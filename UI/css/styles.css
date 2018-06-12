@@ -103,7 +103,7 @@ body {
 
 /*__________signup form_________*/
 
-#signup_form {
+.access_form {
     position: relative;
     background: #F8F8FF;
     padding: 20px;
@@ -172,11 +172,17 @@ body {
     background: #F8F8FF;
     padding: 5px;
     margin-top: 20px;
+    width: 100%;
 }
 
 .main_footer p {
     color: #0099ff;
     text-align: center;
+}
+
+#fixed_bottom {
+    position: fixed;
+    bottom: 0px;
 }
 
 @media only screen and (max-width: 480px) {
@@ -214,5 +220,8 @@ body {
     }
     .intro p {
         display: none;
+    }
+    #fixed_bottom {
+        position: relative;
     }
 }
