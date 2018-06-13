@@ -68,6 +68,7 @@ body {
 .navlink a {
     text-decoration: none;
     color: #66c2ff;
+    font-weight: 600;
     padding: 10px;
 }
 
@@ -156,7 +157,7 @@ body {
     border: 2px solid #333;
     border-radius: 5px;
     cursor: pointer;
-    background: #33cc33;
+    background: #4CAF50;
     color: #ffffff;
 }
 
@@ -195,6 +196,7 @@ body {
     width: 70%;
     background: #FFFFFF;
     margin-top: 20px;
+    border-radius: 5px;
 }
 
 .main_content_header h1 {
@@ -257,6 +259,70 @@ tr:last-child {
     background: #025A02;
 }
 
+.details_main_content {
+    margin-top: 20px;
+    width: 40%;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.tbl_details {
+    font-size: 20px;
+    color: #0099ff;
+    padding: 20px;
+}
+
+.description {
+    font-weight: 700;
+    text-align: left;
+}
+
+.action_buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn_success {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn_success:hover {
+    background-color: #228626;
+}
+
+.btn_danger {
+    background-color: #f44336;
+    border: none;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn_danger:hover {
+    background-color: #8A2018
+}
+
+.btn_success a,
+.btn_danger a {
+    text-decoration: none;
+    color: white;
+}
+
+.divider {
+    border: 2px solid #000000;
+    font-weight: 700;
+}
+
 @media only screen and (max-width: 580px) {
     .nav_container,
     .nav_pull_right {
@@ -298,5 +364,8 @@ tr:last-child {
     }
     table {
         width: 90%;
+    }
+    .details_main_content {
+        width: 95%;
     }
 }
