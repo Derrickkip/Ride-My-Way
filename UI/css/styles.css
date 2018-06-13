@@ -81,9 +81,6 @@ body {
     display: none;
 }
 
-
-/*______signup page__________*/
-
 .content_section {
     display: flex;
     justify-content: center;
@@ -323,6 +320,25 @@ tr:last-child {
     font-weight: 700;
 }
 
+.create_form_group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.create_form_input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none none 1px none;
+    box-shadow: none;
+    font-size: 16px
+}
+
+.create_form_input:focus {
+    outline: none;
+    background: rgba(0, 0, 0, 0.1);
+}
+
 @media only screen and (max-width: 580px) {
     .nav_container,
     .nav_pull_right {
@@ -367,5 +383,13 @@ tr:last-child {
     }
     .details_main_content {
         width: 95%;
+    }
+    .create_form_group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .create_form_input {
+        width: 100%;
+        margin-top: 10px;
     }
 }
