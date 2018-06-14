@@ -11,33 +11,41 @@
 
 </head>
 
-<body class="carpool_bg">
+<body class="bg_main">
     <div class="overlay"></div>
-    <nav class="topnav">
-        <div class="nav_container">
-            <div class="navbrand">
-                <p class="brand_name">Ride-My-Way</p>
-                <div><i class="fa fa-bars navtoggle"></i></div>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <div class="brand">
+                <p class="brand__name">Ride-My-Way</p>
+                <div><i class="fa fa-bars jsnavbar__toggle"></i></div>
             </div>
-            <div class="nav_pull_right">
-                <div class="navlink">
+            <div class="jsnavbar__links">
+                <div class="navbar__link">
+                    <a href="requests.html">requests</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="create_ride.html">create ride</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
                     <a href="rides.html">rides</a>
-                    <hr class="nav_separator" />
+                    <hr class="navbar__separator" />
                 </div>
-                <div class="navlink">
+                <div class="navbar__link">
                     <a href="profile.html">myprofile</a>
-                    <hr class="nav_separator" />
+                    <hr class="navbar__separator" />
                 </div>
-                <div class="navlink">
-                    <a href="login.html">logout</a>
-                    <hr class="nav_separator" />
+                <div class="navbar__link">
+                    <a href="index.html">logout</a>
+                    <hr class="navbar__separator" />
                 </div>
             </div>
         </div>
     </nav>
-    <section class="content_section">
-        <div class="details_main_content">
-            <div class="main_content_header">
+    <section class="section">
+        <div class="section__container">
+            <div class="section__header">
                 <h1>Details</h1>
                 <hr class="divider" />
             </div>
@@ -86,7 +94,7 @@
             </form>
         </div>
     </section>
-    <footer class="main_footer">
+    <footer class="footer--main">
         <p>Derrick &copy; 2018</p>
     </footer>
 
