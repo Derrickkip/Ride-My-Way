@@ -1,5 +1,5 @@
-const nav_toggler = document.querySelector('.navtoggle');
-const nav_links = document.querySelector('.nav_pull_right');
+const nav_toggler = document.querySelector('.jsnavbar__toggle');
+const nav_links = document.querySelector('.jsnavbar__links');
 
 const acc = document.querySelectorAll('.js_accordion');
 

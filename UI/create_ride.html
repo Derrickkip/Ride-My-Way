@@ -11,79 +11,83 @@
 
 </head>
 
-<body class="carpool_bg">
+<body class="bg_main">
     <div class="overlay"></div>
-    <nav class="topnav">
-        <div class="nav_container">
-            <div class="navbrand">
-                <p class="brand_name">Ride-My-Way</p>
-                <div><i class="fa fa-bars navtoggle"></i></div>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <div class="brand">
+                <p class="brand__name">Ride-My-Way</p>
+                <div><i class="fa fa-bars jsnavbar__toggle"></i></div>
             </div>
-            <div class="nav_pull_right">
-                <div class="navlink">
+            <div class="jsnavbar__links">
+                <div class="navbar__link">
+                    <a href="requests.html">requests</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
                     <a href="create_ride.html">create ride</a>
-                    <hr class="nav_separator" />
+                    <hr class="navbar__separator" />
                 </div>
-                <div class="navlink">
+                <div class="navbar__link">
                     <a href="rides.html">rides</a>
-                    <hr class="nav_separator" />
+                    <hr class="navbar__separator" />
                 </div>
-                <div class="navlink">
+                <div class="navbar__link">
                     <a href="profile.html">myprofile</a>
-                    <hr class="nav_separator" />
+                    <hr class="navbar__separator" />
                 </div>
-                <div class="navlink">
-                    <a href="login.html">logout</a>
-                    <hr class="nav_separator" />
+                <div class="navbar__link">
+                    <a href="index.html">logout</a>
+                    <hr class="navbar__separator" />
                 </div>
             </div>
         </div>
     </nav>
-    <div class="content_section">
-        <div class="details_main_content">
-            <div class="main_content_header">
+    <section class="section">
+        <div class="section__container">
+            <header class="section__header">
                 <h1>Create Ride</h1>
                 <hr class="divider" />
-            </div>
-            <form class="form_create" id="form_create">
-                <div class="create_form_group">
-                    <label class="create_form_label" for="from">From</label>
-                    <input type="text" class="create_form_input" name="from">
+            </header>
+            <form class="form--create" id="form_create">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="from">From</label>
+                    <input type="text" class="form--create_input" name="from">
                 </div>
                 <hr/>
-                <div class="create_form_group">
-                    <label class="create_form_label" for="to">To</label>
-                    <input type="text" class="create_form_input" name="to">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="to">To</label>
+                    <input type="text" class="form--create_input" name="to">
                 </div>
                 <hr/>
-                <div class="create_form_group">
-                    <label class="create_form_label" for="time">Time</label>
-                    <input type="text" class="create_form_input" name="time">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="time">Time</label>
+                    <input type="text" class="form--create_input" name="time">
                 </div>
                 <hr/>
-                <div class="create_form_group">
-                    <label class="create_form_label" for="price">Price</label>
-                    <input type="text" class="create_form_input" name="price">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="price">Price</label>
+                    <input type="text" class="form--create_input" name="price">
                 </div>
                 <hr/>
-                <div class="create_form_group">
-                    <label class="create_form_label" for="driver">Driver</label>
-                    <input type="text" class="create_form_input" name="driver">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="driver">Driver</label>
+                    <input type="text" class="form--create_input" name="driver">
                 </div>
                 <hr/>
-                <div class="create_form_group">
-                    <label class="create_form_label" for="car_model">Car Model</label>
-                    <input type="text" class="create_form_input" name="car_model">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="car_model">Car Model</label>
+                    <input type="text" class="form--create_input" name="car_model">
                 </div>
                 <hr/>
-                <div class="create_form_group">
-                    <label class="create_form_label" for="reg_no">Registration No</label>
-                    <input type="text" class="create_form_input" name="reg_no">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="reg_no">Registration No</label>
+                    <input type="text" class="form--create_input" name="reg_no">
                 </div>
                 <hr/>
-                <div class="create_form_group">
-                    <label class="create_form_label" for="seats_no">No of seats</label>
-                    <input type="text" class="create_form_input" name="seats_no">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="seats_no">No of seats</label>
+                    <input type="text" class="form--create_input" name="seats_no">
                 </div>
                 <hr/>
                 <div class="action_buttons">
@@ -92,8 +96,8 @@
                 </div>
             </form>
         </div>
-    </div>
-    <footer class="main_footer">
+    </section>
+    <footer class="footer--main">
         <p>Derrick &copy; 2018</p>
     </footer>
 

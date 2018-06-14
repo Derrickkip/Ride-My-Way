@@ -14,7 +14,7 @@ body {
     background-size: cover;
 }
 
-.carpool_bg {
+.bg_main {
     background: url('images/carpool.jpg') no-repeat center fixed;
     background-size: cover;
 }
@@ -71,60 +71,22 @@ body {
     background-color: #8A2018;
 }
 
+.button--lg {
+    width: 100%;
+}
 
-/*_______navigation________*/
-
-.topnav {
-    background-color: #F8F8FF;
+.section {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.nav_container {
-    width: 85%;
-    display: flex;
-    justify-content: space-between;
-}
-
-.brand_name {
-    color: #0099ff;
-    font-weight: 800;
-}
-
-.navtoggle {
-    display: none;
-}
-
-.nav_pull_right {
-    display: flex;
-    align-items: center;
-}
-
-.navlink {
-    margin: 0 10px;
-}
-
-.navlink a {
-    text-decoration: none;
-    color: #66c2ff;
-    font-weight: 600;
-    padding: 10px;
-}
-
-.navlink a:hover {
-    background: #66c2ff;
-    color: #F8F8FF;
-}
-
-.nav_separator {
-    display: none;
-}
-
-.content_section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.section__container {
+    margin-top: 20px;
+    width: 50%;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
 }
 
 .content_container {
@@ -132,6 +94,61 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+
+/*_______navigation________*/
+
+.navbar {
+    background-color: #F8F8FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar__container {
+    width: 85%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.brand__name {
+    color: #0099ff;
+    font-weight: 800;
+}
+
+.jsnavbar__toggle {
+    display: none;
+}
+
+.jsnavbar__links {
+    display: flex;
+    align-items: center;
+}
+
+.navbar__link {
+    margin: 0 10px;
+}
+
+.navbar__link a {
+    text-decoration: none;
+    color: #66c2ff;
+    font-weight: 600;
+    padding: 10px;
+}
+
+.navbar__link a:hover {
+    background: #66c2ff;
+    color: #F8F8FF;
+}
+
+.navbar__link a:active {
+    background: #F8F8FF;
+    color: #66c2ff;
+}
+
+.navbar__separator {
+    display: none;
 }
 
 .intro h1 {
@@ -143,10 +160,7 @@ body {
     color: #0099ff;
 }
 
-
-/*__________signup form_________*/
-
-.access_form {
+.form--user {
     position: relative;
     background: #F8F8FF;
     padding: 20px;
@@ -160,17 +174,17 @@ body {
     align-items: flex-start;
 }
 
-.form_header h1 {
+.form--user_header h1 {
     color: #0099ff;
 }
 
-.form_group {
+.form--user_group {
     display: flex;
     flex-direction: column;
     margin: 5px 0 10px 0;
 }
 
-.form_input {
+.form--user_input {
     padding: 10px;
     margin: 0;
     font-size: 80%;
@@ -178,47 +192,34 @@ body {
     border: none;
 }
 
-.form_input:focus {
+.form--user_input:focus {
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     outline: none;
 }
 
-.form_action {
+.form--user_action {
     width: 100%;
+    margin-top: 15px;
 }
 
-.btn_submit {
-    width: 100%;
-    padding: 5px;
-    border: 2px solid #333;
-    border-radius: 5px;
-    cursor: pointer;
-    background: #4CAF50;
-    color: #ffffff;
-}
-
-.btn_submit:hover {
-    background: #196619;
-}
-
-.form_action p a {
+.form--user_action p a {
     text-decoration: none;
     color: #0099ff;
 }
 
-.form_action p a:hover {
+.form--user_action p a:hover {
     text-decoration: underline;
 }
 
-.main_footer {
+.footer--main {
     background: #F8F8FF;
     padding: 5px;
     margin-top: 20px;
     width: 100%;
 }
 
-.main_footer p {
+.footer--main p {
     color: #0099ff;
     text-align: center;
 }
@@ -236,7 +237,7 @@ body {
     border-radius: 5px;
 }
 
-.main_content_header h1 {
+.section__header h1 {
     color: #0099ff;
 }
 
@@ -296,14 +297,6 @@ tr:last-child {
     background: #025A02;
 }
 
-.details_main_content {
-    margin-top: 20px;
-    width: 40%;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 5px;
-}
-
 .tbl_details {
     font-size: 20px;
     color: #0099ff;
@@ -360,13 +353,13 @@ tr:last-child {
     font-weight: 700;
 }
 
-.create_form_group {
+.form--create_group {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.create_form_input {
+.form--create_input {
     padding: 10px;
     border-radius: 5px;
     border: none none 1px none;
@@ -374,7 +367,7 @@ tr:last-child {
     font-size: 16px
 }
 
-.create_form_input:focus {
+.form--create_input:focus {
     outline: none;
     background: rgba(0, 0, 0, 0.1);
 }
@@ -461,24 +454,24 @@ tr:last-child {
     border: none;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
     .body {
         font-size: 16px;
     }
-    .nav_container,
-    .nav_pull_right {
+    .navbar__container,
+    .jsnavbar__links {
         flex-direction: column;
     }
-    .navbrand {
+    .brand {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-    .navtoggle {
+    .jsnavbar__toggle {
         display: initial;
         cursor: pointer;
     }
-    .nav_pull_right {
+    .jsnavbar__links {
         display: none;
         align-items: flex-start;
     }
@@ -486,13 +479,14 @@ tr:last-child {
     show {
         display: flex;
     }
-    .navlink {
+    .navbar__link {
         margin: 0 0 10px 0;
+        width: 100%;
     }
-    .navlink a {
-        padding: 0;
+    .navbar__link a {
+        padding: 5px;
     }
-    .nav_separator {
+    .navbar__separator {
         display: flex;
     }
     .content_container {
@@ -507,19 +501,25 @@ tr:last-child {
     table {
         width: 90%;
     }
-    .details_main_content {
+    .section__container {
         width: 95%;
     }
-    .create_form_group {
+    .form--create_group {
         flex-direction: column;
         align-items: flex-start;
     }
-    .create_form_input {
+    .form--create_input {
         width: 100%;
         margin-top: 10px;
     }
     .request,
     .requests__header {
         width: 95%;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 979px) {
+    .section__container {
+        width: 60%;
     }
 }
