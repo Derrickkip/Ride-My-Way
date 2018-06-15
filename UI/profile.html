@@ -15,7 +15,7 @@
     <nav class="navbar">
         <div class="navbar__container">
             <div class="brand">
-                <p class="brand__name">Ride-My-Way</p>
+                <h2 class="brand__name">Ride-My-Way</h2>
                 <div><i class="fa fa-bars jsnavbar__toggle"></i></div>
             </div>
             <div class="jsnavbar__links">
@@ -42,87 +42,103 @@
             </div>
         </div>
     </nav>
-    <section class="section--profile">
-        <div class="user__section">
-            <div class="profile">
-                <div class="title">
-                    <h2 class="primary__color">Profile</h2><span class="fa fa-edit edit" id="edit_user"></span>
+    <section class="section">
+        <div class="section--profile">
+            <div class="user__section">
+                <div class="profile">
+                    <div class="title">
+                        <h3 class="primary__color">Profile</h3><span class="fa fa-edit edit" id="edit_user"></span>
+                    </div>
+                    <div class="profile__details">
+                        <div class="user__details">
+                            <form class="form--details">
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="firstname">First Name</label>
+                                    <input class="form--details_input" type="text" name="firstname" value="Joseph" readonly>
+                                </div>
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="secondname">Second Name</label>
+                                    <input class="form--details_input" type="text" name="secondname" value="Keu" readonly>
+                                </div>
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="email">Email</label>
+                                    <input class="form--details_input" type="text" name="email" value="Jkeu@mail.com" readonly>
+                                </div>
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="pnumber">Phone Number</label>
+                                    <input class="form--details_input" type="text" name="pnumber" value="07323133443" readonly>
+                                </div>
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="dlnumber">Driving Licence</label>
+                                    <input class="form--details_input" type="text" name="dlnumber" value="dl07323133443" readonly>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="profile__details">
-                    <div class="user__details">
+                <div class="car">
+                    <div class="title">
+                        <h3 class="primary__color">Car Details</h3><span class="fa fa-edit edit" id="edit_car"></span>
+                    </div>
+                    <div class="car__details">
                         <form class="form--details">
                             <div class="details__form-group">
-                                <label class="form--details_label" for="firstname">First Name</label>
-                                <input class="form--details_input" type="text" name="firstname" value="Joseph" readonly>
+                                <label class="form--details_label" for="model">Model</label>
+                                <input class="form--details_input" type="text" name="model" value="Toyota Mark X" readonly>
                             </div>
                             <div class="details__form-group">
-                                <label class="form--details_label" for="secondname">Second Name</label>
-                                <input class="form--details_input" type="text" name="secondname" value="Keu" readonly>
+                                <label class="form--details_label" for="nplate">Number Plate</label>
+                                <input class="form--details_input" type="text" name="nplate" value="KBC 001X" readonly>
                             </div>
                             <div class="details__form-group">
-                                <label class="form--details_label" for="email">Email</label>
-                                <input class="form--details_input" type="text" name="email" value="Jkeu@mail.com" readonly>
-                            </div>
-                            <div class="details__form-group">
-                                <label class="form--details_label" for="pnumber">Phone Number</label>
-                                <input class="form--details_input" type="text" name="pnumber" value="07323133443" readonly>
-                            </div>
-                            <div class="details__form-group">
-                                <label class="form--details_label" for="dlnumber">Driving Licence</label>
-                                <input class="form--details_input" type="text" name="dlnumber" value="dl07323133443" readonly>
+                                <label class="form--details_label" for="seats">No of seats</label>
+                                <input class="form--details_input" type="text" name="seats" value="4" readonly>
                             </div>
                         </form>
-                    </div>
-                </div>
-            </div>
-            <div class="car">
-                <div class="title">
-                    <h2 class="primary__color">Car Details</h2><span class="fa fa-edit edit" id="edit_car"></span>
-                </div>
-                <div class="car__details">
-                    <form class="form--details">
-                        <div class="details__form-group">
-                            <label class="form--details_label" for="model">Model</label>
-                            <input class="form--details_input" type="text" name="model" value="Toyota Mark X" readonly>
-                        </div>
-                        <div class="details__form-group">
-                            <label class="form--details_label" for="nplate">Number Plate</label>
-                            <input class="form--details_input" type="text" name="nplate" value="KBC 001X" readonly>
-                        </div>
-                        <div class="details__form-group">
-                            <label class="form--details_label" for="seats">No of seats</label>
-                            <input class="form--details_input" type="text" name="seats" value="4" readonly>
-                        </div>
-                    </form>
 
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="ride__section">
-            <div class="ride__header">
-                <h2 class="primary__color">Ride History</h2>
-            </div>
-            <hr/>
-            <div class="ride__taken">
-                <a href="rides_history.html">
-                    <div class="ride__title">
-                        <h4>Rides Taken</h4><span class="title__number">8</span>
+            <div class="ride__section">
+                <div class="ride__header">
+                    <h3 class="primary__color">Ride History</h3>
+                </div>
+                <hr/>
+                <div class="ride__taken">
+                    <a href="rides_history.html">
+                        <div class="ride__title">
+                            <h4>Rides Taken</h4><span class="title__number">8</span>
+                        </div>
+                    </a>
+                    <div class="ride__details">
+                        <ul class="ride__list">
+                            <li class="ride__item"><span>Ngong to Karen</span><span class="date">June 15, 2018</span></li>
+                            <li class="ride__item"><span>Ngong to Rongai</span><span class="date">June 13, 2018</span></li>
+                        </ul>
+                        <a href="rides history.html"><button class="button--more">view more</button></a>
                     </div>
-                </a>
-            </div>
-            <div class="ride__given">
-                <a href="rides_history.html">
-                    <div class="ride__title">
-                        <h4>Rides Given</h4><span class="title__number">7</span>
+                </div>
+                <div class="ride__given">
+                    <a href="rides_history.html">
+                        <div class="ride__title">
+                            <h4>Rides Given</h4><span class="title__number">7</span>
+                        </div>
+                    </a>
+                    <div class="ride__details">
+                        <ul class="ride__list">
+                            <li class="ride__item"><span>Embakasi to Ngong</span><span class="date">Jan 3, 2018</span></li>
+                            <li class="ride__item"><span>Ngong to Rongai</span><span class="date">Jan 1, 2018</span></li>
+                        </ul>
+                        <a href="rides history.html"><button class="button--more">view more</button></a>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
     </section>
     <div class="modal" id="user_modal">
         <div class="modal__content">
             <div class="modal__header">
-                <h2 class="primary__color">Edit details</h2>
+                <h3 class="primary__color">Edit details</h3>
                 <span class="close">&times;</span>
             </div>
             <hr/>
@@ -158,7 +174,7 @@
     <div class="modal" id="car_modal">
         <div class="modal__content">
             <div class="modal__header">
-                <h2 class="primary__color">Edit details</h2>
+                <h3 class="primary__color">Edit details</h3>
                 <span class="close">&times;</span>
             </div>
             <hr/>
