@@ -75,6 +75,38 @@ body {
     width: 100%;
 }
 
+.success {
+    background: #4CAF50;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.primary {
+    background: #0099ff;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.danger {
+    background: #f44336;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.pending {
+    background: #DCDCDC;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 50%;
+}
+
 .section {
     display: flex;
     justify-content: center;
@@ -461,6 +493,11 @@ tr:last-child {
     width: 85%;
 }
 
+.ride__section {
+    display: flex;
+    flex-direction: column;
+}
+
 .user__section,
 .ride__section {
     width: 40%;
@@ -505,7 +542,7 @@ tr:last-child {
     border: 0;
     outline: 0;
     border-bottom: 2px solid #ccc;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .ride__taken,
@@ -565,6 +602,13 @@ tr:last-child {
     color: #008000;
 }
 
+.requests__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid grey;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -611,7 +655,13 @@ tr:last-child {
 .edit--modal_input {
     padding: 5px;
     outline: 0;
-    font-size: 20px;
+    font-size: 18px;
+    width: 100%;
+}
+
+.edit--modal_input:focus {
+    background: #ccc;
+    border: none;
 }
 
 .modal__action {
