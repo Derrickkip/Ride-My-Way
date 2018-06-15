@@ -312,7 +312,6 @@ tr:last-child {
 
 .red_bg {
     color: red;
-    text-decoration: underline;
 }
 
 .view_btn {
@@ -656,7 +655,6 @@ tr:last-child {
     padding: 5px;
     outline: 0;
     font-size: 18px;
-    width: 100%;
 }
 
 .edit--modal_input:focus {
@@ -669,6 +667,29 @@ tr:last-child {
     justify-content: space-between;
     align-items: center;
     padding-top: 15px;
+}
+
+.rides_taken {
+    width: 85%;
+    overflow-x: auto;
+}
+
+.table--rides th,
+.table--rides tr,
+.table--rides td {
+    border: 1px solid grey;
+}
+
+.table--rides tbody tr:nth-child(odd) {
+    background: #ccc;
+}
+
+.table--rides tbody tr:hover {
+    background: #AAAAAA;
+}
+
+.table--rides tr:last-child {
+    border-bottom: 1px solid grey;
 }
 
 @media only screen and (max-width: 767px) {
