@@ -6,10 +6,10 @@ Ride-My-Way is a carpooling app that allows drivers to create ride offers and pa
  cd into the UI folder and open ``index.html`` in the browser
 
 ## Authors
-* Derrick Kipkirui
+* [Derrick Kipkirui](https://github.com/Derrickkip)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details
 
 ## Acknowledgements
 * [Micah Oriaso](https://github.com/micahoriaso)  for his valuable insights
