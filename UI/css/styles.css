@@ -75,6 +75,38 @@ body {
     width: 100%;
 }
 
+.success {
+    background: #4CAF50;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.primary {
+    background: #0099ff;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.danger {
+    background: #f44336;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.pending {
+    background: #DCDCDC;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 50%;
+}
+
 .section {
     display: flex;
     justify-content: center;
@@ -454,6 +486,191 @@ tr:last-child {
     border: none;
 }
 
+.section--profile {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 20px;
+    width: 85%;
+}
+
+.ride__section {
+    display: flex;
+    flex-direction: column;
+}
+
+.user__section,
+.ride__section {
+    width: 40%;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 10px;
+    border-bottom: 1px solid grey;
+}
+
+.edit {
+    cursor: pointer;
+}
+
+.edit:hover {
+    color: #0099ff;
+}
+
+.profile__details {
+    margin: 10px;
+}
+
+.form--details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.details__form-group,
+.modal__form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.form--details_input {
+    padding: 5px;
+    border: 0;
+    outline: 0;
+    border-bottom: 2px solid #ccc;
+    font-size: 18px;
+}
+
+.ride__taken,
+.ride__given {
+    margin-bottom: 10px;
+}
+
+.ride__taken a,
+.ride__given a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.ride__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ccc;
+    padding: 0 10px;
+    margin: 0;
+    cursor: pointer;
+    border-bottom: 2px solid grey;
+}
+
+.ride__list {
+    list-style-type: none;
+    background: rgba(204, 204, 204, 0.51);
+    margin: 0;
+    padding: 0;
+}
+
+.ride__item {
+    padding: 10px;
+    border-bottom: 1px solid grey;
+    display: flex;
+    justify-content: space-between;
+}
+
+.ride__item:last-child {
+    border-bottom: 0;
+}
+
+.button--more {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+}
+
+.button--more:hover {
+    background: #0099ff;
+    color: #ffffff;
+}
+
+.date {
+    color: #008000;
+}
+
+.requests__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid grey;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 150%;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: 0.2s ease-in-out;
+}
+
+.modal__show {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.modal__content {
+    background-color: #FAFAFA;
+    width: 50%;
+    padding: 20px;
+}
+
+.modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close {
+    color: rgba(131, 130, 130, 0.74);
+    cursor: pointer;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.close:hover {
+    color: #000000;
+}
+
+.edit--modal_input {
+    padding: 5px;
+    outline: 0;
+    font-size: 18px;
+    width: 100%;
+}
+
+.edit--modal_input:focus {
+    background: #ccc;
+    border: none;
+}
+
+.modal__action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+}
+
 @media only screen and (max-width: 767px) {
     .body {
         font-size: 16px;
@@ -515,6 +732,35 @@ tr:last-child {
     .request,
     .requests__header {
         width: 95%;
+    }
+    .section--profile {
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        width: 95%;
+    }
+    .user__section,
+    .ride__section {
+        width: 95%;
+        font-size: 16px;
+    }
+    .details__form-group {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+    #user_modal {
+        padding-top: 20px;
+    }
+    .modal__content {
+        width: 90%;
+    }
+    .modal__form-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .form--details_input {
+        margin-top: 10px;
     }
 }
 
