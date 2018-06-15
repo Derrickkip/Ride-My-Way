@@ -1,21 +1,73 @@
 const nav_toggler = document.querySelector('.jsnavbar__toggle');
 const nav_links = document.querySelector('.jsnavbar__links');
 
-const acc = document.querySelectorAll('.js_accordion');
-
 nav_toggler.addEventListener('click', show_nav);
 
 function show_nav() {
     nav_links.classList.toggle('nav_show');
 }
 
+const acc = document.querySelectorAll('.js_accordion');
 
-for (let i = 0; i < acc.length; i++) {
-    acc[i].addEventListener('click', show_hidden);
+if (acc) {
+    for (let i = 0; i < acc.length; i++) {
+        acc[i].addEventListener('click', show_hidden);
+    }
+
+    function show_hidden(event) {
+        const requests = event.target.nextElementSibling;
+
+        requests.classList.toggle('show');
+    }
 }
 
-function show_hidden(event) {
-    const requests = event.target.nextElementSibling;
+const modal = document.querySelectorAll('.modal');
 
-    requests.classList.toggle('show');
+const edit_user = document.querySelector('#edit_user');
+
+const edit_car = document.querySelector('#edit_car');
+
+const user_modal = document.querySelector('#user_modal');
+
+const car_modal = document.querySelector('#car_modal');
+
+const close = document.querySelectorAll('.close');
+
+if (edit_user) {
+
+    edit_user.addEventListener('click', show_user_modal);
+}
+
+if (edit_car) {
+
+    edit_car.addEventListener('click', show_car_modal);
+
+}
+
+if (close) {
+
+    for (let i = 0; i < close.length; i++) {
+        close[i].addEventListener('click', close_modal);
+    }
+}
+
+function show_user_modal(event) {
+    user_modal.classList.toggle('modal__show');
+}
+
+function show_car_modal(event) {
+    car_modal.classList.toggle('modal__show');
+}
+
+function close_modal(event) {
+    const parent_modal = event.target.parentNode.parentNode.parentNode;
+    parent_modal.classList.toggle('modal__show');
+}
+
+window.onclick = function() {
+    for (let i = 0; i < modal.length; i++) {
+        if (event.target == modal[i]) {
+            modal[i].classList.toggle('modal__show');
+        }
+    }
 }
