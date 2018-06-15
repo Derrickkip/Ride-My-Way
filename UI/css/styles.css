@@ -312,7 +312,6 @@ tr:last-child {
 
 .red_bg {
     color: red;
-    text-decoration: underline;
 }
 
 .view_btn {
@@ -343,6 +342,7 @@ tr:last-child {
 .action_buttons {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-top: 20px;
 }
 
@@ -656,7 +656,6 @@ tr:last-child {
     padding: 5px;
     outline: 0;
     font-size: 18px;
-    width: 100%;
 }
 
 .edit--modal_input:focus {
@@ -669,6 +668,56 @@ tr:last-child {
     justify-content: space-between;
     align-items: center;
     padding-top: 15px;
+}
+
+.rides_taken {
+    width: 85%;
+    overflow-x: auto;
+}
+
+.table--rides th,
+.table--rides tr,
+.table--rides td {
+    border: 1px solid grey;
+}
+
+.table--rides tbody tr:nth-child(odd) {
+    background: #ccc;
+}
+
+.table--rides tbody tr:hover {
+    background: #AAAAAA;
+}
+
+.table--rides tr:last-child {
+    border-bottom: 1px solid grey;
+}
+
+.review__body,
+.review__header {
+    width: 80%;
+    height: 100%;
+}
+
+.review {
+    padding: 10px;
+    font-size: 18px;
+    background: #ccc;
+    width: 100%;
+    height: 100%;
+    outline: none;
+}
+
+.form--review {
+    height: 100%;
+}
+
+.section__review {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 85%;
+    height: 300px;
 }
 
 @media only screen and (max-width: 767px) {
@@ -761,6 +810,11 @@ tr:last-child {
     }
     .form--details_input {
         margin-top: 10px;
+    }
+    .review__body,
+    .review__header {
+        width: 100%;
+        height: 100%;
     }
 }
 
