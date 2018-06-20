@@ -10,5 +10,5 @@ def new_user():
     """
     Create Instance of User class to be used by the module
     """
-    user = User('Daudi', 'Jesse', 'Dj@mail.com', 'password')
+    user = User('Daudi', 'Jesee', 'dj@mail.com', 'password')
     return user
