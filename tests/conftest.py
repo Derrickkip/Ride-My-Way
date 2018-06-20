@@ -21,14 +21,14 @@ def new_driver():
     Create Instance of Driver class
     """
     user_details = ['Daudi', 'Jesee', 'dj@mail.com', 'password']
-    car_details = ['2413e443541', 'Mitsubishi Lancer', 'KBX 001', 4]
+    car_details = [2413e443541, 'Mitsubishi Lancer', 'KBX 001', 4]
     driver = Drivers(user_details, car_details)
     return driver
 
 @pytest.fixture(scope='module')
 def new_ride():
     """
-    Create new ride instancec
+    Create new ride instance
     """
     date = datetime.date.today()
     travel_time = datetime.time(1, 2, 3)

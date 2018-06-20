@@ -7,6 +7,7 @@ def test_user_model(new_user):
     """
     test that user can create account
     """
+    assert new_user.is_driver == False
     assert new_user.first_name == 'Daudi'
     assert new_user.last_name == 'Jesee'
     assert new_user.email == 'dj@mail.com'
@@ -18,12 +19,13 @@ def test_driver_model(new_driver):
     """
     test that driver instance is created correctly
     """
+    assert new_driver.is_driver == True
     assert new_driver.first_name == 'Daudi'
     assert new_driver.last_name == 'Jesee'
     assert new_driver.email == 'dj@mail.com'
     assert new_driver.hashed_password != 'password'
     assert new_driver.driving_licence == 2413e443541
-    assert new_driver.carmodel == 'Mitsubishi Lancer'
+    assert new_driver.car_model == 'Mitsubishi Lancer'
     assert new_driver.car_registration_number == 'KBX 001'
     assert new_driver.seats_available == 4
 

@@ -9,6 +9,7 @@ class Users:
     User model class
     """
     def __init__(self, user_details):
+        self.is_driver = False
         self.user_id = randint(1, 10)
         self.first_name = user_details[0]
         self.last_name = user_details[1]
@@ -30,7 +31,19 @@ class Drivers(Users):
     Driver Class that inherits from user
     """
     def __init__(self, driver_details, car_details):
-        pass
+        super().__init__(driver_details)
+        self.is_driver = True
+        self.driving_licence = car_details[0]
+        self.car_model = car_details[1]
+        self.car_registration_number = car_details[2]
+        self.seats_available = car_details[3]
+        self.ride_offers = []
+
+    def create_ride(self, ride):
+        """
+        Create ride method for driver
+        """
+        self.ride_offers.append(ride)
 
 class Rides:
     """
