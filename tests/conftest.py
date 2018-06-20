@@ -4,7 +4,7 @@ Fixtures for tests
 import datetime
 import pytest
 
-from app.models import Users, Rides
+from app.models import Users, Drivers, Rides
 
 @pytest.fixture(scope='module')
 def new_user():
@@ -14,6 +14,16 @@ def new_user():
     user_details = ['Daudi', 'Jesee', 'dj@mail.com', 'password']
     user = Users(user_details)
     return user
+
+@pytest.fixture(scope='module')
+def new_driver():
+    """
+    Create Instance of Driver class
+    """
+    user_details = ['Daudi', 'Jesee', 'dj@mail.com', 'password']
+    car_details = ['2413e443541', 'Mitsubishi Lancer', 'KBX 001', 4]
+    driver = Drivers(user_details, car_details)
+    return driver
 
 @pytest.fixture(scope='module')
 def new_ride():

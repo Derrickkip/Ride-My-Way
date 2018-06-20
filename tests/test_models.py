@@ -14,6 +14,19 @@ def test_user_model(new_user):
     assert new_user.car_details is None
     assert str(new_user) == 'Daudi Jesee'
 
+def test_driver_model(new_driver):
+    """
+    test that driver instance is created correctly
+    """
+    assert new_driver.first_name == 'Daudi'
+    assert new_driver.last_name == 'Jesee'
+    assert new_driver.email == 'dj@mail.com'
+    assert new_driver.hashed_password != 'password'
+    assert new_driver.driving_licence == 2413e443541
+    assert new_driver.carmodel == 'Mitsubishi Lancer'
+    assert new_driver.car_registration_number == 'KBX 001'
+    assert new_driver.seats_available == 4
+
 def test_ride_model(new_ride):
     """
     test instance of ride class created correctly

@@ -25,6 +25,13 @@ class Users:
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
 
+class Drivers(Users):
+    """
+    Driver Class that inherits from user
+    """
+    def __init__(self, driver_details, car_details):
+        pass
+
 class Rides:
     """
     Rides class declaration
