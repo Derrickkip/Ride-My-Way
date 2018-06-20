@@ -4,7 +4,7 @@ Data model class declarations
 from random import randint
 from werkzeug.security import generate_password_hash
 
-class User:
+class Users:
     """
     User model class
     """
@@ -15,12 +15,6 @@ class User:
         self.email = email
         self.hashed_password = generate_password_hash(password)
         self.car_details = None
-
-class Driver(User):
-    """
-    Driver model class inherits User
-    """
-    pass
 
 class Rides:
     """
