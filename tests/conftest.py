@@ -4,7 +4,7 @@ Fixtures for tests
 import datetime
 import pytest
 
-from app.models import Users, Drivers, Rides
+from app.models import Users, Drivers, Rides, Requests
 
 @pytest.fixture(scope='module')
 def new_user():
@@ -35,3 +35,11 @@ def new_ride():
     date_of_travel = datetime.datetime.combine(date, travel_time)
     ride = Rides('Nairobi', 'Mombasa', date_of_travel, '500 kshs')
     return ride
+
+@pytest.fixture(scope='module')
+def new_request():
+    """
+    Create request instance
+    """
+    request = Requests(str(new_user))
+    return request

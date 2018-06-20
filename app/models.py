@@ -65,3 +65,10 @@ class Rides:
 
     def __str__(self):
         return '{} to {}'.format(self.origin, self.destination)
+
+class Requests:
+    """
+    Request class declaration
+    """
+    def __init__(self, user_name):
+        pass
