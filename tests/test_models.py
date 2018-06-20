@@ -46,4 +46,8 @@ def test_request_class(new_request):
     """
     test request instance
     """
-    assert new_request.user == 'Daudi Jesee'
+    assert str(new_request.user) == 'Daudi Jesee'
+    accept = new_request.accept()
+    assert "Request from Daudi Jesee Accepted" in accept
+    reject = new_request.reject()
+    assert "Request from Daudi Jesee Rejected" in reject

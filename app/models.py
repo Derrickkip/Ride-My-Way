@@ -72,3 +72,18 @@ class Requests:
     """
     def __init__(self, user_name):
         self.user = user_name
+
+    def accept(self):
+        """
+        Accept request
+        """
+        return "Request from {} Accepted".format(self.user)
+
+    def reject(self):
+        """
+        Reject request
+        """
+        return "Request from {} Rejected".format(self.user)
+
+    def __str__(self):
+        return '<Request: {}>'.format(self.user)
