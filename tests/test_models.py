@@ -13,6 +13,7 @@ def test_user_model(new_user):
     assert new_user.email == 'dj@mail.com'
     assert new_user.hashed_password != 'password'
     assert new_user.car_details is None
+    assert new_user.__str__ == 'Daudi Jesee'
 
 def test_ride_model(new_ride):
     """
@@ -23,4 +24,4 @@ def test_ride_model(new_ride):
     assert new_ride.date == datetime.date(2018, 8, 17)
     assert new_ride.time == time.strftime("%H %M")
     assert new_ride.price == "500 kshs"
-    
+    assert new_ride.__str__ == "Nairobi to Mombasa"
