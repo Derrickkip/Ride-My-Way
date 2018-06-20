@@ -20,4 +20,9 @@ class Rides:
     """
     Rides class declaration
     """
-    pass
+    def __init__(self, origin, destination, date, time, price):
+        self.origin = origin
+        self.destination = destination
+        self.date = date
+        self.time = time
+        self.price = price
