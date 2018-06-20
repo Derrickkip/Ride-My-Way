@@ -71,4 +71,4 @@ class Requests:
     Request class declaration
     """
     def __init__(self, user_name):
-        pass
+        self.user = user_name

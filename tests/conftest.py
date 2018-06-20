@@ -41,5 +41,5 @@ def new_request():
     """
     Create request instance
     """
-    request = Requests(str(new_user))
+    request = Requests(str(new_user()))
     return request
