@@ -2,7 +2,6 @@
 Tests for app models
 """
 import datetime
-import time
 
 def test_user_model(new_user):
     """
@@ -13,15 +12,17 @@ def test_user_model(new_user):
     assert new_user.email == 'dj@mail.com'
     assert new_user.hashed_password != 'password'
     assert new_user.car_details is None
-    assert new_user.__str__ == 'Daudi Jesee'
+    assert str(new_user) == 'Daudi Jesee'
 
 def test_ride_model(new_ride):
     """
     test instance of ride class created correctly
     """
+    date = datetime.date.today()
+    travel_time = datetime.time(1, 2, 3)
+    date_of_travel = datetime.datetime.combine(date, travel_time)
     assert new_ride.origin == "Nairobi"
     assert new_ride.destination == "Mombasa"
-    assert new_ride.date == datetime.date(2018, 8, 17)
-    assert new_ride.time == time.strftime("%H %M")
+    assert new_ride.travel_date == date_of_travel
     assert new_ride.price == "500 kshs"
-    assert new_ride.__str__ == "Nairobi to Mombasa"
+    assert str(new_ride) == "Nairobi to Mombasa"
