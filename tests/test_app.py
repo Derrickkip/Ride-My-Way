@@ -10,6 +10,3 @@ def test_app_created_correctly(test_client):
     '''
     assert (current_app is None) is False
     assert (current_app.config['TESTING']) is True
-    response = test_client.get('/')
-    assert response.status_code == 200
-    assert b'Hello World!' in response.data
