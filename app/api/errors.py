@@ -32,10 +32,3 @@ def internal_server_error(error):
     Server error
     """
     return make_response(jsonify({'error':'Internal Server error'}), 500)
-
-@api.errorhandler(501)
-def not_implemented(error):
-    """
-    Service not implemented
-    """
-    return make_response(jsonify({'error':'Not implemented'}), 501)

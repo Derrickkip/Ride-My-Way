@@ -7,19 +7,25 @@ from . import api
 RIDES = [
     {
         'id': 1,
+        'driver': 'Michael Owen',
         'origin': 'Mombasa',
         'destination': 'Nairobi',
         'travel_date': '23th June 2018',
         'time': '10:00 am',
+        'car_model': 'Mitsubishi Evo 8',
+        'seats': 4,
         'price': 500,
         'requests': []
     },
     {
         'id': 2,
+        'driver': 'Sam West',
         'origin': 'Kisumu',
         'destination': 'Lodwar',
         'travel_date': '25th June 2018',
         'time': '12:00 am',
+        'car_model':'Subaru Imprezza',
+        'seats':3,
         'price': 400,
         'requests': []
     }
@@ -50,6 +56,8 @@ def create_ride():
     data = request.json
     if data is None:
         abort(400)
+    if not 'driver' in data:
+        abort(400)
     elif not 'origin' in data:
         abort(400)
     elif not 'destination' in data:
@@ -58,14 +66,21 @@ def create_ride():
         abort(400)
     elif not 'time' in data:
         abort(400)
+    elif not 'car_model' in data:
+        abort(400)
+    elif not 'seats' in data:
+        abort(400)
     elif not 'price' in data:
         abort(400)
     ride = {
         'id': RIDES[-1]['id']+1,
+        'driver': data['driver'],
         'origin': data['origin'],
         'destination': data['destination'],
         'travel_date': data['travel_date'],
         'time': data['time'],
+        'car_model': data['car_model'],
+        'seats': data['seats'],
         'price': data['price'],
         'requests': []
     }
@@ -81,10 +96,13 @@ def update_ride(ride_id):
     ride = [ride for ride in RIDES if ride['id'] == ride_id]
     if ride == []:
         abort(404)
+    ride[0]['driver'] = request.json.get('driver', ride[0]['driver'])
     ride[0]['origin'] = request.json.get('origin', ride[0]['origin'])
     ride[0]['destination'] = request.json.get('destination', ride[0]['destination'])
     ride[0]['travel_date'] = request.json.get('travel_date', ride[0]['travel_date'])
     ride[0]['time'] = request.json.get('time', ride[0]['time'])
+    ride[0]['car_model'] = request.json.get('car_model', ride[0]['car_model'])
+    ride[0]['seats'] = request.json.get('seats', ride[0]['seats'])
     ride[0]['price'] = request.json.get('price', ride[0]['price'])
 
     return jsonify({'ride':ride[0]})
