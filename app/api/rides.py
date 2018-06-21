@@ -25,14 +25,14 @@ RIDES = [
     }
 ]
 
-@api.route('/api/v1/rides', methods=['GET'])
+@api.route('/ridemyway/api/v1/rides', methods=['GET'])
 def get_rides():
     '''
     GET all rides
     '''
     return jsonify({'rides': RIDES})
 
-@api.route('/api/v1/rides/<int:ride_id>', methods=['GET'])
+@api.route('/ridemyway/api/v1/rides/<int:ride_id>', methods=['GET'])
 def get_single_ride(ride_id):
     """
     GET a singe ride
@@ -42,12 +42,24 @@ def get_single_ride(ride_id):
         abort(404)
     return jsonify({'ride': ride[0]})
 
-@api.route('/api/v1/rides', methods=['POST'])
+@api.route('/ridemyway/api/v1/rides', methods=['POST'])
 def create_ride():
     """
     Create a ride
     """
     data = request.json
+    if data is None:
+        abort(400)
+    elif not 'origin' in data:
+        abort(400)
+    elif not 'destination' in data:
+        abort(400)
+    elif not 'travel_date' in data:
+        abort(400)
+    elif not 'time' in data:
+        abort(400)
+    elif not 'price' in data:
+        abort(400)
     ride = {
         'id': RIDES[-1]['id']+1,
         'origin': data['origin'],
@@ -61,7 +73,7 @@ def create_ride():
     RIDES.append(ride)
     return jsonify({"ride": ride}), 201
 
-@api.route('/api/v1/rides/<int:ride_id>', methods=['PUT'])
+@api.route('/ridemyway/api/v1/rides/<int:ride_id>', methods=['PUT'])
 def update_ride(ride_id):
     """
     Update ride
@@ -77,7 +89,7 @@ def update_ride(ride_id):
 
     return jsonify({'ride':ride[0]})
 
-@api.route('/api/v1/rides/<int:ride_id>', methods=['DELETE'])
+@api.route('/ridemyway/api/v1/rides/<int:ride_id>', methods=['DELETE'])
 def delete_ride(ride_id):
     """
     Delete a ride

@@ -7,7 +7,7 @@ def test_get_request(test_client):
     """
     Test that get request works correctly
     """
-    response = test_client.get('/api/v1/rides')
+    response = test_client.get('/ridemyway/api/v1/rides')
     result = json.loads(response.data)
     assert result['rides'][0]['origin'] == 'Mombasa'
     assert result['rides'][0]['destination'] == 'Nairobi'
@@ -27,7 +27,7 @@ def test_get_single_ride(test_client):
     """
     Test request returns correct ride with specified ID
     """
-    response = test_client.get('/api/v1/rides/2')
+    response = test_client.get('/ridemyway/api/v1/rides/2')
     result = json.loads(response.data)
     assert response.status_code == 200
     assert result['ride']['origin'] == 'Kisumu'
@@ -41,8 +41,15 @@ def test_unavailable_ride(test_client):
     """
     Test request returns a 404 error if ride is not present
     """
-    response = test_client.get('/api/v1/rides/4')
+    response = test_client.get('/ridemyway/api/v1/rides/4')
     assert response.status_code == 404
+
+def test_malformed_request(test_client):
+    """
+    Test 400 error code raised
+    """
+    response = test_client.post('/ridemyway/api/v1/rides')
+    assert response.status_code == 400
 
 def test_create_ride(test_client):
     """
@@ -52,7 +59,7 @@ def test_create_ride(test_client):
                'travel_date': '30th August 2018',
                'time': '03:00 pm', 'price' : 200}
 
-    response = test_client.post('/api/v1/rides', data=json.dumps(my_data),
+    response = test_client.post('/ridemyway/api/v1/rides', data=json.dumps(my_data),
                                 content_type='application/json')
     result = json.loads(response.data)
     assert response.status_code == 201
@@ -69,7 +76,7 @@ def test_update_ride(test_client):
     Test A ride can be updated
     """
     my_data = {'destination': 'Brooke', 'time': '03:00 pm', 'price' : 2000}
-    response = test_client.put('api/v1/rides/1', data=json.dumps(my_data),
+    response = test_client.put('/ridemyway/api/v1/rides/1', data=json.dumps(my_data),
                                content_type='application/json')
     result = json.loads(response.data)
     assert response.status_code == 200
@@ -83,7 +90,7 @@ def test_delete_ride(test_client):
     """
     Test A ride can be deleted with the delete method
     """
-    response = test_client.delete('api/v1/rides/1')
+    response = test_client.delete('/ridemyway/api/v1/rides/1')
     assert response.status_code == 204
-    response2 = test_client.get('api/v1/rides/1')
+    response2 = test_client.get('/ridemyway/api/v1/rides/1')
     assert response2.status_code == 404
