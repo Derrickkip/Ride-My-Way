@@ -64,3 +64,11 @@ def test_create_ride(test_client):
     assert result['ride']['price'] == '200'
     assert result['ride']['requests'] == []
     
+def test_delete_ride(test_client):
+    """
+    Test A ride can be deleted with the delete method
+    """
+    response = test_client.delete('api/v1/rides/1')
+    result = json.loads(response.data)
+    assert response.status_code == 202
+    assert result['status'] == 'ok'

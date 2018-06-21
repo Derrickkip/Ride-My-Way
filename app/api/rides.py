@@ -60,3 +60,10 @@ def create_ride():
 
     RIDES.append(ride)
     return jsonify({"ride": ride}), 201
+
+@api.route('/api/v1/rides', methods=['DELETE'])
+def delete_ride():
+    """
+    Delete a ride
+    """
+    pass
