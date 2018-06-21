@@ -10,6 +10,7 @@ RIDES = [
         'origin': 'Mombasa',
         'Destination': 'Nairobi',
         'Travel_date': '23th June 2018',
+        'Time': '10:00 am',
         'Price': 500,
         'requests': []
     },
@@ -18,6 +19,7 @@ RIDES = [
         'origin': 'Kisumu',
         'Destination': 'Lodwar',
         'Travel_date': '25th June 2018',
+        'Time': '12:00am',
         'Price': 400,
         'requests': []
     }

@@ -9,14 +9,18 @@ def test_get_request(test_client):
     """
     response = test_client.get('/api/v1/rides')
     result = json.loads(response.data)
-    assert "'origin':'Mombasa'" in result
-    assert "'Destination':'Nairobi'" in result
-    assert "'Travel_date': '23th June 2018'" in result
-    assert "'Price': 500" in result
-    assert "'origin':'Kisumu'" in result
-    assert "'Destination': 'Lodwar'" in result
-    assert "'Travel_date': '25th June 2018'" in result
-    assert "'Price': 400" in result
-    assert "'requests': []" in result
+    print(result)
+    assert result['rides'][0]['origin'] == 'Mombasa'
+    assert result['rides'][0]['destination'] == 'Nairobi'
+    assert result['rides'][0]['Travel_date'] == '23th June 2018'
+    assert result['rides'][0]['Time'] == '10:00 am' 
+    assert result['rides'][0]['price'] == 500
+    assert result['rides'][0]['requests'] == []
+    assert result['rides'][1]['origin'] == 'Kisumu'
+    assert result['rides'][1]['destination'] == 'Lodwar'
+    assert result['rides'][1]['Travel_date'] == '25th June 2018'
+    assert result['rides'][1]['Time'] == '12:00 am'
+    assert result['rides'][1]['price'] == 400
+    assert result['rides'][1]['requests'] == []
     assert response.status_code == 200
     
