@@ -71,6 +71,52 @@ def test_create_ride(test_client):
     assert result['ride']['price'] == 200
     assert result['ride']['requests'] == []
 
+def test_wrong_create_requests(test_client):
+    """
+    Test wrong request raises 400 error
+    """
+    my_data = {'destination': 'Brooke',
+               'travel_date': '30th August 2018',
+               'time': '03:00 pm', 'price' : 200}
+
+    response = test_client.post('/ridemyway/api/v1/rides', data=json.dumps(my_data),
+                                content_type='application/json')
+
+    assert response.status_code == 400
+
+    my_data2 = {'origin':'Londiani', 'travel_date': '30th August 2018',
+                'time': '03:00 pm', 'price' : 200}
+
+    response2 = test_client.post('/ridemyway/api/v1/rides', data=json.dumps(my_data2),
+                                 content_type='application/json')
+
+    assert response2.status_code == 400
+
+    my_data3 = {'origin':'Londiani', 'destination': 'Brooke', 'time': '03:00 pm', 'price' : 200}
+
+    response3 = test_client.post('/ridemyway/api/v1/rides', data=json.dumps(my_data3),
+                                 content_type='application/json')
+
+    assert response3.status_code == 400
+
+    my_data4 = {'origin':'Londiani', 'destination': 'Brooke',
+                'travel_date': '30th August 2018', 'price' : 200}
+
+    response4 = test_client.post('/ridemyway/api/v1/rides', data=json.dumps(my_data4),
+                                 content_type='application/json')
+
+    assert response4.status_code == 400
+
+    my_data5 = {'origin':'Londiani', 'destination': 'Brooke',
+                'travel_date': '30th August 2018',
+                'time': '03:00 pm'}
+
+    response5 = test_client.post('/ridemyway/api/v1/rides', data=json.dumps(my_data5),
+                                 content_type='application/json')
+
+    assert response5.status_code == 400
+
+
 def test_update_ride(test_client):
     """
     Test A ride can be updated
@@ -86,6 +132,15 @@ def test_update_ride(test_client):
     assert result['ride']['time'] == '03:00 pm'
     assert result['ride']['price'] == 2000
 
+def test_wrong_update_request(test_client):
+    """
+    Test wrong request raises 404 error
+    """
+    my_data = {'destination': 'Brooke', 'time': '03:00 pm', 'price' : 2000}
+    response = test_client.put('/ridemyway/api/v1/rides/5', data=json.dumps(my_data),
+                               content_type='application/json')
+    assert response.status_code == 404
+
 def test_get_requests(test_client):
     """
     Test get all requests to ride with ride_id
@@ -94,6 +149,8 @@ def test_get_requests(test_client):
     result = json.loads(response.data)
     assert response.status_code == 200
     assert result['requests'] == []
+    response2 = test_client.get('/ridemyway/api/v1/rides/4/requests')
+    assert response2.status_code == 404
 
 def test_make_requests(test_client):
     """
@@ -112,6 +169,10 @@ def test_make_requests(test_client):
     result2 = json.loads(response2.data)
     assert result2['requests'][1]['username'] == 'Will Smith'
 
+    response3 = test_client.post('/ridemyway/api/v1/rides/4/requests', data=json.dumps(my_data2),
+                                 content_type='application/json')
+    assert response3.status_code == 404
+
 def test_delete_ride(test_client):
     """
     Test A ride can be deleted with the delete method
@@ -120,3 +181,11 @@ def test_delete_ride(test_client):
     assert response.status_code == 204
     response2 = test_client.get('/ridemyway/api/v1/rides/1')
     assert response2.status_code == 404
+    
+def test_wrong_delete_request(test_client):
+    """
+    Test raises error with wrong delete message
+    """
+    response = test_client.delete('/ridemyway/api/v1/rides/4')
+    assert response.status_code == 404
+
