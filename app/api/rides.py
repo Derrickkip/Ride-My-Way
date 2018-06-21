@@ -1,8 +1,7 @@
 """
 API rides endpoint implementation
 """
-from flask import jsonify, abort
-
+from flask import jsonify, abort, request
 from . import api
 
 RIDES = [
@@ -39,12 +38,25 @@ def get_single_ride(ride_id):
     GET a singe ride
     """
     ride = [ride for ride in RIDES if ride['id'] == ride_id]
-    if ride == [ ]:
+    if ride == []:
         abort(404)
     return jsonify({'ride': ride[0]})
 
 @api.route('/api/v1/rides', methods=['POST'])
 def create_ride():
-    pass
+    """
+    Create a ride
+    """
+    data = request.json
+    ride = {
+        'id': RIDES[-1]['id']+1,
+        'origin': data['origin'],
+        'destination': data['destination'],
+        'travel_date': data['travel_date'],
+        'time': data['time'],
+        'price': data['price'],
+        'requests': []
+    }
 
-
+    RIDES.append(ride)
+    return jsonify({"ride": ride}), 201

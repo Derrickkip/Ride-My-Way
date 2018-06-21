@@ -56,6 +56,7 @@ def test_create_ride(test_client):
                                 content_type='application/json')
     result = json.loads(response.data)
     assert response.status_code == 201
+    assert result['ride']['id'] == 3
     assert result['ride']['origin'] == 'Londiani'
     assert result['ride']['destination'] == 'Brooke'
     assert result['ride']['travel_date'] == '30th August 2018'
