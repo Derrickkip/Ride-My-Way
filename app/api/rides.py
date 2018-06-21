@@ -39,6 +39,12 @@ def get_single_ride(ride_id):
     GET a singe ride
     """
     ride = [ride for ride in RIDES if ride['id'] == ride_id]
-    if ride is None:
+    if ride == [ ]:
         abort(404)
     return jsonify({'ride': ride[0]})
+
+@api.route('/api/v1/rides', methods=['POST'])
+def create_ride():
+    pass
+
+
