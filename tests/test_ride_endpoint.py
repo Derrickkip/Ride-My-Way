@@ -50,7 +50,7 @@ def test_create_ride(test_client):
     """
     my_data = {'origin':'Londiani', 'destination': 'Brooke',
                'travel_date': '30th August 2018',
-               'time': '03:00 pm', 'price' : '200'}
+               'time': '03:00 pm', 'price' : 200}
 
     response = test_client.post('/api/v1/rides', data=json.dumps(my_data),
                                 content_type='application/json')
@@ -61,14 +61,28 @@ def test_create_ride(test_client):
     assert result['ride']['destination'] == 'Brooke'
     assert result['ride']['travel_date'] == '30th August 2018'
     assert result['ride']['time'] == '03:00 pm'
-    assert result['ride']['price'] == '200'
+    assert result['ride']['price'] == 200
     assert result['ride']['requests'] == []
+
+def test_update_ride(test_client):
+    """
+    Test A ride can be updated
+    """
+    my_data = {'destination': 'Brooke', 'time': '03:00 pm', 'price' : 2000}
+    response = test_client.put('api/v1/rides/1', data=json.dumps(my_data), 
+                                content_type='application/json')
+    result = json.loads(response.data)
+    assert response.status_code == 200
+    assert result['ride']['destination'] == 'Brooke'
+    assert result['ride']['time'] == '03:00 pm'
+    assert result['ride']['price'] == 2000
+     
 
 def test_delete_ride(test_client):
     """
     Test A ride can be deleted with the delete method
     """
     response = test_client.delete('api/v1/rides/1')
-    result = json.loads(response.data)
-    assert response.status_code == 202
-    assert result['status'] == 'ok'
+    assert response.status_code == 204
+    response2 = test_client.get('api/v1/rides/1')
+    assert response2.status_code == 404
