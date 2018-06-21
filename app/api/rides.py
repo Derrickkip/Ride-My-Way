@@ -122,11 +122,11 @@ def request_ride(ride_id):
         abort(404)
     requests = ride[0]['requests']
     if requests:
-        id = requests[-1]['id']+1
+        request_id = requests[-1]['id']+1
     else:
-        id = 1
+        request_id = 1
     ride_request = {
-        'id': id,
+        'id': request_id,
         'username': data['username']
     }
     requests.append(ride_request)
