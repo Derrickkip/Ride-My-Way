@@ -94,3 +94,12 @@ def test_delete_ride(test_client):
     assert response.status_code == 204
     response2 = test_client.get('/ridemyway/api/v1/rides/1')
     assert response2.status_code == 404
+
+def test_get_requests(test_client):
+    """
+    Test get all requests to ride with ride_id
+    """
+    response = test_client.get('/ridemyway/api/v1/rides/1/requests')
+    result = json.loads(response.data)
+    assert response.status_code == 200
+    assert result['requests'] == {}

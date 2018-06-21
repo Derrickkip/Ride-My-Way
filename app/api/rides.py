@@ -99,3 +99,17 @@ def delete_ride(ride_id):
         abort(404)
     RIDES.remove(ride[0])
     return jsonify({}), 204
+
+@api.route('/ridemyway/api/v1/rides/<int:ride_id>/requests', methods=['GET'])
+def get_requests(ride_id):
+    """
+    Get requests for ride with ride_id
+    """
+    pass
+
+@api.route('/ridemyway/api/v1/rides/<int:ride_id>/requests', methods=['POST'])
+def request_ride(ride_id):
+    """
+    Request ride
+    """
+    pass
