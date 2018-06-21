@@ -63,7 +63,7 @@ def test_create_ride(test_client):
     assert result['ride']['time'] == '03:00 pm'
     assert result['ride']['price'] == '200'
     assert result['ride']['requests'] == []
-    
+
 def test_delete_ride(test_client):
     """
     Test A ride can be deleted with the delete method

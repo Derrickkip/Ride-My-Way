@@ -61,9 +61,13 @@ def create_ride():
     RIDES.append(ride)
     return jsonify({"ride": ride}), 201
 
-@api.route('/api/v1/rides', methods=['DELETE'])
-def delete_ride():
+@api.route('/api/v1/rides/<int:ride_id>', methods=['DELETE'])
+def delete_ride(ride_id):
     """
     Delete a ride
     """
-    pass
+    ride = [ride for ride in RIDES if ride['id'] == ride_id]
+    if ride == []:
+        abort(404)
+    RIDES.remove(ride[0])
+    return jsonify({"status":"ok"}), 202
