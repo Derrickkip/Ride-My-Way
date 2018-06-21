@@ -2,6 +2,7 @@
 Data model class declarations
 """
 from random import randint
+import json
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Users:
@@ -22,6 +23,9 @@ class Users:
         Check if password given matches password_hash
         """
         return check_password_hash(self.hashed_password, password)
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
@@ -45,6 +49,9 @@ class Drivers(Users):
         """
         self.ride_offers.append(ride)
 
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
 class Rides:
     """
     Rides class declaration
@@ -65,6 +72,9 @@ class Rides:
 
     def __str__(self):
         return '{} to {}'.format(self.origin, self.destination)
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 class Requests:
     """
@@ -87,3 +97,6 @@ class Requests:
 
     def __str__(self):
         return '<Request: {}>'.format(self.user)
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
