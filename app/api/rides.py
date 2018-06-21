@@ -105,7 +105,11 @@ def get_requests(ride_id):
     """
     Get requests for ride with ride_id
     """
-    pass
+    ride = [ride for ride in RIDES if ride['id'] == ride_id]
+    if ride == []:
+        abort(404)
+    requests = ride[0]['requests']
+    return jsonify({'requests': requests})
 
 @api.route('/ridemyway/api/v1/rides/<int:ride_id>/requests', methods=['POST'])
 def request_ride(ride_id):

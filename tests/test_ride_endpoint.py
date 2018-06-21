@@ -3,7 +3,7 @@ Tests for api ride endpoint
 """
 import json
 
-def test_get_request(test_client):
+def test_get_rides(test_client):
     """
     Test that get request works correctly
     """
@@ -86,6 +86,15 @@ def test_update_ride(test_client):
     assert result['ride']['time'] == '03:00 pm'
     assert result['ride']['price'] == 2000
 
+def test_get_requests(test_client):
+    """
+    Test get all requests to ride with ride_id
+    """
+    response = test_client.get('/ridemyway/api/v1/rides/1/requests')
+    result = json.loads(response.data)
+    assert response.status_code == 200
+    assert result['requests'] == []
+
 def test_delete_ride(test_client):
     """
     Test A ride can be deleted with the delete method
@@ -95,11 +104,3 @@ def test_delete_ride(test_client):
     response2 = test_client.get('/ridemyway/api/v1/rides/1')
     assert response2.status_code == 404
 
-def test_get_requests(test_client):
-    """
-    Test get all requests to ride with ride_id
-    """
-    response = test_client.get('/ridemyway/api/v1/rides/1/requests')
-    result = json.loads(response.data)
-    assert response.status_code == 200
-    assert result['requests'] == {}
