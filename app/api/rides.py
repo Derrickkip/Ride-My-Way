@@ -116,4 +116,18 @@ def request_ride(ride_id):
     """
     Request ride
     """
-    pass
+    data = request.json
+    ride = [ride for ride in RIDES if ride['id'] == ride_id]
+    if ride == []:
+        abort(404)
+    requests = ride[0]['requests']
+    if requests:
+        id = requests[-1]['id']+1
+    else:
+        id = 1
+    ride_request = {
+        'id': id,
+        'username': data['username']
+    }
+    requests.append(ride_request)
+    return jsonify({'requests': requests}), 201
