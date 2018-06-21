@@ -6,7 +6,7 @@ from flask import jsonify, make_response
 from . import api
 
 @api.errorhandler(400)
-def Bad_request(error):
+def bad_request(error):
     """
     Bad request
     """
@@ -17,7 +17,7 @@ def unauthorized(error):
     """
     Unauthorized access
     """
-    return make_response(jsonify({'error': 'Unauthorized'}))
+    return make_response(jsonify({'error': 'Unauthorized'}), 401)
 
 @api.errorhandler(404)
 def not_found(error):
@@ -31,12 +31,11 @@ def internal_server_error(error):
     """
     Server error
     """
-    return make_response(jsonify({'error':'Internal Server error'}))
+    return make_response(jsonify({'error':'Internal Server error'}), 500)
 
 @api.errorhandler(501)
 def not_implemented(error):
     """
     Service not implemented
     """
-    return make_response(jsonify({'error':'Not implemented'}))
-
+    return make_response(jsonify({'error':'Not implemented'}), 501)
