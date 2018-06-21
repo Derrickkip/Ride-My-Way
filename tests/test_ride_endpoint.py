@@ -69,14 +69,15 @@ def test_update_ride(test_client):
     Test A ride can be updated
     """
     my_data = {'destination': 'Brooke', 'time': '03:00 pm', 'price' : 2000}
-    response = test_client.put('api/v1/rides/1', data=json.dumps(my_data), 
-                                content_type='application/json')
+    response = test_client.put('api/v1/rides/1', data=json.dumps(my_data),
+                               content_type='application/json')
     result = json.loads(response.data)
     assert response.status_code == 200
+    assert result['ride']['origin'] == 'Mombasa'
     assert result['ride']['destination'] == 'Brooke'
+    assert result['ride']['travel_date'] == '23th June 2018'
     assert result['ride']['time'] == '03:00 pm'
     assert result['ride']['price'] == 2000
-     
 
 def test_delete_ride(test_client):
     """
