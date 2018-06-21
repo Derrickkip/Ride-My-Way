@@ -30,10 +30,10 @@ def test_get_single_ride(test_client):
     response = test_client.get('/api/v1/rides/2')
     result = json.loads(response.data)
     assert response.status_code == 200
-    assert result['rides']['origin'] == 'Kisumu'
-    assert result['rides']['destination'] == 'Lodwar'
-    assert result['rides']['travel_date'] == '25th June 2018'
-    assert result['rides']['time'] == '12:00 am'
-    assert result['rides']['price'] == 400
-    assert result['rides']['requests'] == []
+    assert result['ride']['origin'] == 'Kisumu'
+    assert result['ride']['destination'] == 'Lodwar'
+    assert result['ride']['travel_date'] == '25th June 2018'
+    assert result['ride']['time'] == '12:00 am'
+    assert result['ride']['price'] == 400
+    assert result['ride']['requests'] == []
     

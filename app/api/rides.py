@@ -1,7 +1,7 @@
 """
 API rides endpoint implementation
 """
-from flask import jsonify
+from flask import jsonify, abort
 
 from . import api
 
@@ -32,3 +32,13 @@ def get_rides():
     GET all rides
     '''
     return jsonify({'rides': RIDES})
+
+@api.route('/api/v1/rides/<int:ride_id>', methods=['GET'])
+def get_single_ride(ride_id):
+    """
+    GET a singe ride
+    """
+    ride = [ride for ride in RIDES if ride['id'] == ride_id]
+    if ride is None:
+        abort(404)
+    return jsonify({'ride': ride[0]})
