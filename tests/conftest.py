@@ -1,7 +1,6 @@
 """
 Fixtures for tests
 """
-import datetime
 import pytest
 
 from app import create_app
