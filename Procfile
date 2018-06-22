@@ -1,1 +1,1 @@
-web: python run.py runserver -h 0.0.0.0 -p 5000
+web: gunicorn -w 4 RIDE-MY-WAY/run.py
