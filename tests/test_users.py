@@ -12,6 +12,7 @@ def test_get_users(test_client):
     response = test_client.get('/ridemyway/api/v1/users')
     assert response.status_code == 200
     result = json.loads(response.data)
+    assert result['users'][0]['id'] == 1
     assert result['users'][0]['first_name'] == 'Michael'
     assert result['users'][0]['last_name'] == 'Owen'
     assert result['users'][0]['user_name'] == 'Mike'
@@ -22,6 +23,7 @@ def test_get_users(test_client):
     assert result['users'][0]['driver_details']['seats'] == 4
     assert result['users'][0]['rides_offered'] == 1
     assert result['users'][0]['rides_requested'] == 0
+    assert result['users'][1]['id'] == 2
     assert result['users'][1]['first_name'] == 'Wendy'
     assert result['users'][1]['last_name'] == 'Kim'
     assert result['users'][1]['user_name'] == 'wendesky'
@@ -38,6 +40,7 @@ def test_get_single_user(test_client):
     response = test_client.get('/ridemyway/api/v1/users/2')
     assert response.status_code == 200
     result = json.loads(response.data)
+    assert result['user']['id'] == 2
     assert result['user']['first_name'] == 'Wendy'
     assert result['user']['last_name'] == 'Kim'
     assert result['user']['user_name'] == 'wendesky'
@@ -57,7 +60,22 @@ def test_create_new_user(test_client):
     """
     Create new user test
     """
-    pass
+    my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark", 
+               "email":"jsnow@gmail.com", "driver_details": {}, "rides_offered": 0,
+               "rides_requested": 0}
+    response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
+                                content_type='application/json')
+    response.status_code == 201
+    result = json.loads(response.data)
+    assert result['user']['id'] == 3
+    assert result['user']['first_name'] == 'John'
+    assert result['user']['last_name'] == 'Snow'
+    assert result['user']['user_name'] == 'stark'
+    assert result['user']['email'] == 'jsnow@gmail.com'
+    assert result['user']['driver_details'] == {}
+    assert result['user']['rides_offered'] == 0
+    assert result['user']['rides_requested'] == 0
+
 
 def test_update_user(test_client):
     """
