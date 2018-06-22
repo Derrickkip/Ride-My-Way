@@ -1,0 +1,15 @@
+{
+    "name": "Ride My Way",
+    "description": "Ride my way is a carpooling app that allows drivers to create rides and passengers to join rides",
+    "image": "heroku/python",
+    "repository": "https://github.com/Derrickkip/Ride-My-Way",
+    "keywords": ["python", "flask" ],
+    "addons": [ "coveralls" ],
+    "environments": {
+      "test": {
+        "scripts": {
+          "test": "coverage run -m pytest"
+        }
+      }
+    }
+  }
