@@ -1,1 +1,1 @@
-web: gunicorn -w 4 RIDE-MY-WAY/run.py
+web: gunicorn run:app
