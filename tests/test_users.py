@@ -35,7 +35,23 @@ def test_get_single_user(test_client):
     """
     Fetch single user test
     """
-    pass
+    response = test_client.get('/ridemyway/api/v1/users/2')
+    assert response.status_code == 200
+    result = json.loads(response.data)
+    assert result['user']['first_name'] == 'Wendy'
+    assert result['user']['last_name'] == 'Kim'
+    assert result['user']['user_name'] == 'wendesky'
+    assert result['user']['email'] == 'wendesky@mail.com'
+    assert result['user']['driver_details'] == {}
+    assert result['user']['rides_offered'] == 0
+    assert result['user']['rides_requested'] == 1
+
+def test_unavailable_user(test_client):
+    """
+    Raise 404 error for unavailable user
+    """
+    response = test_client.get('/ridemyway/api/v1/users/4')
+    assert response.status_code == 404
 
 def test_create_new_user(test_client):
     """
