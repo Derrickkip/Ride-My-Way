@@ -5,4 +5,4 @@ from flask import Blueprint
 
 api = Blueprint('api', __name__)
 
-from . import rides, errors
+from . import rides, users, errors
