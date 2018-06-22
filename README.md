@@ -1,6 +1,3 @@
-ft-build-user-endpoint-158533635
-[![Build Status](https://travis-ci.org/Derrickkip/Ride-My-Way.svg?branch=develop)](https://travis-ci.org/Derrickkip/Ride-My-Way) [![Coverage Status](https://coveralls.io/repos/github/Derrickkip/Ride-My-Way/badge.svg?branch=develop)](https://coveralls.io/github/Derrickkip/Ride-My-Way?branch=develop) [![Maintainability](https://api.codeclimate.com/v1/badges/b3f10d58926db9638e30/maintainability)](https://codeclimate.com/github/Derrickkip/Ride-My-Way/maintainability)
-
 [![Build Status](https://travis-ci.org/Derrickkip/Ride-My-Way.svg?branch=develop)](https://travis-ci.org/Derrickkip/Ride-My-Way) [![Coverage Status](https://coveralls.io/repos/github/Derrickkip/Ride-My-Way/badge.svg?branch=develop)](https://coveralls.io/github/Derrickkip/Ride-My-Way?branch=develop) [![Maintainability](https://api.codeclimate.com/v1/badges/b3f10d58926db9638e30/maintainability)](https://codeclimate.com/github/Derrickkip/Ride-My-Way/maintainability)
 develop
 
