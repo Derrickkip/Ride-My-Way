@@ -14,7 +14,7 @@ USERS = [
         'email': 'micowen@mail.com',
         'driver_details' : {
             'driving_license': 'fdwer2ffew3',
-            'model' : 'Mitsubishi Evo 8',
+            'car_model' : 'Mitsubishi Evo 8',
             'plate_number': 'KYT 312X',
             'seats': 4,
         },
@@ -80,7 +80,7 @@ def create_user():
 
     USERS.append(user)
 
-    return jsonify({'user': user})
+    return jsonify({'user': user}), 201
 
 @api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):

@@ -3,8 +3,6 @@ Tests for users api endpoint
 """
 import json
 
-from flask import url_for
-
 def test_get_users(test_client):
     """
     Fetch all users test
@@ -18,7 +16,7 @@ def test_get_users(test_client):
     assert result['users'][0]['user_name'] == 'Mike'
     assert result['users'][0]['email'] == 'micowen@mail.com'
     assert result['users'][0]['driver_details']['driving_license'] == 'fdwer2ffew3'
-    assert result['users'][0]['driver_details']['model'] == 'Mitsubishi Evo 8'
+    assert result['users'][0]['driver_details']['car_model'] == 'Mitsubishi Evo 8'
     assert result['users'][0]['driver_details']['plate_number'] == 'KYT 312X'
     assert result['users'][0]['driver_details']['seats'] == 4
     assert result['users'][0]['rides_offered'] == 1
@@ -60,11 +58,11 @@ def test_create_new_user(test_client):
     """
     Create new user test
     """
-    my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark", 
+    my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark",
                "email":"jsnow@gmail.com", "driver_details": {}}
     response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
                                 content_type='application/json')
-    response.status_code == 201
+    assert response.status_code == 201
     result = json.loads(response.data)
     assert result['user']['id'] == 3
     assert result['user']['first_name'] == 'John'
@@ -79,7 +77,7 @@ def test_missing_first_name(test_client):
     """
     Test raises 404 error if first_name is not in request body
     """
-    my_data = {"last_name": "Snow", "user_name":"stark", 
+    my_data = {"last_name": "Snow", "user_name":"stark",
                "email":"jsnow@gmail.com", "driver_details": {}}
 
     response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
@@ -90,19 +88,19 @@ def test_missing_last_name(test_client):
     """
     Test raise 404 error if last_name is missing in request body
     """
-    my_data = {"first_name": "John", "user_name":"stark", 
+    my_data = {"first_name": "John", "user_name":"stark",
                "email":"jsnow@gmail.com", "driver_details": {}}
 
     response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
                                 content_type='application/json')
-    
+
     assert response.status_code == 400
 
 def test_missing_user_name(test_client):
     """
     Test raises 404 error if user_name is missing in request body
     """
-    my_data = {"first_name": "John", "last_name": "Snow", 
+    my_data = {"first_name": "John", "last_name": "Snow",
                "email":"jsnow@gmail.com", "driver_details": {}}
 
     response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
@@ -114,7 +112,7 @@ def test_missing_email(test_client):
     """
     Test raises 404 error if email is missing in request body
     """
-    my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark", 
+    my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark",
                "driver_details": {}}
 
     response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
@@ -122,11 +120,11 @@ def test_missing_email(test_client):
 
     assert response.status_code == 400
 
-def tset_missing_driver_details(test_client):
+def test_missing_driver_details(test_client):
     """
     Test does not raise error if driver_details is missing in request
     """
-    my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark", 
+    my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark",
                "email":"jsnow@gmail.com"}
 
     response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
@@ -138,7 +136,31 @@ def test_update_user(test_client):
     """
     Update user test
     """
-    pass
+    my_data = {"driver_details": {"driving_license": "2dwheuw213", "car_model": "Land Rover",
+                                  "plate_number": "KBE 312X", "seats": 8}}
+
+    response = test_client.put('/ridemyway/api/v1/users/2', data=json.dumps(my_data),
+                               content_type='application/json')
+
+    assert response.status_code == 200
+    result = json.loads(response.data)
+
+    assert result['user']['driver_details']['driving_licence'] == '2dwheuw213'
+    assert result['user']['driver_details']['car_model'] == 'Land Rover'
+    assert result['user']['driver_details']['plate_number'] == 'KBE 312X'
+    assert result['user']['driver_details']['seats'] == 8
+
+def test_update_unavailable_ride(test_client):
+    """
+    Test raise 404 error if ride is not available
+    """
+    my_data = {"driver_details": {"driving_license": "2dwheuw213", "car_model": "Land Rover",
+                                  "plate_number": "KBE 312X", "seats": 8}}
+
+    response = test_client.put('/ridemyway/api/v1/users/4', data=json.dumps(my_data),
+                               content_type='application/json')
+
+    assert response.status_code == 404
 
 def test_delete_user(test_client):
     """
