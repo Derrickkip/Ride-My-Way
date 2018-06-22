@@ -103,4 +103,8 @@ def delete_user(user_id):
     """
     Delete user
     """
-    pass
+    user = [user for user in USERS if user['id'] == user_id]
+    if user == []:
+        abort(404)
+    USERS.remove(user[0])
+    return jsonify({}), 204
