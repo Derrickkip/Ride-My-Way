@@ -145,7 +145,7 @@ def test_update_user(test_client):
     assert response.status_code == 200
     result = json.loads(response.data)
 
-    assert result['user']['driver_details']['driving_licence'] == '2dwheuw213'
+    assert result['user']['driver_details']['driving_license'] == '2dwheuw213'
     assert result['user']['driver_details']['car_model'] == 'Land Rover'
     assert result['user']['driver_details']['plate_number'] == 'KBE 312X'
     assert result['user']['driver_details']['seats'] == 8
@@ -157,7 +157,7 @@ def test_update_unavailable_ride(test_client):
     my_data = {"driver_details": {"driving_license": "2dwheuw213", "car_model": "Land Rover",
                                   "plate_number": "KBE 312X", "seats": 8}}
 
-    response = test_client.put('/ridemyway/api/v1/users/4', data=json.dumps(my_data),
+    response = test_client.put('/ridemyway/api/v1/users/6', data=json.dumps(my_data),
                                content_type='application/json')
 
     assert response.status_code == 404

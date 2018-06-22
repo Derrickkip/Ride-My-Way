@@ -87,7 +87,16 @@ def update_user(user_id):
     """
     Update user
     """
-    pass
+    user = [user for user in USERS if user['id'] == user_id]
+    if user == []:
+        abort(404)
+    user[0]['first_name']= request.json.get('first_name', user[0]['first_name'])
+    user[0]['last_name']= request.json.get('last_name', user[0]['last_name'])
+    user[0]['user_name']= request.json.get('user_name', user[0]['user_name'])
+    user[0]['email']= request.json.get('email', user[0]['email'])
+    user[0]['driver_details']= request.json.get('driver_details', user[0]['driver_details'])
+
+    return jsonify({'user': user[0]})     
 
 @api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
