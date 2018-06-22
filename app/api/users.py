@@ -2,7 +2,7 @@
 REST Users resource endpoint
 """
 
-from flask import jsonify, url_for
+from flask import jsonify, abort
 from . import api
 
 USERS = [
@@ -45,7 +45,10 @@ def get_single_user(user_id):
     """
     GET a single user
     """
-    pass
+    user = [user for user in USERS if user['id'] == user_id]
+    if user == []:
+        abort(404)
+    return jsonify({'user': user[0]})
 
 @api.route('/ridemyway/api/v1/users', methods=['POST'])
 def create_user():
