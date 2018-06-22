@@ -166,3 +166,14 @@ def test_delete_user(test_client):
     """
     Delete User tests
     """
+    response = test_client.delete('/ridemyway/api/v1/users/1')
+    assert response.status_code == 204
+    response2 = test_client.get('ridemyway/api/v1/users/1')
+    assert response2.status_code == 404
+
+def test_delete_unavailable_user(test_client):
+    """
+    Returns 404 error if user is not available
+    """
+    response = test_client.delete('ridemyway/api/v1/users/6')
+    assert response.status_code == 404
