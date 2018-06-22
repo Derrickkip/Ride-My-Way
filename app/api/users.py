@@ -2,7 +2,7 @@
 REST Users resource endpoint
 """
 
-from flask import jsonify, abort
+from flask import jsonify, abort, request
 from . import api
 
 USERS = [
@@ -55,7 +55,32 @@ def create_user():
     """
     Create new user
     """
-    pass
+    data = request.json
+    if data is None:
+        abort(400)
+    elif not 'first_name' in data:
+        abort(400)
+    elif not 'last_name' in data:
+        abort(400)
+    elif not 'user_name' in data:
+        abort(400)
+    elif not 'email' in data:
+        abort(400)
+    
+    user = {
+        'id': USERS[-1]['id']+1,
+        'first_name': data['first_name'],
+        'last_name': data['last_name'],
+        'user_name': data['user_name'],
+        'email': data['email'],
+        'driver_details' : data.get('driver_details', {}),
+        'rides_offered' : 0,
+        'rides_requested' : 0
+    }
+
+    USERS.append(user)
+
+    return jsonify({'user': user})
 
 @api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
