@@ -73,9 +73,18 @@ def test_create_new_user(test_client):
     assert result['user']['rides_offered'] == 0
     assert result['user']['rides_requested'] == 0
 
+def test_post_without_data(test_client):
+    """
+    Test returns 404 if no post data
+    """
+    response = test_client.post('/ridemyway/api/v1/users',
+                                content_type='application/json')
+    assert response.status_code == 400
+
+
 def test_missing_first_name(test_client):
     """
-    Test raises 404 error if first_name is not in request body
+    Test raises 400 error if first_name is not in request body
     """
     my_data = {"last_name": "Snow", "user_name":"stark",
                "email":"jsnow@gmail.com", "driver_details": {}}
@@ -86,7 +95,7 @@ def test_missing_first_name(test_client):
 
 def test_missing_last_name(test_client):
     """
-    Test raise 404 error if last_name is missing in request body
+    Test raise 400 error if last_name is missing in request body
     """
     my_data = {"first_name": "John", "user_name":"stark",
                "email":"jsnow@gmail.com", "driver_details": {}}
@@ -98,7 +107,7 @@ def test_missing_last_name(test_client):
 
 def test_missing_user_name(test_client):
     """
-    Test raises 404 error if user_name is missing in request body
+    Test raises 400 error if user_name is missing in request body
     """
     my_data = {"first_name": "John", "last_name": "Snow",
                "email":"jsnow@gmail.com", "driver_details": {}}
@@ -110,7 +119,7 @@ def test_missing_user_name(test_client):
 
 def test_missing_email(test_client):
     """
-    Test raises 404 error if email is missing in request body
+    Test raises 400 error if email is missing in request body
     """
     my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark",
                "driver_details": {}}
