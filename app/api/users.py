@@ -10,11 +10,11 @@ def get_user_or_abort(user_id):
     """
     Get user with specified id or abort if not found
     """
-    user = [user for user in USERS if user['id'] == user_id]
-    if user == []:
+    user = USERS.get(user_id, None)
+    if user is None:
         abort(404)
 
-    return user[0]
+    return user
 
 @api.route('/ridemyway/api/v1/users', methods=['GET', 'POST'])
 def users_list():
@@ -31,7 +31,7 @@ def users_list():
             if data is None or req not in data:
                 abort(400)
         user = {
-            'id': USERS[-1]['id']+1,
+            'id': len(USERS)+1,
             'first_name': data['first_name'],
             'last_name': data['last_name'],
             'user_name': data['user_name'],
@@ -41,11 +41,11 @@ def users_list():
             'rides_requested' : 0
         }
 
-        USERS.append(user)
+        USERS[user['id']] = user
 
         return jsonify({'user': user}), 201
 
-    return jsonify({'users': USERS})
+    return jsonify({'users':USERS})
 
 @api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
 def single_user(user_id):
@@ -61,8 +61,8 @@ def single_user(user_id):
 
     #DELETE request
     elif request.method == 'DELETE':
-        USERS.remove(user)
+        USERS.pop(user_id)
         return jsonify({}), 204
 
     #GET request
-    return jsonify({'user': user})
+    return jsonify({'user':user})

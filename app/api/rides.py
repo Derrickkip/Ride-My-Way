@@ -10,11 +10,11 @@ def get_ride_or_abort(ride_id):
     """
     Get ride with specified id or abort if not found
     """
-    ride = [ride for ride in RIDES if ride['id'] == ride_id]
-    if ride == []:
+    ride = RIDES.get(ride_id, None)
+    if ride is None:
         abort(404)
 
-    return ride[0]
+    return ride
 
 
 @api.route('/ridemyway/api/v1/rides', methods=['GET', 'POST'])
@@ -28,11 +28,11 @@ def get_rides():
         reqs = ['driver', 'origin', 'destination', 'travel_date', 'time', 'car_model',
                 'seats', 'price']
         for req in reqs:
-            if data is None or not req in data:
+            if not data or not req in data:
                 abort(400)
 
         ride = {
-            'id': RIDES[-1]['id']+1,
+            'id': len(RIDES)+1,
             'driver': data['driver'],
             'origin': data['origin'],
             'destination': data['destination'],
@@ -44,7 +44,7 @@ def get_rides():
             'requests': []
         }
 
-        RIDES.append(ride)
+        RIDES[ride['id']] = ride
         return jsonify({"ride": ride}), 201
     return jsonify({'rides': RIDES})
 
@@ -62,7 +62,7 @@ def get_single_ride(ride_id):
         return jsonify({'ride':ride})
 
     elif request.method == 'DELETE':
-        RIDES.remove(ride)
+        RIDES.pop(ride_id)
         return jsonify({}), 204
 
     return jsonify({'ride': ride})
