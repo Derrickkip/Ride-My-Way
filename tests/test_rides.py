@@ -10,15 +10,15 @@ def test_get_rides(test_client):
     response = test_client.get('/ridemyway/api/v1/rides')
     assert response.status_code == 200
     result = json.loads(response.data)
-    assert result['rides'][0]['driver'] == 'Michael Owen'
-    assert result['rides'][0]['origin'] == 'Mombasa'
-    assert result['rides'][0]['destination'] == 'Nairobi'
-    assert result['rides'][0]['travel_date'] == '23th June 2018'
-    assert result['rides'][0]['time'] == '10:00 am'
-    assert result['rides'][0]['car_model'] == 'Mitsubishi Evo 8'
-    assert result['rides'][0]['seats'] == 4
-    assert result['rides'][0]['price'] == 500
-    assert result['rides'][0]['requests'] == []
+    assert result['rides']['1']['driver'] == 'Michael Owen'
+    assert result['rides']['1']['origin'] == 'Mombasa'
+    assert result['rides']['1']['destination'] == 'Nairobi'
+    assert result['rides']['1']['travel_date'] == '23th June 2018'
+    assert result['rides']['1']['time'] == '10:00 am'
+    assert result['rides']['1']['car_model'] == 'Mitsubishi Evo 8'
+    assert result['rides']['1']['seats'] == 4
+    assert result['rides']['1']['price'] == 500
+    assert result['rides']['1']['requests'] == []
 
 def test_get_single_ride(test_client):
     """
