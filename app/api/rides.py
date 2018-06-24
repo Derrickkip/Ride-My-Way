@@ -17,7 +17,7 @@ def get_ride_or_abort(ride_id):
     return ride
 
 
-@api.route('/ridemyway/api/v1/rides', methods=['GET', 'POST'])
+@api.route('/api/v1/rides', methods=['GET', 'POST'])
 def get_rides():
     '''
     GET all rides
@@ -48,7 +48,7 @@ def get_rides():
         return jsonify({"ride": ride}), 201
     return jsonify({'rides': RIDES})
 
-@api.route('/ridemyway/api/v1/rides/<int:ride_id>', methods=['GET', 'PUT', 'DELETE'])
+@api.route('/api/v1/rides/<int:ride_id>', methods=['GET', 'PUT', 'DELETE'])
 def get_single_ride(ride_id):
     """
     GET a singe ride
@@ -67,7 +67,7 @@ def get_single_ride(ride_id):
 
     return jsonify({'ride': ride})
 
-@api.route('/ridemyway/api/v1/rides/<int:ride_id>/requests', methods=['GET', 'POST'])
+@api.route('/api/v1/rides/<int:ride_id>/requests', methods=['GET', 'POST'])
 def get_requests(ride_id):
     """
     Get requests for ride with ride_id

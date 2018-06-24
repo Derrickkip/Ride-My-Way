@@ -8,7 +8,7 @@ def test_get_users(test_client):
     """
     Fetch all users test
     """
-    response = test_client.get('/ridemyway/api/v1/users')
+    response = test_client.get('/api/v1/users')
     assert response.status_code == 200
     result = json.loads(response.data)
     assert result['users']['1']['id'] == 1
@@ -27,7 +27,7 @@ def test_get_single_user(test_client):
     """
     Fetch single user test
     """
-    response = test_client.get('/ridemyway/api/v1/users/2')
+    response = test_client.get('/api/v1/users/2')
     assert response.status_code == 200
     result = json.loads(response.data)
     assert result['user']['id'] == 2
@@ -43,7 +43,7 @@ def test_unavailable_user(test_client):
     """
     Raise 404 error for unavailable user
     """
-    response = test_client.get('/ridemyway/api/v1/users/4')
+    response = test_client.get('/api/v1/users/4')
     assert response.status_code == 404
 
 def test_create_new_user(test_client):
@@ -52,7 +52,7 @@ def test_create_new_user(test_client):
     """
     my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark",
                "email":"jsnow@gmail.com", "driver_details": {}}
-    response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
+    response = test_client.post('/api/v1/users', data=json.dumps(my_data),
                                 content_type='application/json')
     assert response.status_code == 201
     result = json.loads(response.data)
@@ -69,7 +69,7 @@ def test_empty_post_request(test_client):
     """
     Test returns 404 if no post data
     """
-    response = test_client.post('/ridemyway/api/v1/users',
+    response = test_client.post('/api/v1/users',
                                 content_type='application/json')
     assert response.status_code == 400
 
@@ -81,7 +81,7 @@ def test_missing_field_in_request(test_client):
     my_data = {"last_name": "Snow", "user_name":"stark",
                "email":"jsnow@gmail.com", "driver_details": {}}
 
-    response = test_client.post('/ridemyway/api/v1/users', data=json.dumps(my_data),
+    response = test_client.post('/api/v1/users', data=json.dumps(my_data),
                                 content_type='application/json')
     assert response.status_code == 400
 
@@ -92,7 +92,7 @@ def test_update_user(test_client):
     my_data = {"driver_details": {"driving_license": "2dwheuw213", "car_model": "Land Rover",
                                   "plate_number": "KBE 312X", "seats": 8}}
 
-    response = test_client.put('/ridemyway/api/v1/users/2', data=json.dumps(my_data),
+    response = test_client.put('/api/v1/users/2', data=json.dumps(my_data),
                                content_type='application/json')
 
     assert response.status_code == 200
@@ -110,7 +110,7 @@ def test_update_unavailable_user(test_client):
     my_data = {"driver_details": {"driving_license": "2dwheuw213", "car_model": "Land Rover",
                                   "plate_number": "KBE 312X", "seats": 8}}
 
-    response = test_client.put('/ridemyway/api/v1/users/6', data=json.dumps(my_data),
+    response = test_client.put('/api/v1/users/6', data=json.dumps(my_data),
                                content_type='application/json')
 
     assert response.status_code == 404
@@ -119,14 +119,14 @@ def test_delete_user(test_client):
     """
     Delete User tests
     """
-    response = test_client.delete('/ridemyway/api/v1/users/1')
+    response = test_client.delete('/api/v1/users/1')
     assert response.status_code == 204
-    response2 = test_client.get('ridemyway/api/v1/users/1')
+    response2 = test_client.get('/api/v1/users/1')
     assert response2.status_code == 404
 
 def test_delete_unavailable_user(test_client):
     """
     Returns 404 error if user is not available
     """
-    response = test_client.delete('ridemyway/api/v1/users/6')
+    response = test_client.delete('/api/v1/users/6')
     assert response.status_code == 404

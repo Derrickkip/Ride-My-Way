@@ -16,7 +16,7 @@ def get_user_or_abort(user_id):
 
     return user
 
-@api.route('/ridemyway/api/v1/users', methods=['GET', 'POST'])
+@api.route('/api/v1/users', methods=['GET', 'POST'])
 def users_list():
     """
     Handler for GET and POST requests
@@ -46,7 +46,7 @@ def users_list():
 
     return jsonify({'users':USERS})
 
-@api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
+@api.route('/api/v1/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
 def single_user(user_id):
     """
     Handles GET, PUT and DELETE requests
