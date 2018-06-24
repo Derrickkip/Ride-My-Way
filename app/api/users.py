@@ -21,7 +21,6 @@ def users_list():
     """
     Handler for GET and POST requests
     """
-    
     if request.method == 'POST':
         data = request.json
 
