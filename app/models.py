@@ -2,8 +2,8 @@
 Defines mock data to be used by api
 """
 
-RIDES = [
-    {
+RIDES = {
+    1:{
         'id': 1,
         'driver': 'Michael Owen',
         'origin': 'Mombasa',
@@ -15,7 +15,7 @@ RIDES = [
         'price': 500,
         'requests': []
     },
-    {
+    2:{
         'id': 2,
         'driver': 'Sam West',
         'origin': 'Kisumu',
@@ -27,10 +27,10 @@ RIDES = [
         'price': 400,
         'requests': []
     }
-]
+}
 
-USERS = [
-    {
+USERS = {
+    1:{
         "id" : 1,
         'first_name': 'Michael',
         'last_name': 'Owen',
@@ -45,7 +45,7 @@ USERS = [
         'rides_offered' : 1,
         'rides_requested' : 0
     },
-    {
+    2:{
         'id': 2,
         'first_name': 'Wendy',
         'last_name': 'Kim',
@@ -55,4 +55,4 @@ USERS = [
         'rides_offered' : 0,
         'rides_requested' : 1
     }
-]
+}
