@@ -3,108 +3,66 @@ REST Users resource endpoint
 """
 
 from flask import jsonify, abort, request
+from app.models import USERS
 from . import api
 
-USERS = [
-    {
-        "id" : 1,
-        'first_name': 'Michael',
-        'last_name': 'Owen',
-        'user_name': 'Mike',
-        'email': 'micowen@mail.com',
-        'driver_details' : {
-            'driving_license': 'fdwer2ffew3',
-            'car_model' : 'Mitsubishi Evo 8',
-            'plate_number': 'KYT 312X',
-            'seats': 4,
-        },
-        'rides_offered' : 1,
-        'rides_requested' : 0
-    },
-    {
-        'id': 2,
-        'first_name': 'Wendy',
-        'last_name': 'Kim',
-        'user_name': 'wendesky',
-        'email': 'wendesky@mail.com',
-        'driver_details' : {},
-        'rides_offered' : 0,
-        'rides_requested' : 1
-    }
-]
+def get_user_or_abort(user_id):
+    """
+    Get user with specified id or abort if not found
+    """
+    user = [user for user in USERS if user['id'] == user_id]
+    if user == []:
+        abort(404)
 
-@api.route('/ridemyway/api/v1/users', methods=['GET'])
-def get_all_users():
+    return user[0]
+
+@api.route('/ridemyway/api/v1/users', methods=['GET', 'POST'])
+def users_list():
     """
-    GET all users
+    Handler for GET and POST requests
     """
+    
+    if request.method == 'POST':
+        data = request.json
+
+        #Check for required fields
+        reqs = ['first_name', 'last_name', 'user_name', 'email']
+        for req in reqs:
+            if data is None or req not in data:
+                abort(400)
+        user = {
+            'id': USERS[-1]['id']+1,
+            'first_name': data['first_name'],
+            'last_name': data['last_name'],
+            'user_name': data['user_name'],
+            'email': data['email'],
+            'driver_details' : data.get('driver_details', {}),
+            'rides_offered' : 0,
+            'rides_requested' : 0
+        }
+
+        USERS.append(user)
+
+        return jsonify({'user': user}), 201
+
     return jsonify({'users': USERS})
 
-@api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['GET'])
-def get_single_user(user_id):
+@api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
+def single_user(user_id):
     """
-    GET a single user
+    Handles GET, PUT and DELETE requests
     """
-    user = [user for user in USERS if user['id'] == user_id]
-    if user == []:
-        abort(404)
-    return jsonify({'user': user[0]})
+    user = get_user_or_abort(user_id)
+    if request.method == 'PUT':
+        for key in request.json.keys():
+            user[key] = request.json.get(key, user[key])
 
-@api.route('/ridemyway/api/v1/users', methods=['POST'])
-def create_user():
-    """
-    Create new user
-    """
-    data = request.json
-    if data is None:
-        abort(400)
-    elif not 'first_name' in data:
-        abort(400)
-    elif not 'last_name' in data:
-        abort(400)
-    elif not 'user_name' in data:
-        abort(400)
-    elif not 'email' in data:
-        abort(400)
+        return jsonify({'user': user})
 
-    user = {
-        'id': USERS[-1]['id']+1,
-        'first_name': data['first_name'],
-        'last_name': data['last_name'],
-        'user_name': data['user_name'],
-        'email': data['email'],
-        'driver_details' : data.get('driver_details', {}),
-        'rides_offered' : 0,
-        'rides_requested' : 0
-    }
+    #DELETE request
+    elif request.method == 'DELETE':
+        USERS.remove(user)
+        return jsonify({}), 204
 
-    USERS.append(user)
-
-    return jsonify({'user': user}), 201
-
-@api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    """
-    Update user
-    """
-    user = [user for user in USERS if user['id'] == user_id]
-    if user == []:
-        abort(404)
-    user[0]['first_name'] = request.json.get('first_name', user[0]['first_name'])
-    user[0]['last_name'] = request.json.get('last_name', user[0]['last_name'])
-    user[0]['user_name'] = request.json.get('user_name', user[0]['user_name'])
-    user[0]['email'] = request.json.get('email', user[0]['email'])
-    user[0]['driver_details'] = request.json.get('driver_details', user[0]['driver_details'])
-
-    return jsonify({'user': user[0]})
-
-@api.route('/ridemyway/api/v1/users/<int:user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    """
-    Delete user
-    """
-    user = [user for user in USERS if user['id'] == user_id]
-    if user == []:
-        abort(404)
-    USERS.remove(user[0])
-    return jsonify({}), 204
+    #GET request
+    return jsonify({'user': user})
