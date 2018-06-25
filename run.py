@@ -3,9 +3,9 @@ Application entry point
 """
 from app import create_app
 
-app = create_app('development')
+APP = create_app('development')
 
 
 if __name__ == '__main__':
-    app.run()
+    APP.run()
     
