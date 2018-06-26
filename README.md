@@ -54,8 +54,9 @@ Here is a screenshot from postman
 ## Author
 * [Derrick Kipkirui](https://github.com/Derrickkip)
 
-## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details
-
 ## Acknowledgements
 * [Micah Oriaso](https://github.com/micahoriaso)  for his valuable insights
+
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details
