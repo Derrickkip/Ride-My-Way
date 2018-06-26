@@ -28,14 +28,14 @@ To get started you need the following
 ### Usage
 The api Implements a CRUD interface for rides and users using GET, POST, PUT and DELETE HTTP methods
 
-#### GET
-run `curl -i http://localhost:5000/api/v1/rides` to test the rides endpoint from another terminal. Should return an empty dictionary
-
-#### POST
+#### CREATE
 run `curl -i -H "Content-Type: application/json" -X POST -d '{"origin":"Kitui", "destination":"Kitale", "travel_date": "25th June 2018", "time": "11:00 pm", "driver": "Simon Mbugua", "car_model": "subaru Impreza", "seats":3, "price": 200}' http://localhost:5000/api/v1/rides` to create a new ride
 Then test that its working by running a get request again `curl -i http://localhost:5000/api/v1/rides`
 
-#### PUT
+#### READ
+run `curl -i http://localhost:5000/api/v1/rides` to test the rides endpoint from another terminal. Should return an empty dictionary
+
+#### UPDATE
 Now that a ride has been created we can edit the ride
 to edit run `curl -i -H "Content-Type: application/json" -X PUT -d '{"origin":"Nairobi", "destination":"Mombasa", "travel_date": "25th August 2018", "time": "01:00 pm"}' http://localhost:5000/api/v1/rides/1`
 
