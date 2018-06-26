@@ -3,6 +3,17 @@ Tests for users api endpoint
 """
 import json
 
+def post_user(test_client, data):
+    """
+    Helper Function to create users for testing
+    """
+    my_data = data
+
+    response = test_client.post('/api/v1/users', data=json.dumps(my_data),
+                                content_type='application/json')
+
+    return response
+
 
 def test_get_users(test_client):
     """
@@ -11,33 +22,26 @@ def test_get_users(test_client):
     response = test_client.get('/api/v1/users')
     assert response.status_code == 200
     result = json.loads(response.data)
-    assert result['users']['1']['id'] == 1
-    assert result['users']['1']['first_name'] == 'Michael'
-    assert result['users']['1']['last_name'] == 'Owen'
-    assert result['users']['1']['user_name'] == 'Mike'
-    assert result['users']['1']['email'] == 'micowen@mail.com'
-    assert result['users']['1']['driver_details']['driving_license'] == 'fdwer2ffew3'
-    assert result['users']['1']['driver_details']['car_model'] == 'Mitsubishi Evo 8'
-    assert result['users']['1']['driver_details']['plate_number'] == 'KYT 312X'
-    assert result['users']['1']['driver_details']['seats'] == 4
-    assert result['users']['1']['rides_offered'] == 1
-    assert result['users']['1']['rides_requested'] == 0
+    assert result['users'] == {}
 
 def test_get_single_user(test_client):
     """
     Fetch single user test
     """
-    response = test_client.get('/api/v1/users/2')
+    my_data = {"first_name": "Wendy", "last_name": "Kim", "user_name":"wendesky",
+               "email":"wendesky@mail.com", "driver_details": {}}
+    post_user(test_client, my_data)
+    response = test_client.get('/api/v1/users/1')
     assert response.status_code == 200
     result = json.loads(response.data)
-    assert result['user']['id'] == 2
+    assert result['user']['id'] == 1
     assert result['user']['first_name'] == 'Wendy'
     assert result['user']['last_name'] == 'Kim'
     assert result['user']['user_name'] == 'wendesky'
     assert result['user']['email'] == 'wendesky@mail.com'
     assert result['user']['driver_details'] == {}
     assert result['user']['rides_offered'] == 0
-    assert result['user']['rides_requested'] == 1
+    assert result['user']['rides_requested'] == 0
 
 def test_unavailable_user(test_client):
     """
@@ -45,25 +49,6 @@ def test_unavailable_user(test_client):
     """
     response = test_client.get('/api/v1/users/4')
     assert response.status_code == 404
-
-def test_create_new_user(test_client):
-    """
-    Create new user test
-    """
-    my_data = {"first_name": "John", "last_name": "Snow", "user_name":"stark",
-               "email":"jsnow@gmail.com", "driver_details": {}}
-    response = test_client.post('/api/v1/users', data=json.dumps(my_data),
-                                content_type='application/json')
-    assert response.status_code == 201
-    result = json.loads(response.data)
-    assert result['user']['id'] == 3
-    assert result['user']['first_name'] == 'John'
-    assert result['user']['last_name'] == 'Snow'
-    assert result['user']['user_name'] == 'stark'
-    assert result['user']['email'] == 'jsnow@gmail.com'
-    assert result['user']['driver_details'] == {}
-    assert result['user']['rides_offered'] == 0
-    assert result['user']['rides_requested'] == 0
 
 def test_empty_post_request(test_client):
     """
@@ -92,7 +77,7 @@ def test_update_user(test_client):
     my_data = {"driver_details": {"driving_license": "2dwheuw213", "car_model": "Land Rover",
                                   "plate_number": "KBE 312X", "seats": 8}}
 
-    response = test_client.put('/api/v1/users/2', data=json.dumps(my_data),
+    response = test_client.put('/api/v1/users/1', data=json.dumps(my_data),
                                content_type='application/json')
 
     assert response.status_code == 200
