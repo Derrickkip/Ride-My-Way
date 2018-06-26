@@ -1,23 +1,38 @@
+"use strict";
 const nav_toggler = document.querySelector('.jsnavbar__toggle');
 const nav_links = document.querySelector('.jsnavbar__links');
-
-nav_toggler.addEventListener('click', show_nav);
 
 function show_nav() {
     nav_links.classList.toggle('nav_show');
 }
+
+function show_user_modal(event) {
+    user_modal.classList.toggle('modal__show');
+}
+
+function show_car_modal(event) {
+    car_modal.classList.toggle('modal__show');
+}
+
+
+function show_hidden(event) {
+    const requests = event.target.nextElementSibling;
+
+    requests.classList.toggle('show');
+}
+
+function close_modal(event) {
+    const parent_modal = event.target.parentNode.parentNode.parentNode;
+    parent_modal.classList.toggle('modal__show');
+}
+
+nav_toggler.addEventListener('click', show_nav);
 
 const acc = document.querySelectorAll('.js_accordion');
 
 if (acc) {
     for (let i = 0; i < acc.length; i++) {
         acc[i].addEventListener('click', show_hidden);
-    }
-
-    function show_hidden(event) {
-        const requests = event.target.nextElementSibling;
-
-        requests.classList.toggle('show');
     }
 }
 
@@ -49,19 +64,6 @@ if (close) {
     for (let i = 0; i < close.length; i++) {
         close[i].addEventListener('click', close_modal);
     }
-}
-
-function show_user_modal(event) {
-    user_modal.classList.toggle('modal__show');
-}
-
-function show_car_modal(event) {
-    car_modal.classList.toggle('modal__show');
-}
-
-function close_modal(event) {
-    const parent_modal = event.target.parentNode.parentNode.parentNode;
-    parent_modal.classList.toggle('modal__show');
 }
 
 window.onclick = function() {
