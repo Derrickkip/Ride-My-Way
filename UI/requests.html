@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ride-My-Way|requests</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <div class="brand">
+                <p class="brand__name">Ride-My-Way</p>
+                <div><i class="fa fa-bars jsnavbar__toggle"></i></div>
+            </div>
+            <div class="jsnavbar__links">
+                <div class="navbar__link">
+                    <a href="requests.html">Requests</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="create_ride.html">Create Ride</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="rides.html">Rides</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="profile.html">Profile</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="index.html">Logout</a>
+                    <hr class="navbar__separator" />
+                </div>
+            </div>
+        </div>
+    </nav>
+    <section class="section requests">
+        <div class="requests__header">
+            <h2 class="primary__color">Requests</h2>
+            <hr/>
+        </div>
+        <div class="request">
+            <div class="request__header js_accordion">
+                <div class="title__description">
+                    <span>Rongai</span> to <span>Ngong</span>
+                </div>
+                <div class="title__number"><span>3</span></div>
+            </div>
+            <div class="request__body hidden">
+                <ul class="request__items">
+                    <li class="request__item">
+                        <span><a href="#">Clarke Kent</a></span>
+                        <span class="item__pull-right">
+                            <button class="button--success">Accept</button>
+                        </span>
+                        <span>
+                            <button class="button--danger">Reject</button>
+                        </span>
+                    </li>
+                    <li class="request__item">
+                        <span><a href="#">Bruce Wayne</a></span>
+                        <span class="item__pull-right">
+                            <button class="button--success">Accept</button>
+                        </span>
+                        <span>
+                            <button class="button--danger">Reject</button>
+                        </span>
+                    </li>
+                    <li class="request__item">
+                        <span><a href="#">Dianna Prince</a></span>
+                        <span class="item__pull-right">
+                            <button class="button--success">Accept</button>
+                        </span>
+                        <span>
+                            <button class="button--danger">Reject</button>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="request">
+            <div class="request__header js_accordion">
+                <div class="title__description">
+                    <span>Nakuru</span> to <span>Nairobi</span>
+                </div>
+                <div class="title__number">2</span>
+                </div>
+            </div>
+            <div class="request__body hidden">
+                <ul class="request__items">
+                    <li class="request__item">
+                        <span><a href="#">Peter Parker</a></span>
+                        <span class="item__pull-right">
+                            <button class="button--success">Accept</button>
+                        </span>
+                        <span>
+                            <button class="button--danger">Reject</button>
+                        </span>
+                    </li>
+                    <li class="request__item">
+                        <span><a href="#">Tony Stark</a></span>
+                        <span class="item__pull-right">
+                            <button class="button--success">Accept</button>
+                        </span>
+                        <span>
+                            <button class="button--danger">Reject</button>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <footer class="footer--main fixed_bottom">
+        <p>Derrick &copy; 2018</p>
+    </footer>
+
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

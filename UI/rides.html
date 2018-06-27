@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ride-My-Way|ride-offers</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body class="bg_main">
+    <div class="overlay"></div>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <div class="brand">
+                <p class="brand__name">Ride-My-Way</p>
+                <div><i class="fa fa-bars jsnavbar__toggle"></i></div>
+            </div>
+            <div class="jsnavbar__links">
+                <div class="navbar__link">
+                    <a href="requests.html">Requests</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="create_ride.html">Create Ride</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="rides.html">Rides</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="profile.html">Profile</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="index.html">Logout</a>
+                    <hr class="navbar__separator" />
+                </div>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="main_content">
+            <div class="section__header">
+                <h1>Available rides <span class="badge">5</span></h1>
+            </div>
+            <table class="table" id="rides_table">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Time</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Rongai</td>
+                        <td>Ngong</td>
+                        <td><span class="red_bg">08:00 am</span></td>
+                        <td><a href="ride_details.html"><button class="button--success">view</button></a></td>
+                    </tr>
+                    <tr>
+                        <td>Nakuru</td>
+                        <td>Nairobi</td>
+                        <td><span class="red_bg">08:00 am</span></td>
+                        <td><a href="ride_details.html"><button class="button--success">view</button></a></td>
+                    </tr>
+                    <tr>
+                        <td>Githurai</td>
+                        <td>Thika</td>
+                        <td><span class="red_bg">09:00 am</span></td>
+                        <td><a href="ride_details.html"><button class="button--success">view</button></a></td>
+                    </tr>
+                    <tr>
+                        <td>Embakasi</td>
+                        <td>Town</td>
+                        <td><span class="red_bg">10:00 am</span></td>
+                        <td><a href="ride_details.html"><button class="button--success">view</button></a></td>
+                    </tr>
+                    <tr>
+                        <td>Nakuru</td>
+                        <td>Nairobi</td>
+                        <td><span class="red_bg">12:00 pm</span></td>
+                        <td><a href="ride_details.html"><button class="button--success">view</button></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="footer--main fixed_bottom">
+        <p>Derrick &copy; 2018</p>
+    </footer>
+
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

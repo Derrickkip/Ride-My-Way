@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ride-My-Way|rides-given</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <div class="brand">
+                <h2 class="brand__name">Ride-My-Way</h2>
+                <div><i class="fa fa-bars jsnavbar__toggle"></i></div>
+            </div>
+            <div class="jsnavbar__links">
+                <div class="navbar__link">
+                    <a href="requests.html">Requests</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="create_ride.html">Create Ride</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="rides.html">Rides</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="profile.html">Profile</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="index.html">Logout</a>
+                    <hr class="navbar__separator" />
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="section">
+        <div class="rides_taken">
+            <div class="taken_header">
+                <h2 class="primary__color">Rides Offered</h2>
+            </div>
+            <hr/>
+            <table class="table table--rides" id="table__taken">
+                <thead>
+                    <tr>
+                        <th>from</th>
+                        <th>To</th>
+                        <th>Date</th>
+                        <th>time</th>
+                        <th>price</th>
+                        <th>requests</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Embakasi</td>
+                        <td>Ngong</td>
+                        <td class="date">June 3, 2018</td>
+                        <td class="red_bg">08:00 am</td>
+                        <td>60 kshs</td>
+                        <td>5</td>
+                        <td><a href="reviews.html"><button class="button--success">review</button></a></td>
+                        <td><button class="button--danger">Delete</button></td>
+
+                    </tr>
+                    <tr>
+                        <td>Ngong</td>
+                        <td>Rongai</td>
+                        <td class="date">June 1, 2018</td>
+                        <td class="red_bg">08:00 am</td>
+                        <td>100 kshs</td>
+                        <td>6</td>
+                        <td><a href="reviews.html"><button class="button--success">review</button></a></td>
+                        <td><button class="button--danger">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td>Githurai</td>
+                        <td>Thika</td>
+                        <td class="date">June 10, 2018</td>
+                        <td class="red_bg">10:00 am</td>
+                        <td>70 kshs</td>
+                        <td>3</td>
+                        <td><a href="reviews.html"><button class="button--success">review</button></a></td>
+                        <td><button class="button--danger">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td>Lang'ata</td>
+                        <td>South B</td>
+                        <td class="date">June 10, 2018</td>
+                        <td class="red_bg">03:00 pm</td>
+                        <td>50 kshs</td>
+                        <td>2</td>
+                        <td><a href="reviews.html"><button class="button--success">review</button></a></td>
+                        <td><button class="button--danger">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td>Nairobi</td>
+                        <td>Kitale</td>
+                        <td class="date">March 12, 2018</td>
+                        <td class="red_bg">08:00 am</td>
+                        <td>600 kshs</td>
+                        <td>9</td>
+                        <td><a href="reviews.html"><button class="button--success">review</button></a></td>
+                        <td><button class="button--danger">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td>Kitale</td>
+                        <td>Nairobi</td>
+                        <td class="date">March 10, 2018</td>
+                        <td class="red_bg">08:00 am</td>
+                        <td>600 kshs</td>
+                        <td>1</td>
+                        <td><a href="reviews.html"><button class="button--success">review</button></a></td>
+                        <td><button class="button--danger">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td>Kinoo</td>
+                        <td>Westlands</td>
+                        <td class="date">Feb 14, 2018</td>
+                        <td class="red_bg">12:00 pm</td>
+                        <td>20 kshs</td>
+                        <td>0</td>
+                        <td><a href="reviews.html"><button class="button--success">review</button></a></td>
+                        <td><button class="button--danger">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <footer class="footer--main">
+        <p>Derrick &copy; 2018</p>
+    </footer>
+
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

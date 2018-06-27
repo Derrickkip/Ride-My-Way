@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ride-My-Way|create-offer</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body class="bg_main">
+    <div class="overlay"></div>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <div class="brand">
+                <p class="brand__name">Ride-My-Way</p>
+                <div><i class="fa fa-bars jsnavbar__toggle"></i></div>
+            </div>
+            <div class="jsnavbar__links">
+                <div class="navbar__link">
+                    <a href="requests.html">Requests</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="create_ride.html">Create Ride</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="rides.html">Rides</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="profile.html">Profile</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="index.html">Logout</a>
+                    <hr class="navbar__separator" />
+                </div>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="section__container">
+            <header class="section__header">
+                <h1>Create Ride</h1>
+                <hr class="divider" />
+            </header>
+            <form class="form--create" id="form_create">
+                <div class="form--create_group">
+                    <label class="form--create_label" for="from">From</label>
+                    <input type="text" class="form--create_input" name="from">
+                </div>
+                <hr/>
+                <div class="form--create_group">
+                    <label class="form--create_label" for="to">To</label>
+                    <input type="text" class="form--create_input" name="to">
+                </div>
+                <hr/>
+                <div class="form--create_group">
+                    <label class="form--create_label" for="time">Time</label>
+                    <input type="text" class="form--create_input" name="time">
+                </div>
+                <hr/>
+                <div class="form--create_group">
+                    <label class="form--create_label" for="price">Price</label>
+                    <input type="text" class="form--create_input" name="price">
+                </div>
+                <hr/>
+                <div class="form--create_group">
+                    <label class="form--create_label" for="driver">Driver</label>
+                    <input type="text" class="form--create_input" name="driver">
+                </div>
+                <hr/>
+                <div class="form--create_group">
+                    <label class="form--create_label" for="car_model">Car Model</label>
+                    <input type="text" class="form--create_input" name="car_model">
+                </div>
+                <hr/>
+                <div class="form--create_group">
+                    <label class="form--create_label" for="reg_no">Registration No</label>
+                    <input type="text" class="form--create_input" name="reg_no">
+                </div>
+                <hr/>
+                <div class="form--create_group">
+                    <label class="form--create_label" for="seats_no">No of seats</label>
+                    <input type="text" class="form--create_input" name="seats_no">
+                </div>
+                <hr/>
+                <div class="action_buttons">
+                    <button class="btn_success"><a href="requests.html">Create Ride</a></button>
+                    <button class="btn_danger"><a href="rides.html">Cancel</a></button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <footer class="footer--main">
+        <p>Derrick &copy; 2018</p>
+    </footer>
+
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

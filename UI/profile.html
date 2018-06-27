@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ride-My-Way|profile</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar__container">
+            <div class="brand">
+                <h2 class="brand__name">Ride-My-Way</h2>
+                <div><i class="fa fa-bars jsnavbar__toggle"></i></div>
+            </div>
+            <div class="jsnavbar__links">
+                <div class="navbar__link">
+                    <a href="requests.html">Requests</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="create_ride.html">Create Ride</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="rides.html">Rides</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="profile.html">Profile</a>
+                    <hr class="navbar__separator" />
+                </div>
+                <div class="navbar__link">
+                    <a href="index.html">Logout</a>
+                    <hr class="navbar__separator" />
+                </div>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="section--profile">
+            <div class="user__section">
+                <div class="profile">
+                    <div class="title">
+                        <h3 class="primary__color">Profile</h3><span class="fa fa-edit edit" id="edit_user"></span>
+                    </div>
+                    <div class="profile__details">
+                        <div class="user__details">
+                            <form class="form--details">
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="firstname">First Name</label>
+                                    <input class="form--details_input" type="text" name="firstname" value="Joseph" readonly>
+                                </div>
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="secondname">Second Name</label>
+                                    <input class="form--details_input" type="text" name="secondname" value="Keu" readonly>
+                                </div>
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="email">Email</label>
+                                    <input class="form--details_input" type="text" name="email" value="Jkeu@mail.com" readonly>
+                                </div>
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="pnumber">Phone Number</label>
+                                    <input class="form--details_input" type="text" name="pnumber" value="07323133443" readonly>
+                                </div>
+                                <div class="details__form-group">
+                                    <label class="form--details_label" for="dlnumber">Driving Licence</label>
+                                    <input class="form--details_input" type="text" name="dlnumber" value="dl07323133443" readonly>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="car">
+                    <div class="title">
+                        <h3 class="primary__color">Car Details</h3><span class="fa fa-edit edit" id="edit_car"></span>
+                    </div>
+                    <div class="car__details">
+                        <form class="form--details">
+                            <div class="details__form-group">
+                                <label class="form--details_label" for="model">Model</label>
+                                <input class="form--details_input" type="text" name="model" value="Toyota Mark X" readonly>
+                            </div>
+                            <div class="details__form-group">
+                                <label class="form--details_label" for="nplate">Number Plate</label>
+                                <input class="form--details_input" type="text" name="nplate" value="KBC 001X" readonly>
+                            </div>
+                            <div class="details__form-group">
+                                <label class="form--details_label" for="seats">No of seats</label>
+                                <input class="form--details_input" type="text" name="seats" value="4" readonly>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="ride__section">
+                <div class='rides'>
+                    <div class="ride__header">
+                        <h3 class="primary__color">Ride History</h3>
+                    </div>
+                    <hr/>
+                    <div class="ride__taken">
+                        <a href="rides_taken.html">
+                            <div class="ride__title">
+                                <h4>Rides Taken</h4><span class="title__number">8</span>
+                            </div>
+                        </a>
+                        <div class="ride__details">
+                            <ul class="ride__list">
+                                <li class="ride__item"><span>Ngong to Karen</span><span class="date">June 15, 2018</span></li>
+                                <li class="ride__item"><span>Ngong to Rongai</span><span class="date">June 13, 2018</span></li>
+                            </ul>
+                            <a href="rides_taken.html"><button class="button--more">view more</button></a>
+                        </div>
+                    </div>
+                    <div class="ride__given">
+                        <a href="rides_offered.html">
+                            <div class="ride__title">
+                                <h4>Rides Given</h4><span class="title__number">7</span>
+                            </div>
+                        </a>
+                        <div class="ride__details">
+                            <ul class="ride__list">
+                                <li class="ride__item"><span>Embakasi to Ngong</span><span class="date">Jan 3, 2018</span></li>
+                                <li class="ride__item"><span>Ngong to Rongai</span><span class="date">Jan 1, 2018</span></li>
+                            </ul>
+                            <a href="rides_offered.html"><button class="button--more">view more</button></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="requests__section">
+                    <div class="requests__title">
+                        <h3 class="primary__color">Requests</h3>
+                    </div>
+                    <hr/>
+                    <div class="requests__body">
+                        <div class="requests__item">
+                            <p>Total requests</p><span class="primary">15</span>
+                        </div>
+                        <div class="requests__item">
+                            <p>Accepted requests</p><span class="success">8</span>
+                        </div>
+                        <div class="requests__item">
+                            <p>Pending requests</p><span class="pending">4</span>
+                        </div>
+                        <div class="requests__item">
+                            <p>Rejected requests</p><span class="danger">3</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal" id="user_modal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="primary__color">Edit details</h3>
+                <span class="close">&times;</span>
+            </div>
+            <hr/>
+            <form class="form--edit">
+                <div class="modal__form-group">
+                    <label class="edit--modal_label" for="firstname">First Name</label>
+                    <input class="edit--modal_input" type="text" name="firstname" value="Joseph" required>
+                </div>
+                <div class="modal__form-group">
+                    <label class="edit--modal_label" for="secondname">Second Name</label>
+                    <input class="edit--modal_input" type="text" name="secondname" value="Keu" required>
+                </div>
+                <div class="modal__form-group">
+                    <label class="edit--modal_label" for="email">Email</label>
+                    <input class="edit--modal_input" type="email" name="email" value="Jkeu@mail.com" required>
+                </div>
+                <div class="modal__form-group">
+                    <label class="edit--modal_label" for="pnumber">Phone Number</label>
+                    <input class="edit--modal_input" type="text" name="pnumber" value="07323133443">
+                </div>
+                <div class="modal__form-group">
+                    <label class="edit--modal_label" for="dlnumber">Driver Licence</label>
+                    <input class="edit--modal_input" type="text" name="dlnumber" value="dl07323133443">
+                </div>
+                <hr/>
+                <div class="modal__action">
+                    <button class="button--success">Update Profile</button>
+                    <button class="button--danger">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="car_modal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="primary__color">Edit details</h3>
+                <span class="close">&times;</span>
+            </div>
+            <hr/>
+            <form class="form--edit">
+                <div class="modal__form-group">
+                    <label class="edit--modal_label" for="model">Model</label>
+                    <input class="edit--modal_input" type="text" name="model" value="Toyota Mark X" required>
+                </div>
+                <div class="modal__form-group">
+                    <label class="edit--modal_label" for="nplate">Number Plate</label>
+                    <input class="edit--modal_input" type="text" name="nplate" value="KBC 001X" required>
+                </div>
+                <div class="modal__form-group">
+                    <label class="edit--modal_label" for="seats">No of seats</label>
+                    <input class="edit--modal_input" type="text" name="seats" value="4" required>
+                </div>
+                <hr/>
+                <div class="modal__action">
+                    <button class="button--success">Update details</button>
+                    <button class="button--danger">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer class="footer--main">
+        <p>Derrick &copy; 2018</p>
+    </footer>
+
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

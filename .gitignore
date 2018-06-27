@@ -1,0 +1,8 @@
+venv
+htmlcov
+__pycache__
+.pyc
+.vscode
+nodeids
+.coverage
+.pytest_cache
