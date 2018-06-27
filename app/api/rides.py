@@ -2,6 +2,7 @@
 API rides endpoint implementation
 """
 from flask import jsonify, abort, request
+from schema import Schema, And, Use, Optional, Regex
 from app.models import RIDES
 from . import api
 
@@ -18,44 +19,60 @@ def get_ride_or_abort(ride_id):
 
 
 @api.route('/api/v1/rides', methods=['GET', 'POST'])
-def get_rides():
+def rides_operations():
     '''
-    GET all rides
+    Get a list of rides or create a new ride
     '''
     if request.method == 'POST':
         data = request.json
 
-        reqs = ['driver', 'origin', 'destination', 'travel_date', 'time', 'car_model',
-                'seats', 'price']
-        for req in reqs:
-            if not data or not req in data:
-                abort(400)
+        schema = Schema({'driver': And(str, len), 'origin': And(str, len),
+                         'destination': And(str, len), 'travel_date': And(str, len),
+                         'time': And(str, len), 'car_model': And(str, len), 'seats': Use(int),
+                         'price': Use(int)})
 
-        ride = {
-            'id': len(RIDES)+1,
-            'driver': data['driver'],
-            'origin': data['origin'],
-            'destination': data['destination'],
-            'travel_date': data['travel_date'],
-            'time': data['time'],
-            'car_model': data['car_model'],
-            'seats': data['seats'],
-            'price': data['price'],
-            'requests': []
-        }
+        if not schema.is_valid(data):
+            abort(400)
 
-        RIDES[ride['id']] = ride
-        return jsonify({"ride": ride}), 201
+        for key in data.keys():
+            if Regex(r'[a-zA-Z0-9]+').validate(data[key]):
+                ride = {
+                    'id': len(RIDES)+1,
+                    'driver': data['driver'],
+                    'origin': data['origin'],
+                    'destination': data['destination'],
+                    'travel_date': data['travel_date'],
+                    'time': data['time'],
+                    'car_model': data['car_model'],
+                    'seats': data['seats'],
+                    'price': data['price'],
+                    'requests': []
+                }
+
+                RIDES[ride['id']] = ride
+                return jsonify({"ride": ride}), 201
+
     return jsonify({'rides': RIDES})
 
 @api.route('/api/v1/rides/<int:ride_id>', methods=['GET', 'PUT', 'DELETE'])
-def get_single_ride(ride_id):
+def single_ride_operation(ride_id):
     """
-    GET a singe ride
+    Read details of a ride, Update a ride, Delete a ride
     """
     ride = get_ride_or_abort(ride_id)
     if request.method == 'PUT':
-        #check for keys in request data and update key
+
+        data = request.json
+
+        schema = Schema({Optional('driver'): And(str, len), Optional('origin'): And(str, len),
+                         Optional('destination'): And(str, len),
+                         Optional('travel_date'): And(str, len), Optional('time'): And(str, len),
+                         Optional('car_model'): And(str, len),
+                         Optional('seats'): Use(int), Optional('price'): Use(int)})
+
+        if not schema.is_valid(data):
+            abort(400)
+
         for key in request.json.keys():
             ride[key] = request.json.get(key, ride[key])
 
@@ -68,9 +85,9 @@ def get_single_ride(ride_id):
     return jsonify({'ride': ride})
 
 @api.route('/api/v1/rides/<int:ride_id>/requests', methods=['GET', 'POST'])
-def get_requests(ride_id):
+def requests_operations(ride_id):
     """
-    Get requests for ride with ride_id
+    Read a list of ride requests, Request a ride
     """
     ride = get_ride_or_abort(ride_id)
     if request.method == 'POST':
@@ -80,6 +97,10 @@ def get_requests(ride_id):
             request_id = requests[-1]['id']+1
         else:
             request_id = 1
+
+        schema = Schema({'username': And(str, len)})
+        if not schema.is_valid(data):
+            abort(400)
         ride_request = {
             'id': request_id,
             'username': data['username']
