@@ -2,69 +2,146 @@
 Routes for user authentication
 """
 import urllib.parse
-from flask import jsonify
+from flask import jsonify, current_app
 from flask_restful import Resource, reqparse
 import psycopg2
-from passlib.hash import pbkdf2_sha256
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
 
-result = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
-username = result.username
-dbpassword = result.password
-database = result.path[1:]
-hostname = result.hostname
+parser = reqparse.RequestParser()
 
+RESULT = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
+USERNAME = RESULT.username
+DATABASE = RESULT.path[1:]
+HOSTNAME = RESULT.hostname
+PASSWORD = RESULT.password
+
+def get_user(email):
+    """
+    Helper method to check if user exists in database
+    """
+    conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                            password=PASSWORD, host=HOSTNAME)
+
+    cur = conn.cursor()
+
+    cur.execute("select * from users where email=%(email)s", {'email':email})
+
+    rows = cur.fetchone()
+
+    return rows is not None
+
+def encode_token(email, firstname):
+    """
+    encode token to be sent to user
+    """
+    payload = {
+        'email': email,
+        'firstname': firstname
+    }
+
+    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
+
+    return token
 
 class Signup(Resource):
+    """
+    Signup route handler
+    """
     def post(self):
         """
         signup for an account
         """
         conn = None
-        try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('first_name', type=str, help="user's firstname")
-            parser.add_argument('last_name', type=str, help="user's lastname")
-            parser.add_argument('email', type=str, help="user's email")
-            parser.add_argument('password', type=str, help="password")
-            args = parser.parse_args()
+        parser.add_argument('first_name', type=str, help="user's firstname")
+        parser.add_argument('last_name', type=str, help="user's lastname")
+        parser.add_argument('email', type=str, help="user's email")
+        parser.add_argument('password', type=str, help="password")
+        args = parser.parse_args()
 
-            firstname = args['first_name']
-            lastname = args['last_name']
-            email = args['email']
-            password = args['password']
+        firstname = args['first_name']
+        lastname = args['last_name']
+        email = args['email']
+        password = args['password']
 
-            hash = pbkdf2_sha256.encrypt(password, rounds=200, salt_size=16)
+        password_hash = generate_password_hash(password)
 
-            data = [firstname, lastname, email, hash]
+        data = [firstname, lastname, email, password_hash]
 
-            sql = """INSERT INTO users (first_name, last_name, email, password)
-                        VALUES(%s, %s, %s, %s)"""
+        if not get_user(email):
 
-            conn = psycopg2.connect(database=database, user=username,
-                                    password=dbpassword, host=hostname)
+            try:
 
-            cur = conn.cursor()
+                sql = """INSERT INTO users (first_name, last_name, email, password)
+                            VALUES(%s, %s, %s, %s)"""
 
-            cur.execute(sql, data)
+                conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                        password=PASSWORD, host=HOSTNAME)
 
-            cur.close()
+                cur = conn.cursor()
 
-            conn.commit()
+                cur.execute(sql, data)
 
-            return {'success': 'user account created'}, 201
-        
-        except(Exception , psycopg2.DatabaseError) as Error:
-                return jsonify({'error': str(Error)})
+                cur.close()
 
-        finally:
-            if conn is not None:
+                conn.commit()
+
                 conn.close()
 
-        
+                access_token = encode_token(email, firstname)
+
+                return {'success': 'user account created',
+                        'access_token': access_token.decode('UTF-8')}, 201
+
+            except(Exception, psycopg2.DatabaseError) as error:
+                return {'error': str(error)}
+        else:
+            return {'error': 'user already exists'}, 400
+
+
 class Login(Resource):
+    """
+    Login route handler
+    """
     def post(self):
         """
-        login to your account
+        login into  account
         """
-        pass
-        
+        conn = None
+        parser.add_argument('email', type=str, help='users email')
+        parser.add_argument('password', type=str, help='password')
+        args = parser.parse_args()
+
+        email = args['email']
+        password = args['password']
+
+        if get_user(email):
+            try:
+                conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                        password=PASSWORD, host=HOSTNAME)
+
+                cur = conn.cursor()
+
+                cur.execute("SELECT first_name, password FROM users WHERE email=%(email)s",
+                            {'email':email})
+
+                rows = cur.fetchone()
+
+                if not rows:
+                    return {'error': 'who are you?'}
+
+                firstname = rows[0]
+                stored_password = rows[1]
+
+                if check_password_hash(stored_password, password):
+                    access_token = encode_token(email, firstname)
+
+                    return {"success":"login successful",
+                            "access_token": access_token.decode('UTF-8'),}
+                
+                return {'its me': 'DERRICK'}
+
+            except(Exception, psycopg2.DatabaseError) as error:
+                return jsonify({'error': str(error)})
+
+        return {'error':'wrong credentials'}, 400

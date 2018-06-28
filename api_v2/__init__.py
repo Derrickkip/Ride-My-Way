@@ -1,8 +1,11 @@
+"""
+API V2 initialisation
+"""
 from flask import Flask
 from flask_restful import Resource, Api
-from .auth import Signup, Login
-from .rides import Rides, Ride, CreateRide, MakeRequest, Requests, Respond 
 from config import CONFIG
+from .auth import Signup, Login
+from .rides import Rides, Ride, CreateRide, MakeRequest, Requests, Respond
 
 def create_app(config_name):
     """
@@ -10,6 +13,7 @@ def create_app(config_name):
     """
 
     app = Flask(__name__)
+    app.config.from_object(CONFIG[config_name])
     api = Api(app)
 
     api.add_resource(Signup, '/auth/signup')
@@ -19,6 +23,6 @@ def create_app(config_name):
     api.add_resource(CreateRide, '/users/rides')
     api.add_resource(MakeRequest, '/rides/<int:ride_id>/requests')
     api.add_resource(Requests, '/users/rides/<int:ride_id>')
-    api.add_resource(Respond,'/users/rides/<int:ride_id>/requests/<int:request_id>')
+    api.add_resource(Respond, '/users/rides/<int:ride_id>/requests/<int:request_id>')
 
     return app

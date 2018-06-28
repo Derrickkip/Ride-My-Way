@@ -1,13 +1,21 @@
 """
 Fixtures for apiV2
 """
+import urllib.parse
 import pytest
+from pytest_postgresql import factories
 import psycopg2
 
 from api_v2 import create_app
 
+result = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
+username = result.username
+database = result.path[1:]
+hostname = result.hostname
+dbpassword = result.password
+ 
 @pytest.fixture(scope='module')
-def test_client():
+def test_client(request):
     """
     Flask testclient setup
     """
@@ -16,36 +24,33 @@ def test_client():
 
     ctx = app.app_context()
     ctx.push()
-
     yield app_client
 
-    ctx.pop()
-
-@pytest.fixture(scope='module')
-def init_db():
-    """
-    Create a test user
-    """
-
-    sql = """INSERT INTO users(first_name, last_name, email, password) VALUES
-             ('John', 'Snow', 'snow@mail.com', 'kingofnorth')"""
-    conn = None
-    try:
+    def fin():
+        print('deleting data')
     
-        conn = psycopg2.connect(dbname='testdb', host='localhost',
-                                user='testuser', password='testuser')
+        conn = psycopg2.connect(database=database, user=username,
+                                password=dbpassword, host=hostname)
 
         cur = conn.cursor()
-
-        #Create test user
-        cur.execute(sql)
+        
+        sqls = ('''DELETE FROM users''', '''DELETE FROM rides''', '''DELETE FROM requests''')
+        
+        for sql in sqls:
+            cur.execute(sql)
 
         cur.close()
 
         conn.commit()
 
-    except (Exception , psycopg2.DatabaseError) as Error:
-        print(Error)
-    finally:
-        if conn is not None:
-            conn.close()
+        conn.close()
+
+        ctx.pop()
+
+    request.addfinalizer(fin)
+    
+
+
+
+
+    

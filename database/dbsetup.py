@@ -18,6 +18,7 @@ def create_tables():
             email varchar(80) not null,
             driving_licence varchar(80) null,
             carmodel varchar(80) null
+            password varchar (255) not null
         )
         """,
         """ CREATE TABLE requests (
