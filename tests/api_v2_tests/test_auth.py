@@ -15,3 +15,17 @@ def test_signup(test_client):
                                 content_type='application/json')
 
     assert response.status_code == 201
+
+def test_login(test_client):
+    """
+    test that user can login into account
+    """
+    my_data = {'email':'test@mail.com', 'password':"testpassword"}
+    response = test_client.post('/auth/login', data=json.dumps(my_data),
+                                content_type='application/json')
+
+    assert response.status_code == 200
+
+    result = json.loads(response.data)
+
+    assert "access_token" in result.keys()
