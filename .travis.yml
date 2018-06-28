@@ -20,15 +20,6 @@ addons:
     repo_token: 
       secure: "fOKcAAvcRFR1PV8qKq2CKSI5f9IbI+4pyiZykLbJUcO2wYc/pMZrG1ApnCxfciJSerKE2Sfo49BEF9ZjxxN+2it5uVMGf0ZgIoIeUZW/WsSwP3K7R9yqUZk8y2iyWPIVtU144avom+1rbAjWhPB6mNK5LnTJkrkzVRjzj8OxZIbSVIt9xNgVPeBv4/rWMk1IUuZJu1c94Hv2ovO42Bp0KOQxBy5djh8qT/REfqUmmLoUW4T/jkHukzkDmYBMvteGf4xg3UQuW4JfdRS9TsC507DKdHBJeiqyROJuExTUqRTD2s/a+DAWdk22d2toTf2Mf71BAIGVe+iqIpfU5zSmziu9nNmSfq+P5D+JHyqSfMEzMceiQ8HxpV2tA4P/JGNmd8dRHKfZe+bm+Amwg9RlibT5BFlaOqfQUaj4C4RtAb0WjSdTwv/gC19nqcGNRM3gj7s2tkVuky2lb9qOJnTzbkmkymMpfKskp6ZdTxlN4zxP1QifNbc2Uvh0+Jmjs93MZiwPDvn4E/KqWCm47ritIpwOCmk+AbDglCG606IIKC9sgZh+BedkkVvUydhK/8QOyyc++/a83DZDU34qy1Wx9jaUSxS5jyTGmXPXsCSC1HnPsy187VlvWiGWN5TLYE5flyWxybnBPwP2mtL07U5/ISi9sP4dhaoewXJ+OnfFPm4="
 
-  postgresql: "10"
-  apt:
-    packages:
-      -postgresql-10
-      -postgresql-client-10
-
-env:
-  global:
-  - PGPORT=5433
 after_success:
   - coveralls
 
