@@ -42,8 +42,8 @@ def create_tables():
     conn = None
     
     try:
-        conn = psycopg2.connect(dbname='ridemyway', host='localhost',
-                            user='admin', password='admin')
+        conn = psycopg2.connect(dbname='testdb', host='localhost',
+                            user='testuser', password='testuser')
         
         cur = conn.cursor()
         #create tables
