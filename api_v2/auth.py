@@ -44,6 +44,13 @@ def encode_token(email, firstname):
 
     return token
 
+def decode_token(access_token):
+    """
+    decode authentication token
+    """
+    payload = jwt.decode(access_token, current_app.config['SECRET_KEY'])
+    return payload['email']
+
 class Signup(Resource):
     """
     Signup route handler
