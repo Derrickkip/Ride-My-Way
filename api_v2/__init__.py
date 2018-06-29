@@ -1,8 +1,10 @@
+
 """
 API V2 initialisation
 """
 from flask import Flask
 from flask_restful import Resource, Api
+from flask_jwt_extended import JWTManager
 from config import CONFIG
 from .auth import Signup, Login
 from .rides import Rides, Ride, CreateRide, MakeRequest, Requests, Respond
@@ -15,6 +17,8 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(CONFIG[config_name])
     api = Api(app)
+
+    jwt = JWTManager(app)
 
     api.add_resource(Signup, '/auth/signup')
     api.add_resource(Login, '/auth/login')

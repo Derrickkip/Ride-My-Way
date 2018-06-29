@@ -5,6 +5,7 @@ import urllib.parse
 import pytest
 from pytest_postgresql import factories
 import psycopg2
+import json
 
 from api_v2 import create_app
 
@@ -48,9 +49,3 @@ def test_client(request):
         ctx.pop()
 
     request.addfinalizer(fin)
-    
-
-
-
-
-    

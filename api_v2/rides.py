@@ -1,22 +1,59 @@
 """
 Implements the rides endpoints
 """
-from flask_restful import Resource
+import urllib.parse
+import psycopg2
+from flask import request, abort
+from flask_restful import Resource, reqparse
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+parser = reqparse.RequestParser()
+
+RESULT = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
+USERNAME = RESULT.username
+DATABASE = RESULT.path[1:]
+HOSTNAME = RESULT.hostname
+PASSWORD = RESULT.password
+
 
 class Rides(Resource):
+    @jwt_required
     def get(self):
         """
         fetch all rides
-        """
-        pass
+        """        
+        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                        password=PASSWORD, host=HOSTNAME)
+
+        cur = conn.cursor()
+
+        cur.execute('select * from rides')
+
+        rows = cur.fetchall()
+
+        rides = {}
+        for row in rows:
+            rides[1] = row
+
+        return {'rides': rides }, 200
 
 
 class Ride(Resource):
+    @jwt_required
     def get(self, ride_id):
         """
         fetch single ride
         """
-        pass
+        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                        password=PASSWORD, host=HOSTNAME)
+
+        cur = conn.cursor()
+
+        cur.execute('select * from rides where ride_id=%(ride_id)s', {'ride_id':ride_id})
+
+        rows = cur.fetchone()
+
+        return {'ride': rows}
 
 class CreateRide(Resource):
     def post(self):

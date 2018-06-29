@@ -3,7 +3,6 @@ tests for user authentication
 """
 import pytest
 import json
-import unittest
 
 data = [{'first_name':'Simon', 'last_name': 'Mbugua', 
         'email': 'simon@email.com', 'password':"testpassword" },
@@ -42,8 +41,6 @@ def test_login(test_client):
     assert response.status_code == 200
 
     result = json.loads(response.data)
-
-    print(result)
 
     assert "access_token" in result.keys()
 

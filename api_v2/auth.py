@@ -4,9 +4,9 @@ Routes for user authentication
 import urllib.parse
 from flask import jsonify, current_app
 from flask_restful import Resource, reqparse
+from flask_jwt_extended import create_access_token, get_jwt_identity
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
 
 parser = reqparse.RequestParser()
 
@@ -30,26 +30,6 @@ def get_user(email):
     rows = cur.fetchone()
 
     return rows is not None
-
-def encode_token(email, firstname):
-    """
-    encode token to be sent to user
-    """
-    payload = {
-        'email': email,
-        'firstname': firstname
-    }
-
-    token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
-
-    return token
-
-def decode_token(access_token):
-    """
-    decode authentication token
-    """
-    payload = jwt.decode(access_token, current_app.config['SECRET_KEY'])
-    return payload['email']
 
 class Signup(Resource):
     """
@@ -95,10 +75,7 @@ class Signup(Resource):
 
                 conn.close()
 
-                access_token = encode_token(email, firstname)
-
-                return {'success': 'user account created',
-                        'access_token': access_token.decode('UTF-8')}, 201
+                return {'success': 'user account created'}, 201
 
             except(Exception, psycopg2.DatabaseError) as error:
                 return {'error': str(error)}
@@ -135,18 +112,16 @@ class Login(Resource):
                 rows = cur.fetchone()
 
                 if not rows:
-                    return {'error': 'who are you?'}
+                    return {'error': 'Authentication failed user unknown'}
 
                 firstname = rows[0]
                 stored_password = rows[1]
 
                 if check_password_hash(stored_password, password):
-                    access_token = encode_token(email, firstname)
+                    access_token = create_access_token(email, firstname)
 
                     return {"success":"login successful",
-                            "access_token": access_token.decode('UTF-8'),}
-                
-                return {'its me': 'DERRICK'}
+                            "access_token": access_token}
 
             except(Exception, psycopg2.DatabaseError) as error:
                 return jsonify({'error': str(error)})

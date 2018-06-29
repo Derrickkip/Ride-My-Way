@@ -8,7 +8,7 @@ class Config:
     Common configurations
     """
     DEBUG = True
-    SECRET_KEY = '\x1b\xa5*G\xca\x88@\xe37\x8e\x8cP\x18\xef\xa3\xc0r\xaa\xf4\x94H3\xc3\xfd'
+    JWT_SECRET_KEY = '\x1b\xa5*G\xca\x88@\xe37\x8e\x8cP\x18\xef\xa3\xc0r\xaa\xf4\x94H3\xc3\xfd'
 
 class DevelopmentConfig(Config):
     """
@@ -21,6 +21,7 @@ class TestingConfig(Config):
     Testing configurations
     """
     TESTING = True
+    DATABASE = "postgresql://testuser:testuser@localhost/testdb"
 
 class ProductionConfig(Config):
     """
