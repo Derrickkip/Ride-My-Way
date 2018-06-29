@@ -2,9 +2,9 @@
 Routes for user authentication
 """
 import urllib.parse
-from flask import jsonify, current_app
+from flask import jsonify
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import create_access_token, get_jwt_identity
+from flask_jwt_extended import create_access_token
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
 

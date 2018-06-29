@@ -5,6 +5,9 @@ import json
 import unittest
 from api_v2 import create_app
 
+data = [{'origin': 'Kisumu', 'destination': 'Kericho',
+         'date_of_ride': '20th June 2018', 'time': "10:00 pm", "price":100}]
+
 def get_headers(test_client):
     """
     get headers for user authentication
@@ -35,3 +38,22 @@ def test_get_rides(test_client):
                                content_type='application/json')
 
     assert response.status_code == 200
+
+def test_unauthenticated_user_cant_get_rides(test_client):
+    """
+    test that user needs auth header to view rides
+    """
+    response = test_client.get('/rides')
+
+    assert response.status_code == 401
+
+def test_create_ride(test_client):
+    """
+    test that a user can create rides
+    """
+    auth_header = get_headers(test_client)  
+    response = test_client.post('/users/rides', headers={'Authorization':auth_header},
+                                data=json.dumps(data[0]),content_type='application/json')
+
+    assert response.status_code == 201
+
