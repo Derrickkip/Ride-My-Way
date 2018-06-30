@@ -21,11 +21,6 @@ def create_tables():
             password varchar (255) not null
         )
         """,
-        """ CREATE TABLE requests (
-                request_id SERIAL primary key,
-                user_id int references users(user_id)
-        )
-        """,
         """ CREATE TABLE rides (
                 ride_id SERIAL primary key,
                 user_id int not null references users(user_id),
@@ -33,9 +28,14 @@ def create_tables():
                 destination varchar(80) not null,
                 date_of_ride varchar(80) not null,
                 time varchar(80) not null,
-                price int not null,
-                requests int null references requests(request_id)
+                price int not null
 
+        )
+        """,
+        """ CREATE TABLE requests (
+                request_id SERIAL primary key,
+                user_id int references users(user_id),
+                ride_id int references rides(ride_id)
         )
         """
     )

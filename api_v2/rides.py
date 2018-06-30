@@ -3,6 +3,7 @@ Implements the rides endpoints
 """
 import urllib.parse
 import psycopg2
+from flask import make_response, jsonify
 from flask_restful import Resource, reqparse, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -70,19 +71,19 @@ class Rides(Resource):
         """
         fetch all rides
         """
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
                                 password=PASSWORD, host=HOSTNAME)
 
-        cur = conn.cursor()
+        self.cur = self.conn.cursor()
 
-        cur.execute('select ride_id, origin, destination, date_of_ride, time, price, user_id from rides')
+        self.cur.execute('select ride_id, origin, destination, date_of_ride, time, price, user_id from rides')
 
-        rows = cur.fetchall()
+        self.rows = self.cur.fetchall()
 
-        rides = {}
+        self.rides = {}
         num = 1
-        for row in rows:
-            rides[num] = {
+        for row in self.rows:
+            self.rides[num] = {
                 'id':row[0],
                 'origin':row[1],
                 'destinaton': row[2],
@@ -93,13 +94,13 @@ class Rides(Resource):
             }
             num += 1
 
-        cur.close()
+        self.cur.close()
 
-        conn.commit()
+        self.conn.commit()
 
-        conn.close()
+        self.conn.close()
 
-        return {'rides': rides}, 200
+        return {'rides': self.rides}, 200
 
 
 class Ride(Resource):
@@ -193,11 +194,40 @@ class CreateRide(Resource):
         return {'success': 'ride created'}, 201
 
 class MakeRequest(Resource):
+    """
+    request for ride
+    """
+    @jwt_required
     def post(self, ride_id):
         """
         request a ride
         """
-        pass
+        email = get_jwt_identity()
+        user = get_user_by_email(email)
+        
+        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
+
+        cur = conn.cursor()
+
+        cur.execute("select ride_id from requests where user_id=%(user_id)s", {'user_id': user[0]})
+
+        row = cur.fetchone()
+
+        if row:
+
+            if row[0] == ride_id:
+                abort(400)
+
+        cur.execute("insert into requests (user_id, ride_id) values (%s, %s)", [user[0], ride_id])
+
+        cur.close()
+
+        conn.commit()
+
+        conn.close()
+
+        return {'success':'You have successfully requested for the ride'}, 200
 
 class Requests(Resource):
     def get(self, ride_id):

@@ -91,34 +91,34 @@ class Login(Resource):
         """
         login into  account
         """
-        conn = None
+        self.conn = None
         parser.add_argument('email', type=str, help='users email')
         parser.add_argument('password', type=str, help='password')
-        args = parser.parse_args()
+        self.args = parser.parse_args()
 
-        email = args['email']
-        password = args['password']
+        self.email = self.args['email']
+        self.password = self.args['password']
 
-        if get_user(email):
+        if get_user(self.email):
             try:
-                conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
                                         password=PASSWORD, host=HOSTNAME)
 
-                cur = conn.cursor()
+                self.cur = self.conn.cursor()
 
-                cur.execute("SELECT first_name, password FROM users WHERE email=%(email)s",
-                            {'email':email})
+                self.cur.execute("SELECT first_name, password FROM users WHERE email=%(email)s",
+                            {'email':self.email})
 
-                rows = cur.fetchone()
+                self.rows = self.cur.fetchone()
 
-                if not rows:
+                if not self.rows:
                     return {'error': 'Authentication failed user unknown'}
 
-                firstname = rows[0]
-                stored_password = rows[1]
+                self.firstname = self.rows[0]
+                self.stored_password = self.rows[1]
 
-                if check_password_hash(stored_password, password):
-                    access_token = create_access_token(email, firstname)
+                if check_password_hash(self.stored_password, self.password):
+                    access_token = create_access_token(self.email, self.firstname)
 
                     return {"success":"login successful",
                             "access_token": access_token}
