@@ -34,7 +34,7 @@ def test_client(request):
 
         cur = conn.cursor()
         
-        sqls = ('''DELETE FROM rides''', '''DELETE FROM requests''', '''DELETE FROM users''', )
+        sqls = ('''DELETE FROM requests''','''DELETE FROM rides''', '''DELETE FROM users''', )
         
         for sql in sqls:
             cur.execute(sql)

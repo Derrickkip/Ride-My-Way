@@ -29,6 +29,21 @@ def get_headers(test_client):
 
     return auth_header
 
+def get_ride_id(test_client):
+    """
+    Returns id of ride for testing
+    """
+    auth_header = get_headers(test_client)
+    response = test_client.get('/rides', headers={'Authorization':auth_header},
+                               content_type='application/json')
+
+    result = json.loads(response.data)
+
+    ride_id = result['rides']["1"]["id"]
+
+    return ride_id
+
+
 def test_get_rides(test_client):
     """
     test user can create rides
@@ -67,3 +82,28 @@ def test_user_cannot_create_same_ride(test_client):
 
     assert response.status_code == 400
 
+def test_users_can_request_rides(test_client):
+    """
+    Test that requests to rides can be made
+    """
+    ride_id = get_ride_id(test_client)
+    auth_header = get_headers(test_client)
+    
+    response = test_client.post('/rides/'+str(ride_id)+'/requests', headers={'Authorization':auth_header},
+                                data=json.dumps(data[0]),content_type='application/json')
+
+    assert response.status_code == 200
+
+def test_users_cannot_request_ride_twice(test_client):
+    """
+    Test that a duplicate request raises a 400 error
+    """
+    ride_id = get_ride_id(test_client)
+    auth_header = get_headers(test_client)
+    
+    response = test_client.post('/rides/'+str(ride_id)+'/requests', headers={'Authorization':auth_header},
+                                data=json.dumps(data[0]),content_type='application/json')
+
+    assert response.status_code == 400
+
+    
