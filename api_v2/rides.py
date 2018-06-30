@@ -4,10 +4,9 @@ Implements the rides endpoints
 import urllib.parse
 import psycopg2
 from flask import request
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
+from schema import Schema, And, Use
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
-PARSER = reqparse.RequestParser()
 
 DB = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
 USERNAME = DB.username
@@ -32,7 +31,6 @@ def get_user_by_email(email):
         rows = cur.fetchone()
 
         cur.close()
-        conn.commit()
         conn.close()
 
         return rows
@@ -57,7 +55,6 @@ def get_user_by_id(user_id):
         full_name = rows[0] +' '+ rows[1]
 
         cur.close()
-        conn.commit()
         conn.close()
 
         return full_name
@@ -82,14 +79,12 @@ def get_ride_owner_by_ride_id(ride_id):
         rows = cur.fetchone()
 
         cur.close()
-        conn.commit()
         conn.close()
 
         return rows[0]
 
     except(Exception, psycopg2.DatabaseError) as error:
         return {'error': str(error)}
-
 
 class Rides(Resource):
     """
@@ -134,7 +129,6 @@ class Rides(Resource):
                 num += 1
 
             self.cur.close()
-            self.conn.commit()
             self.conn.close()
 
             return {'rides': rides}, 200
@@ -147,18 +141,23 @@ class Rides(Resource):
         """
         create a new ride
         """
-        PARSER.add_argument('origin',type=str, help='where ride is from')
-        PARSER.add_argument('destination', type=str, help='where ride is headed')
-        PARSER.add_argument('date_of_ride', type=str, help='day of ride')
-        PARSER.add_argument('time', type=str, help='time of trave')
-        PARSER.add_argument('price', type=int, help='how much one has to pay for ride')
-        args = PARSER.parse_args()
+        data = request.json
+        schema = Schema({'origin': And(str, len), 'destination': And(str, len),
+                         'date_of_ride': And(str, len), 'time': And(str, len),
+                         'price': Use(int)})
 
-        origin = args['origin']
-        destination = args['destination']
-        date_of_ride = args['date_of_ride']
-        time = args['time']
-        price = args['price']
+        if not schema.is_valid(data):
+            return {"bad request":"A required field is missing or a value is empty"}, 400
+
+        for key in data.keys():
+            if str(data[key]).isspace():
+                return {'bad request': 'values cannot be spaces'}
+
+        origin = data['origin']
+        destination = data['destination']
+        date_of_ride = data['date_of_ride']
+        time = data['time']
+        price = data['price']
 
         email = get_jwt_identity()
         user = get_user_by_email(email)
@@ -238,7 +237,6 @@ class Ride(Resource):
             }
 
             self.cur.close()
-            self.conn.commit()
             self.conn.close()
 
             return {'ride': ride}
@@ -338,6 +336,9 @@ class Requests(Resource):
         user = get_user_by_email(email)[0]
         ride_owner = get_ride_owner_by_ride_id(ride_id)
 
+        if ride_owner is None:
+            return {'error': 'The requested ride could not be found'}, 400
+
         if user != ride_owner:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
 
@@ -412,11 +413,14 @@ class Respond(Resource):
         """
         accept or reject a ride
         """
-        PARSER.add_argument('status', type=str, help="Status to update ride")
-        args = PARSER.parse_args()
+        data = request.json
+        schema = Schema({'status': And(str, len)})
+
+        if not schema.is_valid(data):
+            return {'error': 'status is missing in the request'}
 
         values = ['accepted', 'rejected']
-        if args['status'].lower() not in values:
+        if data['status'].lower() not in values:
             return {'bad request': 'the status update should be either rejected or accepted'}, 400
 
         email = get_jwt_identity()
@@ -429,7 +433,7 @@ class Respond(Resource):
             self.cur.execute('''update requests
                             set accept_status =%(accept_status)s 
                             where request_id =%(request_id)s''',
-                             {'accept_status':args['status'], 'request_id': request_id})
+                             {'accept_status':data['status'], 'request_id': request_id})
 
             self.cur.close()
             self.conn.commit()

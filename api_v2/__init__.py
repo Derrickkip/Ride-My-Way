@@ -8,7 +8,6 @@ from flask_jwt_extended import JWTManager
 from config import CONFIG
 from .auth import Signup, Login
 from .rides import Rides, Ride, Requests, Respond
-from .errors import errors
 
 def create_app(config_name):
     """
@@ -17,7 +16,7 @@ def create_app(config_name):
 
     app = Flask(__name__)
     app.config.from_object(CONFIG[config_name])
-    api = Api(app, errors=errors)
+    api = Api(app)
 
     jwt = JWTManager(app)
 

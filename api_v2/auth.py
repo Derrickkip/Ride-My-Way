@@ -2,13 +2,12 @@
 Routes for user authentication
 """
 import urllib.parse
-from flask import jsonify
-from flask_restful import Resource, reqparse
+from flask import jsonify, request
+from flask_restful import Resource
 from flask_jwt_extended import create_access_token
+from schema import Schema, And
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
-
-PARSER = reqparse.RequestParser()
 
 RESULT = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
 USERNAME = RESULT.username
@@ -45,16 +44,21 @@ class Signup(Resource):
         """
         signup for an account
         """
-        PARSER.add_argument('first_name', type=str, help="user's firstname")
-        PARSER.add_argument('last_name', type=str, help="user's lastname")
-        PARSER.add_argument('email', type=str, help="user's email")
-        PARSER.add_argument('password', type=str, help="password")
-        args = PARSER.parse_args()
+        data = request.json
+        schema = Schema({'first_name': And(str, len), 'last_name': And(str, len),
+                         'email': And(str, len), 'password': And(str, len)})
 
-        firstname = args['first_name']
-        lastname = args['last_name']
-        email = args['email']
-        password = args['password']
+        if not schema.is_valid(data):
+            return {'error': 'Check your input for missing fields or empty values'}, 400
+
+        for key in data.keys():
+            if data[key].isspace():
+                return {'error': 'values cannot be empty strings'}, 400
+
+        firstname = data['first_name']
+        lastname = data['last_name']
+        email = data['email']
+        password = data['password']
 
         password_hash = generate_password_hash(password)
 
@@ -97,12 +101,18 @@ class Login(Resource):
         """
         login into  account
         """
-        PARSER.add_argument('email', type=str, help='users email')
-        PARSER.add_argument('password', type=str, help='password')
-        args = PARSER.parse_args()
+        data = request.json
+        schema = Schema({'email': And(str, len), 'password': And(str, len)})
 
-        email = args['email']
-        password = args['password']
+        if not schema.is_valid(data):
+            return {'bad request': 'Check your input for missing keys or empty values'}, 400
+
+        for key in data.keys():
+            if data[key].isspace():
+                return {'error': "values cannot be empty strings"}
+
+        email = data['email']
+        password = data['password']
 
         if get_user(email):
             try:
