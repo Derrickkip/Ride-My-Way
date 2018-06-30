@@ -4,16 +4,15 @@ Fixtures for apiV2
 import urllib.parse
 import pytest
 import psycopg2
-import json
 
 from api_v2 import create_app
 
-result = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
-username = result.username
-database = result.path[1:]
-hostname = result.hostname
-dbpassword = result.password
- 
+DB = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
+USERNAME = DB.username
+DATABASE = DB.path[1:]
+HOSTNAME = DB.hostname
+PASSWORD = DB.password
+
 @pytest.fixture(scope='module')
 def test_client(request):
     """
@@ -27,15 +26,19 @@ def test_client(request):
     yield app_client
 
     def fin():
+        '''
+        Function to be run at end of test
+        '''
         print('deleting data')
-    
-        conn = psycopg2.connect(database=database, user=username,
-                                password=dbpassword, host=hostname)
+
+        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
 
         cur = conn.cursor()
-        
-        sqls = ('''DELETE FROM requests''','''DELETE FROM rides''', '''DELETE FROM users''', )
-        
+
+        sqls = ('''DELETE FROM requests''', '''DELETE FROM rides''',
+                '''DELETE FROM users''', )
+
         for sql in sqls:
             cur.execute(sql)
 
