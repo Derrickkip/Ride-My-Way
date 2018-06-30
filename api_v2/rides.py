@@ -79,26 +79,27 @@ def get_ride_owner_by_ride_id(ride_id):
 
 class Rides(Resource):
     """
-    returns list of rides
+    handler for /rides endpoint
     """
-    @jwt_required
-    def get(self):
-        """
-        fetch all rides
-        """
+    def __init__(self):
         self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
                                 password=PASSWORD, host=HOSTNAME)
 
         self.cur = self.conn.cursor()
 
+    @jwt_required
+    def get(self):
+        """
+        fetch all rides
+        """
         self.cur.execute('select ride_id, origin, destination, date_of_ride, time, price, user_id from rides')
 
-        self.rows = self.cur.fetchall()
+        rows = self.cur.fetchall()
 
-        self.rides = {}
+        rides = {}
         num = 1
-        for row in self.rows:
-            self.rides[num] = {
+        for row in rows:
+            rides[num] = {
                 'id':row[0],
                 'origin':row[1],
                 'destinaton': row[2],
@@ -115,7 +116,54 @@ class Rides(Resource):
 
         self.conn.close()
 
-        return {'rides': self.rides}, 200
+        return {'rides': rides}, 200
+
+    @jwt_required
+    def post(self):
+        """
+        create a new ride
+        """
+        parser.add_argument('origin', type=str, help='where ride is from')
+        parser.add_argument('destination', type=str, help='where ride is headed')
+        parser.add_argument('date_of_ride', type=str, help='day of ride')
+        parser.add_argument('time', type=str, help='time of trave')
+        parser.add_argument('price', type=int, help='how much one has to pay for ride')
+        args = parser.parse_args()
+
+        origin = args['origin']
+        destination = args['destination']
+        date_of_ride = args['date_of_ride']
+        time = args['time']
+        price = args['price']
+
+        email = get_jwt_identity()
+        user = get_user_by_email(email)
+
+        #check that user has not created the same ride twice
+
+        self.cur.execute("select date_of_ride, time from rides where user_id=%(user_id)s",{'user_id':user[0]})
+        
+        row = self.cur.fetchone()
+        if row:
+            ride_date = row[0]
+            ride_time = row[1]
+
+            if (ride_date==date_of_ride) and (ride_time==time):
+                abort(400)
+
+        #insert ride to database
+
+        self.cur.execute("""INSERT INTO rides (origin, destination, date_of_ride, time, 
+                    price, user_id) VALUES(%s, %s, %s, %s, %s, %s)""",
+                    [origin, destination, date_of_ride, time, price, user[0]])
+        
+        self.cur.close()
+
+        self.conn.commit()
+
+        self.conn.close()
+
+        return {'success': 'ride created'}, 201
 
 
 class Ride(Resource):
@@ -152,102 +200,19 @@ class Ride(Resource):
 
         conn.close()
 
-        return {'ride': ride}
-
-class CreateRide(Resource):
-    """
-    Create new ride
-    """
-    @jwt_required
-    def post(self):
-        """
-        create a new ride
-        """
-        parser.add_argument('origin', type=str, help='where ride is from')
-        parser.add_argument('destination', type=str, help='where ride is headed')
-        parser.add_argument('date_of_ride', type=str, help='day of ride')
-        parser.add_argument('time', type=str, help='time of trave')
-        parser.add_argument('price', type=int, help='how much one has to pay for ride')
-        args = parser.parse_args()
-
-        origin = args['origin']
-        destination = args['destination']
-        date_of_ride = args['date_of_ride']
-        time = args['time']
-        price = args['price']
-
-        email = get_jwt_identity()
-        user = get_user_by_email(email)
-
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
-
-        cur = conn.cursor()
-
-        #check that user has not created the same ride twice
-
-        cur.execute("select date_of_ride, time from rides where user_id=%(user_id)s",{'user_id':user[0]})
-        
-        row = cur.fetchone()
-        if row:
-            ride_date = row[0]
-            ride_time = row[1]
-
-            if (ride_date==date_of_ride) and (ride_time==time):
-                abort(400)
-
-        cur.execute("""INSERT INTO rides (origin, destination, date_of_ride, time, 
-                    price, user_id) VALUES(%s, %s, %s, %s, %s, %s)""",
-                    [origin, destination, date_of_ride, time, price, user[0]])
-        
-        cur.close()
-
-        conn.commit()
-
-        conn.close()
-
-        return {'success': 'ride created'}, 201
-
-class MakeRequest(Resource):
-    """
-    request for ride
-    """
-    @jwt_required
-    def post(self, ride_id):
-        """
-        request a ride
-        """
-        email = get_jwt_identity()
-        user = get_user_by_email(email)
-        
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
-
-        cur = conn.cursor()
-
-        cur.execute("select ride_id from requests where user_id=%(user_id)s", {'user_id': user[0]})
-
-        row = cur.fetchone()
-
-        if row:
-
-            if row[0] == ride_id:
-                abort(400)
-
-        cur.execute("insert into requests (user_id, ride_id) values (%s, %s)", [user[0], ride_id])
-
-        cur.close()
-
-        conn.commit()
-
-        conn.close()
-
-        return {'success':'You have successfully requested for the ride'}, 200
+        return {'ride': ride}    
+    
 
 class Requests(Resource):
     """
     get all requests for ride with specified ride_id
     """
+    def __init__(self):
+        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
+
+        self.cur = self.conn.cursor()
+
     @jwt_required
     def get(self, ride_id):
         """
@@ -260,21 +225,17 @@ class Requests(Resource):
         if user != ride_owner:
             abort(403)
 
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
+        self.cur.execute('select request_id, user_id, accept_status from requests where ride_id=%(ride_id)s', {'ride_id': ride_id})
 
-        cur = conn.cursor()
-
-        cur.execute('select request_id, user_id from requests where ride_id=%(ride_id)s', {'ride_id': ride_id})
-
-        rows = cur.fetchall()
+        rows = self.cur.fetchall()
         if rows:
             requests = {}
             num = 1
             for row in rows:
                 requests[num] = {
                     'id':row[0],
-                    'user_name': get_user_by_id(row[1])
+                    'user_name': get_user_by_id(row[1]),
+                    'accept_status': row[2]
                 }
                 num += 1
 
@@ -283,11 +244,67 @@ class Requests(Resource):
         else:
             return {'result':'0 requests for this ride'}
 
+    @jwt_required
+    def post(self, ride_id):
+        """
+        request a ride
+        """
+        email = get_jwt_identity()
+        user = get_user_by_email(email)
+
+        self.cur.execute("select ride_id from requests where user_id=%(user_id)s", {'user_id': user[0]})
+
+        row = self.cur.fetchone()
+
+        if row:
+
+            if row[0] == ride_id:
+                abort(400)
+
+        self.cur.execute("insert into requests (user_id, ride_id) values (%s, %s)", [user[0], ride_id])
+
+        self.cur.close()
+
+        self.conn.commit()
+
+        self.conn.close()
+
+        return {'success':'You have successfully requested for the ride'}, 200
+
 class Respond(Resource):
+    '''
+    User should be able to accept or reject a request for ride
+    '''
+    @jwt_required
     def put(self, ride_id, request_id):
         """
         accept or reject a ride
         """
-        pass
+        parser.add_argument('status', type=str, help="Status to update ride")
+        self.args =parser.parse_args()
 
+        values = ['accepted', 'rejected']
+        if self.args['status'].lower() not in values:
+            abort(400)
 
+        self.email = get_jwt_identity()
+        self.user = get_user_by_email(self.email)[0]
+        self.ride_owner = get_ride_owner_by_ride_id(ride_id)
+        if self.user != self.ride_owner:
+            abort(403)
+
+        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
+
+        self.cur = self.conn.cursor()
+
+        self.cur.execute('update requests set accept_status =%(accept_status)s where request_id =%(request_id)s',{'accept_status':self.args['status'], 'request_id': request_id})
+
+        self.cur.close()
+
+        self.conn.commit()
+
+        self.conn.close()
+
+        return {'success': 'request has been updated'}
+        
