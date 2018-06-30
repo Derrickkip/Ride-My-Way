@@ -106,4 +106,16 @@ def test_users_cannot_request_ride_twice(test_client):
 
     assert response.status_code == 400
 
+def test_user_can_view_requests_to_ride(test_client):
+    """
+    Test that ride owner can view ride requests
+    """
+    ride_id = get_ride_id(test_client)
+    auth_header = get_headers(test_client)
+    
+    response = test_client.get('/users/rides/'+str(ride_id)+'/requests', headers={'Authorization':auth_header},
+                               content_type='application/json')
+
+    assert response.status_code == 200
+
     
