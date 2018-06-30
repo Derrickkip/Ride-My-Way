@@ -3,7 +3,6 @@ Fixtures for apiV2
 """
 import urllib.parse
 import pytest
-from pytest_postgresql import factories
 import psycopg2
 import json
 
