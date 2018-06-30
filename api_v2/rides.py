@@ -147,7 +147,7 @@ class Rides(Resource):
         """
         create a new ride
         """
-        PARSER.add_argument('origin', type=str, help='where ride is from')
+        PARSER.add_argument('origin',type=str, help='where ride is from')
         PARSER.add_argument('destination', type=str, help='where ride is headed')
         PARSER.add_argument('date_of_ride', type=str, help='day of ride')
         PARSER.add_argument('time', type=str, help='time of trave')
@@ -298,6 +298,26 @@ class Ride(Resource):
 
         except(Exception, psycopg2.DatabaseError) as error:
             return {'error': str(error)}
+
+    @jwt_required
+    def delete(self, ride_id):
+        """
+        delete ride from table
+        """
+        email = get_jwt_identity()
+        user = get_user_by_email(email)[0]
+        ride_owner = get_ride_owner_by_ride_id(ride_id)
+        if user != ride_owner:
+            return {'forbidden': 'You dont have permission to perform this operation'}, 403
+
+        self.cur.execute('''delete from rides where ride_id=%(ride_id)s''',
+                         {'ride_id': ride_id})
+
+        self.cur.close()
+        self.conn.commit()
+        self.conn.close()
+
+        return {'success':'ride deleted'}
 
 class Requests(Resource):
     """
