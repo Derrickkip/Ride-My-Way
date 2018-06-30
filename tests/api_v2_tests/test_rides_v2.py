@@ -57,3 +57,13 @@ def test_create_ride(test_client):
 
     assert response.status_code == 201
 
+def test_user_cannot_create_same_ride(test_client):
+    """
+    Ride duplicates should be rejected
+    """
+    auth_header = get_headers(test_client)  
+    response = test_client.post('/users/rides', headers={'Authorization':auth_header},
+                                data=json.dumps(data[0]),content_type='application/json')
+
+    assert response.status_code == 400
+

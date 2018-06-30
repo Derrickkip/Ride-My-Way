@@ -3,7 +3,7 @@ Implements the rides endpoints
 """
 import urllib.parse
 import psycopg2
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 parser = reqparse.RequestParser()
@@ -75,7 +75,7 @@ class Rides(Resource):
 
         cur = conn.cursor()
 
-        cur.execute('select origin, destination, date_of_ride, time, price, user_id from rides')
+        cur.execute('select ride_id, origin, destination, date_of_ride, time, price, user_id from rides')
 
         rows = cur.fetchall()
 
@@ -83,12 +83,13 @@ class Rides(Resource):
         num = 1
         for row in rows:
             rides[num] = {
-                'origin':row[0],
-                'destinaton': row[1],
-                'date_of_ride': row[2],
-                'time': row[3],
-                'price': row[4],
-                'driver': get_user_by_id(row[5])
+                'id':row[0],
+                'origin':row[1],
+                'destinaton': row[2],
+                'date_of_ride': row[3],
+                'time': row[4],
+                'price': row[5],
+                'driver': get_user_by_id(row[6])
             }
             num += 1
 
@@ -115,9 +116,19 @@ class Ride(Resource):
 
         cur = conn.cursor()
 
-        cur.execute('select * from rides where ride_id=%(ride_id)s', {'ride_id':ride_id})
+        cur.execute('select ride_id, user_id, origin, destination, date_of_ride, time, price from rides where ride_id=%(ride_id)s', {'ride_id':ride_id})
 
-        rows = cur.fetchall()
+        rows = cur.fetchone()
+
+        ride = {
+            'id': rows[0],
+            'driver': get_user_by_id(rows[1]),
+            'origin': rows[2],
+            'destination': rows[3],
+            'date_of_ride': rows[4],
+            'time': rows[5],
+            'price': rows[6]
+        }
 
         cur.close()
 
@@ -125,7 +136,7 @@ class Ride(Resource):
 
         conn.close()
 
-        return rows
+        return {'ride': ride}
 
 class CreateRide(Resource):
     """
@@ -151,10 +162,23 @@ class CreateRide(Resource):
 
         email = get_jwt_identity()
         user = get_user_by_email(email)
+
         conn = psycopg2.connect(database=DATABASE, user=USERNAME,
                                 password=PASSWORD, host=HOSTNAME)
 
         cur = conn.cursor()
+
+        #check that user has not created the same ride twice
+
+        cur.execute("select date_of_ride, time from rides where user_id=%(user_id)s",{'user_id':user[0]})
+        
+        row = cur.fetchone()
+        if row:
+            ride_date = row[0]
+            ride_time = row[1]
+
+            if (ride_date==date_of_ride) and (ride_time==time):
+                abort(400)
 
         cur.execute("""INSERT INTO rides (origin, destination, date_of_ride, time, 
                     price, user_id) VALUES(%s, %s, %s, %s, %s, %s)""",
