@@ -164,4 +164,15 @@ def test_respond_to_rides(test_client):
                                data=json.dumps(status), content_type='application/json')
 
     assert response.status_code == 200
+
+def test_delete_ride(test_client):
+    """
+    Test that user can delete ride
+    """
+    auth_header = get_headers(test_client)
+    ride_id = get_ride_id(test_client)
+    response = test_client.delete('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+                                  content_type='application/json')
+
+    assert response.status_code == 200
     
