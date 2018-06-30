@@ -3,78 +3,94 @@ Implements the rides endpoints
 """
 import urllib.parse
 import psycopg2
-from flask import make_response, jsonify
+from flask import make_response, jsonify, request
 from flask_restful import Resource, reqparse, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 parser = reqparse.RequestParser()
 
-RESULT = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
-USERNAME = RESULT.username
-DATABASE = RESULT.path[1:]
-HOSTNAME = RESULT.hostname
-PASSWORD = RESULT.password
+DB = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
+USERNAME = DB.username
+DATABASE = DB.path[1:]
+HOSTNAME = DB.hostname
+PASSWORD = DB.password
 
 def get_user_by_email(email):
     """
     returns user with given email
     """
-    conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                            password=PASSWORD, host=HOSTNAME)
+    try:
+        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
 
-    cur = conn.cursor()
+        cur = conn.cursor()
 
-    cur.execute("select user_id, first_name from users where email=%(email)s", {'email':email})
+        cur.execute('''select
+                    user_id,
+                    first_name from users where email=%(email)s''', {'email':email})
 
-    rows = cur.fetchone()
+        rows = cur.fetchone()
 
-    cur.close()
+        cur.close()
 
-    conn.commit()
+        conn.commit()
 
-    conn.close()
+        conn.close()
 
 
-    return rows
+        return rows
+
+    except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
 def get_user_by_id(user_id):
     """
     return user name for user with given id
     """
-    conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                            password=PASSWORD, host=HOSTNAME)
+    try:
+        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
 
-    cur = conn.cursor()
+        cur = conn.cursor()
 
-    cur.execute("select first_name, last_name from users where user_id=%(user_id)s",
-                {'user_id':user_id})
+        cur.execute("select first_name, last_name from users where user_id=%(user_id)s",
+                    {'user_id':user_id})
 
-    rows = cur.fetchone()
-    full_name = rows[0] +' '+ rows[1]
+        rows = cur.fetchone()
+        full_name = rows[0] +' '+ rows[1]
 
-    cur.close()
+        cur.close()
 
-    conn.commit()
+        conn.commit()
 
-    conn.close()
+        conn.close()
 
 
-    return full_name
+        return full_name
+
+    except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
 def get_ride_owner_by_ride_id(ride_id):
     """
     returns ride with specified id
     """
-    conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                            password=PASSWORD, host=HOSTNAME)
+    try:
+        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
 
-    cur = conn.cursor()
+        cur = conn.cursor()
 
-    cur.execute('select user_id from rides where ride_id=%(ride_id)s', {'ride_id': ride_id})
-    
-    rows = cur.fetchone()
+        cur.execute('''select 
+                    user_id from rides where ride_id=%(ride_id)s''',
+                    {'ride_id': ride_id})
+        
+        rows = cur.fetchone()
+        if rows:
+            return rows[0]
 
-    return rows[0]
+    except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
 
 class Rides(Resource):
@@ -92,31 +108,43 @@ class Rides(Resource):
         """
         fetch all rides
         """
-        self.cur.execute('select ride_id, origin, destination, date_of_ride, time, price, user_id from rides')
 
-        rows = self.cur.fetchall()
+        try:
+            self.cur.execute('''select 
+                            ride_id,
+                            origin,
+                            destination,
+                            date_of_ride,
+                            time,
+                            price,
+                            user_id from rides''')
 
-        rides = {}
-        num = 1
-        for row in rows:
-            rides[num] = {
-                'id':row[0],
-                'origin':row[1],
-                'destinaton': row[2],
-                'date_of_ride': row[3],
-                'time': row[4],
-                'price': row[5],
-                'driver': get_user_by_id(row[6])
-            }
-            num += 1
+            rows = self.cur.fetchall()
 
-        self.cur.close()
+            rides = {}
+            num = 1
+            for row in rows:
+                rides[num] = {
+                    'id':row[0],
+                    'origin':row[1],
+                    'destinaton': row[2],
+                    'date_of_ride': row[3],
+                    'time': row[4],
+                    'price': row[5],
+                    'driver': get_user_by_id(row[6])
+                }
+                num += 1
 
-        self.conn.commit()
+            self.cur.close()
 
-        self.conn.close()
+            self.conn.commit()
 
-        return {'rides': rides}, 200
+            self.conn.close()
+
+            return {'rides': rides}, 200
+
+        except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
     @jwt_required
     def post(self):
@@ -139,69 +167,146 @@ class Rides(Resource):
         email = get_jwt_identity()
         user = get_user_by_email(email)
 
-        #check that user has not created the same ride twice
-
-        self.cur.execute("select date_of_ride, time from rides where user_id=%(user_id)s",{'user_id':user[0]})
         
-        row = self.cur.fetchone()
-        if row:
-            ride_date = row[0]
-            ride_time = row[1]
+        try:
+            #check that user has not created the same ride twice
+            self.cur.execute('''select 
+                            date_of_ride,
+                            time
+                            from rides where user_id=%(user_id)s''',
+                            {'user_id':user[0]})
+            
+            row = self.cur.fetchone()
+            if row:
+                ride_date = row[0]
+                ride_time = row[1]
 
-            if (ride_date==date_of_ride) and (ride_time==time):
-                abort(400)
+                if (ride_date==date_of_ride) and (ride_time==time):
+                    return {'bad request': 'You have already created a ride at that time'}, 400
+            #insert ride to database
 
-        #insert ride to database
+            self.cur.execute('''insert into rides
+                            (origin,
+                            destination,
+                            date_of_ride,
+                            time, 
+                            price, user_id) VALUES(%s, %s, %s, %s, %s, %s)''',
+                            [origin, destination, date_of_ride, time, price, user[0]])
+            
+            self.cur.close()
 
-        self.cur.execute("""INSERT INTO rides (origin, destination, date_of_ride, time, 
-                    price, user_id) VALUES(%s, %s, %s, %s, %s, %s)""",
-                    [origin, destination, date_of_ride, time, price, user[0]])
-        
-        self.cur.close()
+            self.conn.commit()
 
-        self.conn.commit()
+            self.conn.close()
 
-        self.conn.close()
+            return {'success': 'ride created'}, 201
 
-        return {'success': 'ride created'}, 201
+        except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
 
 class Ride(Resource):
     """
     returns a single ride specified by id
     """
+    def __init__(self):
+        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
+
+        self.cur = self.conn.cursor()
+
     @jwt_required
     def get(self, ride_id):
         """
         fetch single ride
         """
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
+        try:
+            self.cur.execute('''select ride_id,
+                            user_id,
+                            origin,
+                            destination,
+                            date_of_ride,
+                            time,
+                            price
+                            from rides where ride_id=%(ride_id)s''', {'ride_id':ride_id})
 
-        cur = conn.cursor()
+            rows = self.cur.fetchone()
+            if not rows:
+                return {'error': 'ride does not exist'}, 400
 
-        cur.execute('select ride_id, user_id, origin, destination, date_of_ride, time, price from rides where ride_id=%(ride_id)s', {'ride_id':ride_id})
+            ride = {
+                'id': rows[0],
+                'driver': get_user_by_id(rows[1]),
+                'origin': rows[2],
+                'destination': rows[3],
+                'date_of_ride': rows[4],
+                'time': rows[5],
+                'price': rows[6]
+            }
 
-        rows = cur.fetchone()
+            self.cur.close()
 
-        ride = {
-            'id': rows[0],
-            'driver': get_user_by_id(rows[1]),
-            'origin': rows[2],
-            'destination': rows[3],
-            'date_of_ride': rows[4],
-            'time': rows[5],
-            'price': rows[6]
-        }
+            self.conn.commit()
 
-        cur.close()
+            self.conn.close()
 
-        conn.commit()
+            return {'ride': ride}
 
-        conn.close()
+        except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
-        return {'ride': ride}    
-    
+    @jwt_required
+    def put(self, ride_id):  
+        """
+        Update ride details
+        """
+        #Only the ride creater should be able to update ride
+        email = get_jwt_identity()
+        user = get_user_by_email(email)[0]
+        ride_owner = get_ride_owner_by_ride_id(ride_id)
+
+        if user != ride_owner:
+            return {'forbidden': 'You dont have permission to perform this operation'},403
+        try:
+            self.cur.execute('''select 
+                            origin,
+                            destination,
+                            date_of_ride,
+                            time,
+                            price from rides where ride_id=%(ride_id)s''',
+                            {'ride_id':ride_id})
+
+            row = self.cur.fetchone()
+            if not row:
+                return {'request error': 'ride does not exist'}, 400
+
+            origin = row[0]
+            destination = row[1]
+            date_of_ride = row[2]
+            time = row[3]
+            price = row[4]
+
+            self.cur.execute('''update rides set 
+                            origin=%(origin)s, 
+                            destination=%(destination)s,
+                            date_of_ride=%(date_of_ride)s,
+                            time=%(time)s,
+                            price=%(price)s where ride_id=%(ride_id)s''',
+                            {'origin': request.json.get('origin',origin),
+                            'destination': request.json.get('destination', destination),
+                            'date_of_ride': request.json.get('date_of_ride', date_of_ride),
+                            'time': request.json.get('time', time),
+                            'price': request.json.get('price', price),
+                            'ride_id': ride_id})
+
+            self.cur.close()
+            self.conn.commit()
+            self.conn.close()
+
+            return {'success': 'ride details updated'}
+
+        except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
 class Requests(Resource):
     """
@@ -223,26 +328,34 @@ class Requests(Resource):
         ride_owner = get_ride_owner_by_ride_id(ride_id)
 
         if user != ride_owner:
-            abort(403)
+            return {'forbidden': 'You dont have permission to perform this operation'},403
+        try:
+            self.cur.execute('''select 
+                            request_id,
+                            user_id,
+                            accept_status
+                            from requests where ride_id=%(ride_id)s''',
+                            {'ride_id': ride_id})
 
-        self.cur.execute('select request_id, user_id, accept_status from requests where ride_id=%(ride_id)s', {'ride_id': ride_id})
+            rows = self.cur.fetchall()
+            if rows:
+                requests = {}
+                num = 1
+                for row in rows:
+                    requests[num] = {
+                        'id':row[0],
+                        'user_name': get_user_by_id(row[1]),
+                        'accept_status': row[2]
+                    }
+                    num += 1
 
-        rows = self.cur.fetchall()
-        if rows:
-            requests = {}
-            num = 1
-            for row in rows:
-                requests[num] = {
-                    'id':row[0],
-                    'user_name': get_user_by_id(row[1]),
-                    'accept_status': row[2]
-                }
-                num += 1
+                return requests
 
-            return requests
+            else:
+                return {'result':'0 requests for this ride'}
 
-        else:
-            return {'result':'0 requests for this ride'}
+        except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
     @jwt_required
     def post(self, ride_id):
@@ -252,24 +365,31 @@ class Requests(Resource):
         email = get_jwt_identity()
         user = get_user_by_email(email)
 
-        self.cur.execute("select ride_id from requests where user_id=%(user_id)s", {'user_id': user[0]})
+        try:
+            #check that user has not requested for the ride
+            self.cur.execute('''select
+                            ride_id
+                            from requests where user_id=%(user_id)s''',
+                            {'user_id': user[0]})
 
-        row = self.cur.fetchone()
+            row = self.cur.fetchone()
 
-        if row:
+            if row:
+                if row[0] == ride_id:
+                    return {'bad request': 'you have already requested for this ride'}, 400
+            self.cur.execute('''insert into requests (user_id, ride_id) values (%s, %s)''',
+                            [user[0], ride_id])
 
-            if row[0] == ride_id:
-                abort(400)
+            self.cur.close()
 
-        self.cur.execute("insert into requests (user_id, ride_id) values (%s, %s)", [user[0], ride_id])
+            self.conn.commit()
 
-        self.cur.close()
+            self.conn.close()
 
-        self.conn.commit()
+            return {'success':'You have successfully requested for the ride'}, 200
 
-        self.conn.close()
-
-        return {'success':'You have successfully requested for the ride'}, 200
+        except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
 
 class Respond(Resource):
     '''
@@ -285,26 +405,33 @@ class Respond(Resource):
 
         values = ['accepted', 'rejected']
         if self.args['status'].lower() not in values:
-            abort(400)
+            return {'bad request': 'the status update should be either rejected or accepted'},400
 
         self.email = get_jwt_identity()
         self.user = get_user_by_email(self.email)[0]
         self.ride_owner = get_ride_owner_by_ride_id(ride_id)
         if self.user != self.ride_owner:
-            abort(403)
+            return {'forbidden': 'You dont have permission to perform this operation'},403
+        
+        try:
+            self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                    password=PASSWORD, host=HOSTNAME)
 
-        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
+            self.cur = self.conn.cursor()
 
-        self.cur = self.conn.cursor()
+            self.cur.execute('''update requests
+                            set accept_status =%(accept_status)s 
+                            where request_id =%(request_id)s''',
+                            {'accept_status':self.args['status'], 'request_id': request_id})
 
-        self.cur.execute('update requests set accept_status =%(accept_status)s where request_id =%(request_id)s',{'accept_status':self.args['status'], 'request_id': request_id})
+            self.cur.close()
 
-        self.cur.close()
+            self.conn.commit()
 
-        self.conn.commit()
+            self.conn.close()
 
-        self.conn.close()
+            return {'success': 'request has been updated'}
 
-        return {'success': 'request has been updated'}
+        except(Exception, psycopg2.DatabaseError) as error:
+            return {'error': str(error)}
         
