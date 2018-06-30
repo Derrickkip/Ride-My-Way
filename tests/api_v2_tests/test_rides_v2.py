@@ -67,7 +67,7 @@ def test_create_ride(test_client):
     test that a user can create rides
     """
     auth_header = get_headers(test_client)  
-    response = test_client.post('/users/rides', headers={'Authorization':auth_header},
+    response = test_client.post('/rides', headers={'Authorization':auth_header},
                                 data=json.dumps(data[0]),content_type='application/json')
 
     assert response.status_code == 201
@@ -77,7 +77,7 @@ def test_user_cannot_create_same_ride(test_client):
     Ride duplicates should be rejected
     """
     auth_header = get_headers(test_client)  
-    response = test_client.post('/users/rides', headers={'Authorization':auth_header},
+    response = test_client.post('/rides', headers={'Authorization':auth_header},
                                 data=json.dumps(data[0]),content_type='application/json')
 
     assert response.status_code == 400
@@ -90,7 +90,7 @@ def test_users_can_request_rides(test_client):
     auth_header = get_headers(test_client)
     
     response = test_client.post('/rides/'+str(ride_id)+'/requests', headers={'Authorization':auth_header},
-                                data=json.dumps(data[0]),content_type='application/json')
+                                content_type='application/json')
 
     assert response.status_code == 200
 
@@ -102,7 +102,7 @@ def test_users_cannot_request_ride_twice(test_client):
     auth_header = get_headers(test_client)
     
     response = test_client.post('/rides/'+str(ride_id)+'/requests', headers={'Authorization':auth_header},
-                                data=json.dumps(data[0]),content_type='application/json')
+                                content_type='application/json')
 
     assert response.status_code == 400
 
@@ -113,8 +113,29 @@ def test_user_can_view_requests_to_ride(test_client):
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)
     
-    response = test_client.get('/users/rides/'+str(ride_id)+'/requests', headers={'Authorization':auth_header},
+    response = test_client.get('/rides/'+str(ride_id)+'/requests', headers={'Authorization':auth_header},
                                content_type='application/json')
+
+    assert response.status_code == 200
+
+def test_user_can_accept_or_reject_ride_offers(test_client):
+    """
+    Test that user can either accept or reject ride
+    """
+    ride_id = get_ride_id(test_client)
+    auth_header = get_headers(test_client)
+
+    req_response = test_client.get('/rides/'+str(ride_id)+'/requests', headers={'Authorization':auth_header},
+                               content_type='application/json')
+
+    result = json.loads(req_response.data)
+
+    request_id = result["1"]["id"]
+
+    status = {'status': "accepted"}
+
+    response = test_client.put('/rides/'+str(ride_id)+'/requests/'+str(request_id), headers={'Authorization':auth_header},
+                               data=json.dumps(status), content_type='application/json')
 
     assert response.status_code == 200
 
