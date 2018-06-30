@@ -6,7 +6,8 @@ import unittest
 from api_v2 import create_app
 
 data = [{'origin': 'Kisumu', 'destination': 'Kericho',
-         'date_of_ride': '20th June 2018', 'time': "10:00 pm", "price":100}]
+         'date_of_ride': '20th June 2018', 'time': "10:00 pm", "price":100},
+         { 'origin':'Siaya', 'date_of_ride': '13th July 2018'}]
 
 def get_headers(test_client):
     """
@@ -81,6 +82,28 @@ def test_user_cannot_create_same_ride(test_client):
                                 data=json.dumps(data[0]),content_type='application/json')
 
     assert response.status_code == 400
+
+def test_get_single_ride(test_client):
+    """
+    test user can view details of single ride
+    """
+    ride_id = get_ride_id(test_client)
+    auth_header = get_headers(test_client)
+    response = test_client.get('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+                               content_type='application/json')
+
+    assert response.status_code == 200
+
+def test_user_can_update_ride(test_client):
+    """
+    test update endpoint working
+    """
+    auth_header = get_headers(test_client) 
+    ride_id = get_ride_id(test_client) 
+    response = test_client.put('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+                                data=json.dumps(data[1]),content_type='application/json')
+
+    assert response.status_code == 200
 
 def test_users_can_request_rides(test_client):
     """
