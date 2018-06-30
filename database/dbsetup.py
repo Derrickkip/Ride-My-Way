@@ -36,7 +36,7 @@ def create_tables():
                 request_id SERIAL primary key,
                 user_id int references users(user_id),
                 ride_id int references rides(ride_id),
-                accept_status varchar(80) default 'pending',
+                accept_status varchar(80) default 'pending'
         )
         """
     )
