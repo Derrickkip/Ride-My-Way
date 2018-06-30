@@ -61,6 +61,21 @@ def get_user_by_id(user_id):
 
     return full_name
 
+def get_ride_owner_by_ride_id(ride_id):
+    """
+    returns ride with specified id
+    """
+    conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                            password=PASSWORD, host=HOSTNAME)
+
+    cur = conn.cursor()
+
+    cur.execute('select user_id from rides where ride_id=%(ride_id)s', {'ride_id': ride_id})
+    
+    rows = cur.fetchone()
+
+    return rows[0]
+
 
 class Rides(Resource):
     """
@@ -230,11 +245,43 @@ class MakeRequest(Resource):
         return {'success':'You have successfully requested for the ride'}, 200
 
 class Requests(Resource):
+    """
+    get all requests for ride with specified ride_id
+    """
+    @jwt_required
     def get(self, ride_id):
         """
         get all requests to ride
         """
-        pass
+        email = get_jwt_identity()
+        user = get_user_by_email(email)[0]
+        ride_owner = get_ride_owner_by_ride_id(ride_id)
+
+        if user != ride_owner:
+            abort(403)
+
+        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
+                                password=PASSWORD, host=HOSTNAME)
+
+        cur = conn.cursor()
+
+        cur.execute('select request_id, user_id from requests where ride_id=%(ride_id)s', {'ride_id': ride_id})
+
+        rows = cur.fetchall()
+        if rows:
+            requests = {}
+            num = 1
+            for row in rows:
+                requests[num] = {
+                    'id':row[0],
+                    'user_name': get_user_by_id(row[1])
+                }
+                num += 1
+
+            return requests
+
+        else:
+            return {'result':'0 requests for this ride'}
 
 class Respond(Resource):
     def put(self, ride_id, request_id):

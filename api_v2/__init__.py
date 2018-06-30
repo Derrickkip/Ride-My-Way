@@ -27,7 +27,7 @@ def create_app(config_name):
     api.add_resource(Ride, '/rides/<int:ride_id>')
     api.add_resource(CreateRide, '/users/rides')
     api.add_resource(MakeRequest, '/rides/<int:ride_id>/requests')
-    api.add_resource(Requests, '/users/rides/<int:ride_id>')
+    api.add_resource(Requests, '/users/rides/<int:ride_id>/requests')
     api.add_resource(Respond, '/users/rides/<int:ride_id>/requests/<int:request_id>')
 
     return app
