@@ -23,7 +23,7 @@ def create_tables():
         """,
         """ CREATE TABLE rides (
                 ride_id SERIAL primary key,
-                user_id int not null references users(user_id),
+                user_id int not null references users(user_id) on delete cascade,
                 origin varchar(80) not null,
                 destination varchar(80) not null,
                 date_of_ride varchar(80) not null,
@@ -34,8 +34,8 @@ def create_tables():
         """,
         """ CREATE TABLE requests (
                 request_id SERIAL primary key,
-                user_id int references users(user_id),
-                ride_id int references rides(ride_id),
+                user_id int references users(user_id) on delete cascade,
+                ride_id int references rides(ride_id) on delete cascade,
                 accept_status varchar(80) default 'pending'
         )
         """
