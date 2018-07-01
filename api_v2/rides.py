@@ -5,7 +5,7 @@ import urllib.parse
 import psycopg2
 from flask import request
 from flask_restful import Resource
-from schema import Schema, And, Use
+from jsonschema import validate
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 DB = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
@@ -13,6 +13,24 @@ USERNAME = DB.username
 DATABASE = DB.path[1:]
 HOSTNAME = DB.hostname
 PASSWORD = DB.password
+
+RIDE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "origin": {"type": "string"},
+        "destination": {"type": "string"},
+        "date_of_ride": {"type": "string"},
+        "time": {"type": "string"},
+        "price": {"type": "number"}
+    }
+}
+
+RESPONSE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "status": {"enum": ["accepted", "rejected"]}
+    }
+}
 
 def get_user_by_email(email):
     """
@@ -35,7 +53,7 @@ def get_user_by_email(email):
 
         return rows
 
-    except(Exception, psycopg2.DatabaseError) as error:
+    except psycopg2.DatabaseError as error:
         return {'error': str(error)}
 
 def get_user_by_id(user_id):
@@ -59,7 +77,7 @@ def get_user_by_id(user_id):
 
         return full_name
 
-    except(Exception, psycopg2.DatabaseError) as error:
+    except psycopg2.DatabaseError as error:
         return {'error': str(error)}
 
 def get_ride_owner_by_ride_id(ride_id):
@@ -83,7 +101,7 @@ def get_ride_owner_by_ride_id(ride_id):
 
         return rows[0]
 
-    except(Exception, psycopg2.DatabaseError) as error:
+    except psycopg2.DatabaseError as error:
         return {'error': str(error)}
 
 class Rides(Resource):
@@ -99,7 +117,18 @@ class Rides(Resource):
     @jwt_required
     def get(self):
         """
-        fetch all rides
+        get all ride offers
+        ---
+        tags:
+            - Rides
+        security:
+            - Bearer: []
+        responses:
+            200:
+                description: Success
+                schema:
+                    $ref: '#/definitions/Rides'
+
         """
 
         try:
@@ -133,25 +162,36 @@ class Rides(Resource):
 
             return {'rides': rides}, 200
 
-        except(Exception, psycopg2.DatabaseError) as error:
+        except psycopg2.DatabaseError as error:
             return {'error': str(error)}
 
     @jwt_required
     def post(self):
         """
-        create a new ride
+        create a new ride offer
+        ---
+        tags:
+            - Rides
+        security:
+            - Bearer: []
+        parameters:
+            - name: Rides
+              in: body
+              schema:
+                $ref: '#/definitions/Rides'
+        responses:
+            201:
+                description: Ride successfully created
+            400:
+                description: Bad request
+
         """
         data = request.json
-        schema = Schema({'origin': And(str, len), 'destination': And(str, len),
-                         'date_of_ride': And(str, len), 'time': And(str, len),
-                         'price': Use(int)})
-
-        if not schema.is_valid(data):
-            return {"bad request":"A required field is missing or a value is empty"}, 400
+        validate(data, RIDE_SCHEMA)
 
         for key in data.keys():
             if str(data[key]).isspace():
-                return {'bad request': 'values cannot be spaces'}
+                return {'bad request': 'values cannot be spaces'}, 400
 
         origin = data['origin']
         destination = data['destination']
@@ -193,13 +233,13 @@ class Rides(Resource):
 
             return {'success': 'ride created'}, 201
 
-        except(Exception, psycopg2.DatabaseError) as error:
+        except psycopg2.DatabaseError as error:
             return {'error': str(error)}
 
 
 class Ride(Resource):
     """
-    returns a single ride specified by id
+    Single ride operations
     """
     def __init__(self):
         self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
@@ -210,7 +250,27 @@ class Ride(Resource):
     @jwt_required
     def get(self, ride_id):
         """
-        fetch single ride
+        view details of a ride offer
+        ---
+        tags:
+            - Rides
+        description: view details of a ride
+        security:
+            - Bearer: []
+        parameters:
+            - name: ride_id
+              in: path
+              type: int
+              description: Id of ride to fetch
+
+        responses:
+            200:
+                description: ride fetched
+                schema:
+                    $ref: '#/definitions/Rides'
+            404:
+                description: ride not found
+
         """
         try:
             self.cur.execute('''select ride_id,
@@ -224,7 +284,7 @@ class Ride(Resource):
 
             rows = self.cur.fetchone()
             if not rows:
-                return {'error': 'ride does not exist'}, 400
+                return {'error': 'ride not found'}, 404
 
             ride = {
                 'id': rows[0],
@@ -241,18 +301,42 @@ class Ride(Resource):
 
             return {'ride': ride}
 
-        except(Exception, psycopg2.DatabaseError) as error:
+        except psycopg2.DatabaseError as error:
             return {'error': str(error)}
 
     @jwt_required
     def put(self, ride_id):
         """
-        Update ride details
+        Update ride offer
+        ---
+        tags:
+            - Rides
+        description: Update details of a ride send only fields to update
+        security:
+            - Bearer: []
+        parameters:
+            - name: ride_id
+              in: path
+              type: int
+              description: Id of ride to update
+            - name: ride
+              in: body
+              schema:
+                $ref: '#/definitions/Rides'
+
+        responses:
+            200:
+                description: ride updated
+            404:
+                description: ride not found
         """
         #Only the ride creater should be able to update ride
         email = get_jwt_identity()
         user = get_user_by_email(email)[0]
         ride_owner = get_ride_owner_by_ride_id(ride_id)
+
+        if ride_owner is None:
+            return {'error': 'ride not found'}, 404
 
         if user != ride_owner:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
@@ -267,7 +351,7 @@ class Ride(Resource):
 
             row = self.cur.fetchone()
             if not row:
-                return {'request error': 'ride does not exist'}, 400
+                return {'request error': 'ride not found'}, 404
 
             origin = row[0]
             destination = row[1]
@@ -294,32 +378,54 @@ class Ride(Resource):
 
             return {'success': 'ride details updated'}
 
-        except(Exception, psycopg2.DatabaseError) as error:
+        except psycopg2.DatabaseError as error:
             return {'error': str(error)}
 
     @jwt_required
     def delete(self, ride_id):
         """
-        delete ride from table
+        delete ride offer
+        ---
+        tags:
+            - Rides
+        security:
+            - Bearer: []
+        parameters:
+            - name: ride_id
+              in: path
+              type: int
+              description: Id of ride to update
+        responses:
+            200:
+                description: ride deleted
+            404:
+                description: ride not found
+
         """
         email = get_jwt_identity()
         user = get_user_by_email(email)[0]
         ride_owner = get_ride_owner_by_ride_id(ride_id)
+        if ride_owner is None:
+            return {'error':'Ride not found'}, 404
         if user != ride_owner:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
 
-        self.cur.execute('''delete from rides where ride_id=%(ride_id)s''',
-                         {'ride_id': ride_id})
+        try:
+            self.cur.execute('''delete from rides where ride_id=%(ride_id)s''',
+                             {'ride_id': ride_id})
 
-        self.cur.close()
-        self.conn.commit()
-        self.conn.close()
+            self.cur.close()
+            self.conn.commit()
+            self.conn.close()
 
-        return {'success':'ride deleted'}
+        except psycopg2.DatabaseError as error:
+            return {'error': str(error)}
+
+        return {'success':'ride deleted'}, 200
 
 class Requests(Resource):
     """
-    get all requests for ride with specified ride_id
+    Requests operations
     """
     def __init__(self):
         self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
@@ -330,14 +436,33 @@ class Requests(Resource):
     @jwt_required
     def get(self, ride_id):
         """
-        get all requests to ride
+        get all requests to a ride offer
+        ---
+        tags:
+            - Rides
+        security:
+            - Bearer: []
+
+        parameters:
+            - name: ride_id
+              in: path
+              type: int
+              description: Id of ride you want to see requests
+
+        responses:
+            200:
+                description: success
+                schema:
+                    $ref: '#/definitions/Requests'
+            404:
+                description: ride not found
         """
         email = get_jwt_identity()
         user = get_user_by_email(email)[0]
         ride_owner = get_ride_owner_by_ride_id(ride_id)
 
         if ride_owner is None:
-            return {'error': 'The requested ride could not be found'}, 400
+            return {'error': 'ride not found'}, 404
 
         if user != ride_owner:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
@@ -363,16 +488,39 @@ class Requests(Resource):
 
             return requests
 
-        except(Exception, psycopg2.DatabaseError) as error:
+        except psycopg2.DatabaseError as error:
             return {'error': str(error)}
 
     @jwt_required
     def post(self, ride_id):
         """
-        request a ride
+        request to join a ride offer
+        ---
+        tags:
+            - Rides
+        security:
+            - Bearer: []
+
+        parameters:
+            - name: ride_id
+              in: path
+              type: int
+              description: Id of ride you want requests
+
+        responses:
+            200:
+                description: successfully requested
+            400:
+                description: bad request
+            404:
+                description: ride not found
         """
         email = get_jwt_identity()
         user = get_user_by_email(email)
+        ride = get_ride_owner_by_ride_id(ride_id)
+
+        if ride is None:
+            return {"error": "ride not found"}, 404
 
         try:
             #check that user has not requested for the ride
@@ -395,7 +543,7 @@ class Requests(Resource):
 
             return {'success':'You have successfully requested for the ride'}, 200
 
-        except(Exception, psycopg2.DatabaseError) as error:
+        except psycopg2.DatabaseError as error:
             return {'error': str(error)}
 
 class Respond(Resource):
@@ -411,21 +559,43 @@ class Respond(Resource):
     @jwt_required
     def put(self, ride_id, request_id):
         """
-        accept or reject a ride
+        accept or reject a request to a ride offer 
+        ---
+        tags:
+            - Rides
+        security:
+            - Bearer: []
+
+        parameters:
+            - name: ride_id
+              in: path
+              type: int
+              description: Id of ride you want to respond to
+            - name: request_id
+              in: path
+              type: int
+              description: Id of request you want to respond to
+            - name: response
+              in: body
+              schema:
+                $ref: '#/definitions/Response'
+
+        responses:
+            200:
+                description: success
+            400:
+                description: Bad request
+            403:
+                description: Unauthorised, Only owners of ride can respond to requests
         """
         data = request.json
-        schema = Schema({'status': And(str, len)})
-
-        if not schema.is_valid(data):
-            return {'error': 'status is missing in the request'}
-
-        values = ['accepted', 'rejected']
-        if data['status'].lower() not in values:
-            return {'bad request': 'the status update should be either rejected or accepted'}, 400
+        validate(data, RESPONSE_SCHEMA)
 
         email = get_jwt_identity()
         user = get_user_by_email(email)[0]
         ride_owner = get_ride_owner_by_ride_id(ride_id)
+        if not ride_owner:
+            return {'error': 'ride not found'}, 404
         if user != ride_owner:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
 
@@ -441,5 +611,5 @@ class Respond(Resource):
 
             return {'success': 'request has been updated'}
 
-        except(Exception, psycopg2.DatabaseError) as error:
+        except psycopg2.DatabaseError as error:
             return {'error': str(error)}

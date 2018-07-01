@@ -50,4 +50,4 @@ def test_wrong_credentials(test_client):
     response = test_client.post('/auth/login', data=json.dumps(DATA[2]),
                                 content_type='application/json')
 
-    assert response.status_code == 400
+    assert response.status_code == 404

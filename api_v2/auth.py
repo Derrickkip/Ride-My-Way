@@ -5,7 +5,7 @@ import urllib.parse
 from flask import jsonify, request
 from flask_restful import Resource
 from flask_jwt_extended import create_access_token
-from schema import Schema, And
+from jsonschema import validate
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -14,6 +14,24 @@ USERNAME = RESULT.username
 DATABASE = RESULT.path[1:]
 HOSTNAME = RESULT.hostname
 PASSWORD = RESULT.password
+
+SIGNUP_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "first_name": {"type": "string"},
+        "last_name": {"type": "string"},
+        "email": {"type": "string"},
+        "password": {"type": "string"}
+    }
+}
+
+LOGIN_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "email": {"type": "string"},
+        "password": {"type": "string"}
+    }
+}
 
 def get_user(email):
     """
@@ -42,14 +60,24 @@ class Signup(Resource):
 
     def post(self):
         """
-        signup for an account
+        Signup
+        ---
+        tags:
+            - Auth
+        parameters:
+            - name: User
+              in: body
+              schema:
+                $ref: '#/definitions/UserSignup'
+        responses:
+            201:
+                type: object
+                description: Account created successfully
+            400:
+                description: Bad request
         """
         data = request.json
-        schema = Schema({'first_name': And(str, len), 'last_name': And(str, len),
-                         'email': And(str, len), 'password': And(str, len)})
-
-        if not schema.is_valid(data):
-            return {'error': 'Check your input for missing fields or empty values'}, 400
+        validate(data, SIGNUP_SCHEMA)
 
         for key in data.keys():
             if data[key].isspace():
@@ -64,27 +92,26 @@ class Signup(Resource):
 
         data = [firstname, lastname, email, password_hash]
 
-        if not get_user(email):
-
-            try:
-
-                sql = """INSERT INTO users (first_name, last_name, email, password)
-                            VALUES(%s, %s, %s, %s)"""
-
-                self.cur.execute(sql, data)
-
-                self.cur.close()
-
-                self.conn.commit()
-
-                self.conn.close()
-
-                return {'success': 'user account created'}, 201
-
-            except(Exception, psycopg2.DatabaseError) as error:
-                return {'error': str(error)}
-        else:
+        if get_user(email):
             return {'error': 'user already exists'}, 400
+
+        try:
+
+            sql = """INSERT INTO users (first_name, last_name, email, password)
+                        VALUES(%s, %s, %s, %s)"""
+
+            self.cur.execute(sql, data)
+
+            self.cur.close()
+
+            self.conn.commit()
+
+            self.conn.close()
+
+        except psycopg2.DatabaseError as error:
+            return {'error': str(error)}
+
+        return {'success': 'user account created'}, 201
 
 
 class Login(Resource):
@@ -99,17 +126,31 @@ class Login(Resource):
 
     def post(self):
         """
-        login into  account
+        Login
+        ---
+        tags:
+            - Auth
+        description: login into account
+        parameters:
+            - name: login details
+              in: body
+              schema:
+                $ref: '#/definitions/UserLogin'
+        responses:
+            200:
+                description: login successfull
+            400:
+                description: Bad request
+            404:
+                description: Wrong credentials
+
         """
         data = request.json
-        schema = Schema({'email': And(str, len), 'password': And(str, len)})
-
-        if not schema.is_valid(data):
-            return {'bad request': 'Check your input for missing keys or empty values'}, 400
+        validate(data, LOGIN_SCHEMA)
 
         for key in data.keys():
             if data[key].isspace():
-                return {'error': "values cannot be empty strings"}
+                return {'error': "values cannot be empty strings"}, 400
 
         email = data['email']
         password = data['password']
@@ -118,24 +159,24 @@ class Login(Resource):
             try:
 
                 self.cur.execute('''SELECT first_name,
-                                 password FROM users WHERE email=%(email)s''',
+                                    password FROM users WHERE email=%(email)s''',
                                  {'email':email})
 
-                rows = self.cur.fetchone()
-
-                if not rows:
-                    return {'error': 'Authentication failed user unknown'}
-
-                firstname = rows[0]
-                stored_password = rows[1]
-
-                if check_password_hash(stored_password, password):
-                    access_token = create_access_token(email, firstname)
-
-                    return {"success":"login successful",
-                            "access_token": access_token}
-
-            except(Exception, psycopg2.DatabaseError) as error:
+            except psycopg2.DatabaseError as error:
                 return jsonify({'error': str(error)})
 
-        return {'error':'wrong credentials'}, 400
+            rows = self.cur.fetchone()
+
+            if not rows:
+                return {'error': 'Authentication failed user unknown'}
+
+            firstname = rows[0]
+            stored_password = rows[1]
+
+            if check_password_hash(stored_password, password):
+                access_token = create_access_token(email, firstname)
+
+                return {"success":"login successful",
+                        "access_token": access_token}
+
+        return {'error':'wrong credentials'}, 404
