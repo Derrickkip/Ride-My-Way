@@ -7,11 +7,6 @@ import psycopg2
 
 from api_v2 import create_app
 
-DB = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
-USERNAME = DB.username
-DATABASE = DB.path[1:]
-HOSTNAME = DB.hostname
-PASSWORD = DB.password
 
 @pytest.fixture(scope='module')
 def test_client(request):
@@ -23,6 +18,7 @@ def test_client(request):
 
     ctx = app.app_context()
     ctx.push()
+    db = app.config['DATABASE']
     yield app_client
 
     def fin():
@@ -31,8 +27,7 @@ def test_client(request):
         '''
         print('deleting data')
 
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
+        conn = psycopg2.connect(db)
 
         cur = conn.cursor()
 

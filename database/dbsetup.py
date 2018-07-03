@@ -3,6 +3,15 @@ Database setup
 """
 
 import psycopg2
+from flask import current_app
+
+def dbconn():
+    """
+    return db connector
+    """
+    conn = psycopg2.connect(current_app.config['DATABASE'])
+
+    return conn
 
 def create_tables():
     """
@@ -41,11 +50,9 @@ def create_tables():
         """
     )
     
-    conn = None
     
     try:
-        conn = psycopg2.connect(dbname='testdb', host='localhost',
-                            user='testuser', password='testuser')
+        conn = dbconn()
         
         cur = conn.cursor()
         #create tables

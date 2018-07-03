@@ -8,12 +8,7 @@ from flask_jwt_extended import create_access_token
 from jsonschema import validate
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
-
-RESULT = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
-USERNAME = RESULT.username
-DATABASE = RESULT.path[1:]
-HOSTNAME = RESULT.hostname
-PASSWORD = RESULT.password
+from database.dbsetup import dbconn
 
 SIGNUP_SCHEMA = {
     "type": "object",
@@ -37,14 +32,17 @@ def get_user(email):
     """
     Helper method to check if user exists in database
     """
-    conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                            password=PASSWORD, host=HOSTNAME)
+    conn = dbconn()
 
     cur = conn.cursor()
 
     cur.execute("select * from users where email=%(email)s", {'email':email})
 
     rows = cur.fetchone()
+
+    cur.close()
+
+    conn.close()
 
     return rows is not None
 
@@ -53,8 +51,7 @@ class Signup(Resource):
     Signup route handler
     """
     def __init__(self):
-        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                     password=PASSWORD, host=HOSTNAME)
+        self.conn = dbconn()
 
         self.cur = self.conn.cursor()
 
@@ -71,7 +68,6 @@ class Signup(Resource):
                 $ref: '#/definitions/UserSignup'
         responses:
             201:
-                type: object
                 description: Account created successfully
             400:
                 description: Bad request
@@ -119,8 +115,7 @@ class Login(Resource):
     Login route handler
     """
     def __init__(self):
-        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                     password=PASSWORD, host=HOSTNAME)
+        self.conn = dbconn()
 
         self.cur = self.conn.cursor()
 

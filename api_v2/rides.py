@@ -7,12 +7,7 @@ from flask import request
 from flask_restful import Resource
 from jsonschema import validate
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
-DB = urllib.parse.urlparse("postgresql://testuser:testuser@localhost/testdb")
-USERNAME = DB.username
-DATABASE = DB.path[1:]
-HOSTNAME = DB.hostname
-PASSWORD = DB.password
+from database.dbsetup import dbconn
 
 RIDE_SCHEMA = {
     "type": "object",
@@ -37,8 +32,7 @@ def get_user_by_email(email):
     returns user with given email
     """
     try:
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
+        conn = dbconn()
 
         cur = conn.cursor()
 
@@ -61,9 +55,7 @@ def get_user_by_id(user_id):
     return user name for user with given id
     """
     try:
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
-
+        conn = dbconn()
         cur = conn.cursor()
 
         cur.execute("select first_name, last_name from users where user_id=%(user_id)s",
@@ -85,9 +77,7 @@ def get_ride_owner_by_ride_id(ride_id):
     returns ride with specified id
     """
     try:
-        conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                password=PASSWORD, host=HOSTNAME)
-
+        conn = dbconn()
         cur = conn.cursor()
 
         cur.execute('''select
@@ -109,9 +99,7 @@ class Rides(Resource):
     handler for /rides endpoint
     """
     def __init__(self):
-        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                     password=PASSWORD, host=HOSTNAME)
-
+        self.conn = dbconn()
         self.cur = self.conn.cursor()
 
     @jwt_required
@@ -242,9 +230,7 @@ class Ride(Resource):
     Single ride operations
     """
     def __init__(self):
-        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                     password=PASSWORD, host=HOSTNAME)
-
+        self.conn = dbconn()
         self.cur = self.conn.cursor()
 
     @jwt_required
@@ -428,9 +414,7 @@ class Requests(Resource):
     Requests operations
     """
     def __init__(self):
-        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                     password=PASSWORD, host=HOSTNAME)
-
+        self.conn = dbconn()
         self.cur = self.conn.cursor()
 
     @jwt_required
@@ -485,6 +469,8 @@ class Requests(Resource):
                     'accept_status': row[2]
                 }
                 num += 1
+            self.cur.close()
+            self.conn.close()
 
             return requests
 
@@ -551,9 +537,7 @@ class Respond(Resource):
     User should be able to accept or reject a request for ride
     '''
     def __init__(self):
-        self.conn = psycopg2.connect(database=DATABASE, user=USERNAME,
-                                     password=PASSWORD, host=HOSTNAME)
-
+        self.conn = dbconn()
         self.cur = self.conn.cursor()
 
     @jwt_required
