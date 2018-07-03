@@ -13,7 +13,7 @@ before_script:
   - psql -c "create role testuser with superuser login password 'testuser';" -U postgres
   - psql -c 'create database testdb;' -U postgres
   - psql -c 'alter database testdb owner to testuser' -U postgres
-  - python database/dbsetup.py
+  - python database/tables.py
 
 script:
   - coverage run -m pytest
