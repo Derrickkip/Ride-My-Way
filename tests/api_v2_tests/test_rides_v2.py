@@ -92,6 +92,16 @@ def test_get_single_ride(test_client):
 
     assert response.status_code == 200
 
+def test_non_existent_ride(test_client):
+    """
+    test that requesting for none existent ride raises 404 error
+    """
+    auth_header = get_headers(test_client)
+    response = test_client.get('/rides/50000', headers={'Authorization':auth_header},
+                               content_type='application/json')
+
+    assert response.status_code == 404
+
 def test_user_can_update_ride(test_client):
     """
     test update endpoint working

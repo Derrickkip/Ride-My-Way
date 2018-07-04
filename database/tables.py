@@ -39,11 +39,11 @@ def create_tables():
         )
         """
     )
-    
-    
+
     try:
-        conn = psycopg2.connect(database="testdb", user="testuser", password="testuser", host="localhost")
-        
+        conn = psycopg2.connect(database="testdb", user="testuser",
+                                password="testuser", host="localhost")
+
         cur = conn.cursor()
         #create tables
         for command in commands:
@@ -54,8 +54,8 @@ def create_tables():
         conn.commit()
 
         conn.close()
-    except (Exception, psycopg2.DatabaseError) as Error:
-        print(Error)
+    except psycopg2.DatabaseError as error:
+        print(error)
 
 
 if __name__ == '__main__':

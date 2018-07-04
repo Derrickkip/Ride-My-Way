@@ -1,14 +1,10 @@
 """
 Routes for user authentication
 """
-import urllib.parse
-from flask import jsonify, request
+from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import create_access_token
 from jsonschema import validate
-import psycopg2
-from werkzeug.security import generate_password_hash, check_password_hash
-from database.dbsetup import dbconn
+from database.dbsetup import Users
 
 SIGNUP_SCHEMA = {
     "type": "object",
@@ -28,33 +24,10 @@ LOGIN_SCHEMA = {
     }
 }
 
-def get_user(email):
-    """
-    Helper method to check if user exists in database
-    """
-    conn = dbconn()
-
-    cur = conn.cursor()
-
-    cur.execute("select * from users where email=%(email)s", {'email':email})
-
-    rows = cur.fetchone()
-
-    cur.close()
-
-    conn.close()
-
-    return rows is not None
-
 class Signup(Resource):
     """
     Signup route handler
     """
-    def __init__(self):
-        self.conn = dbconn()
-
-        self.cur = self.conn.cursor()
-
     def post(self):
         """
         Signup
@@ -79,46 +52,17 @@ class Signup(Resource):
             if data[key].isspace():
                 return {'error': 'values cannot be empty strings'}, 400
 
-        firstname = data['first_name']
-        lastname = data['last_name']
-        email = data['email']
-        password = data['password']
+        new_user = Users(data['first_name'], data['last_name'],
+                         data['email'], data['password'])
 
-        password_hash = generate_password_hash(password)
+        response = new_user.signup()
 
-        data = [firstname, lastname, email, password_hash]
-
-        if get_user(email):
-            return {'error': 'user already exists'}, 400
-
-        try:
-
-            sql = """INSERT INTO users (first_name, last_name, email, password)
-                        VALUES(%s, %s, %s, %s)"""
-
-            self.cur.execute(sql, data)
-
-            self.cur.close()
-
-            self.conn.commit()
-
-            self.conn.close()
-
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
-
-        return {'success': 'user account created'}, 201
-
+        return response
 
 class Login(Resource):
     """
     Login route handler
     """
-    def __init__(self):
-        self.conn = dbconn()
-
-        self.cur = self.conn.cursor()
-
     def post(self):
         """
         Login
@@ -150,28 +94,7 @@ class Login(Resource):
         email = data['email']
         password = data['password']
 
-        if get_user(email):
-            try:
+        response = Users.login(email, password)
 
-                self.cur.execute('''SELECT first_name,
-                                    password FROM users WHERE email=%(email)s''',
-                                 {'email':email})
-
-            except psycopg2.DatabaseError as error:
-                return jsonify({'error': str(error)})
-
-            rows = self.cur.fetchone()
-
-            if not rows:
-                return {'error': 'Authentication failed user unknown'}
-
-            firstname = rows[0]
-            stored_password = rows[1]
-
-            if check_password_hash(stored_password, password):
-                access_token = create_access_token(email, firstname)
-
-                return {"success":"login successful",
-                        "access_token": access_token}
-
-        return {'error':'wrong credentials'}, 404
+        return response
+      

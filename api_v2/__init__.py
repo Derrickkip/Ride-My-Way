@@ -8,7 +8,7 @@ from flasgger import Swagger
 from flask_jwt_extended import JWTManager
 from config import CONFIG
 from .auth import Signup, Login
-from .rides import Rides, Ride, Requests, Respond
+from .rides import Ride, RidesEndpoint, RideRequests, Respond
 from .template import TEMPLATE
 
 def create_app(config_name):
@@ -25,9 +25,9 @@ def create_app(config_name):
 
     api.add_resource(Signup, '/auth/signup')
     api.add_resource(Login, '/auth/login')
-    api.add_resource(Rides, '/rides')
+    api.add_resource(RidesEndpoint, '/rides')
     api.add_resource(Ride, '/rides/<int:ride_id>')
-    api.add_resource(Requests, '/rides/<int:ride_id>/requests')
+    api.add_resource(RideRequests, '/rides/<int:ride_id>/requests')
     api.add_resource(Respond, '/rides/<int:ride_id>/requests/<int:request_id>')
 
     return app
