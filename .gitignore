@@ -6,3 +6,4 @@ __pycache__
 nodeids
 .coverage
 .pytest_cache
+.env

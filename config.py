@@ -8,7 +8,7 @@ class Config:
     Common configurations
     """
     DEBUG = True
-    SECRET_KEY = os.environ.get('SECRET_KEY') or '\x1b\xa5*G\xca\x88@\xe37\x8e\x8cP\x18\xef\xa3\xc0r\xaa\xf4\x94H3\xc3\xfd'
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
 class DevelopmentConfig(Config):
     """
@@ -21,12 +21,14 @@ class TestingConfig(Config):
     Testing configurations
     """
     TESTING = True
+    DATABASE = os.getenv('TEST_DB')
 
 class ProductionConfig(Config):
     """
     Production configurations
     """
     DEBUG = False
+    DATABASE = os.getenv('PROD_DATABASE')
 
 CONFIG = {
     'development': DevelopmentConfig,
