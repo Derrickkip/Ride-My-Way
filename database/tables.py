@@ -1,6 +1,7 @@
 """
 Create db tables
 """
+import os
 import psycopg2
 
 def create_tables():
@@ -41,8 +42,7 @@ def create_tables():
     )
 
     try:
-        conn = psycopg2.connect(database="testdb", user="testuser",
-                                password="testuser", host="localhost")
+        conn = psycopg2.connect(os.getenv('PROD_DATABASE'))
 
         cur = conn.cursor()
         #create tables
