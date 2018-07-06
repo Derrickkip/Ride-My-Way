@@ -10,7 +10,8 @@ DATA = [{'first_name':'Simon', 'last_name': 'Mbugua',
         {'first_name':'Simon', 'last_name': 'Mbugua',
          'email': 'simonemail.com', 'password':"testpassword"},
         {'email':'simon@email.com', 'password':"testpassword"},
-        {'email': 'swwee@mail.com', 'password':"testpassword"}
+        {'email': 'swwee@mail.com', 'password':"testpassword"},
+        {'email': 'simon@email.com', 'password': 'testp'}
        ]
 
 def get_users_in_db():
@@ -76,11 +77,20 @@ def test_login(test_client):
 
     assert "access_token" in result.keys()
 
-def test_wrong_credentials(test_client):
+def test_wrong_email(test_client):
     """
-    test that it returns 400 error for bad request
+    test that it returns 404 error for wrong email
     """
     response = test_client.post('/auth/login', data=json.dumps(DATA[3]),
                                 content_type='application/json')
 
     assert response.status_code == 404
+
+def test_wrong_password(test_client):
+    """
+    test returns 404 error for wrong password
+    """
+    response = test_client.post('/auth/login', data=json.dumps(DATA[4]),
+                                content_type='application/json')
+
+    assert response.status_code == 400

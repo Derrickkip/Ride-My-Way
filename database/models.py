@@ -157,7 +157,7 @@ class Users:
             stored_password = get_password(email)[0]
 
             if not check_password_hash(stored_password, password):
-                return {'error': 'Incorrect password, try again !'}
+                return {'error': 'Incorrect password, try again !'}, 400
 
             access_token = create_access_token(email)
 
