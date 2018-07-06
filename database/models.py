@@ -11,9 +11,12 @@ def dbconn():
     """
     return db connector
     """
-    conn = psycopg2.connect(current_app.config['DATABASE'])
+    try:
+        conn = psycopg2.connect(current_app.config['DATABASE'])
 
-    return conn
+        return conn
+    except psycopg2.DatabaseError as error:
+        return {'error': str(error)}
 
 ########################################
 # HELPER METHODS
@@ -23,66 +26,55 @@ def get_user_by_email(email):
     """
     returns user with given email
     """
-    try:
-        conn = dbconn()
 
-        cur = conn.cursor()
+    conn = dbconn()
 
-        cur.execute('''select * from users where email=%(email)s''', {'email':email})
+    cur = conn.cursor()
 
-        rows = cur.fetchone()
+    cur.execute('''select * from users where email=%(email)s''', {'email':email})
 
-        cur.close()
-        conn.close()
+    rows = cur.fetchone()
 
-        return rows
+    cur.close()
+    conn.close()
 
-    except psycopg2.DatabaseError as error:
-        return {'error': str(error)}
+    return rows
 
 def get_user_by_id(user_id):
     """
     return user name for user with given id
     """
-    try:
-        conn = dbconn()
-        cur = conn.cursor()
+    conn = dbconn()
+    cur = conn.cursor()
 
-        cur.execute("select first_name, last_name from users where user_id=%(user_id)s",
-                    {'user_id':user_id})
+    cur.execute("select first_name, last_name from users where user_id=%(user_id)s",
+                {'user_id':user_id})
 
-        rows = cur.fetchone()
-        full_name = rows[0] +' '+ rows[1]
+    rows = cur.fetchone()
+    full_name = rows[0] +' '+ rows[1]
 
-        cur.close()
-        conn.close()
+    cur.close()
+    conn.close()
 
-        return full_name
-
-    except psycopg2.DatabaseError as error:
-        return {'error': str(error)}
+    return full_name
 
 def get_ride_owner(ride_id):
     """
     returns ride with specified id
     """
-    try:
-        conn = dbconn()
-        cur = conn.cursor()
+    conn = dbconn()
+    cur = conn.cursor()
 
-        cur.execute('''select
-                    user_id from rides where ride_id=%(ride_id)s''',
-                    {'ride_id': ride_id})
+    cur.execute('''select
+                user_id from rides where ride_id=%(ride_id)s''',
+                {'ride_id': ride_id})
 
-        rows = cur.fetchone()
+    rows = cur.fetchone()
 
-        cur.close()
-        conn.close()
+    cur.close()
+    conn.close()
 
-        return rows
-
-    except psycopg2.DatabaseError as error:
-        return {'error': str(error)}
+    return rows
 
 def get_user(email):
     """
@@ -139,24 +131,19 @@ class Users:
         if get_user(self.email):
             return {'error': 'user already exists'}, 400
 
-        try:
+        conn = dbconn()
+        cur = conn.cursor()
 
-            conn = dbconn()
-            cur = conn.cursor()
+        sql = """INSERT INTO users (first_name, last_name, email, password, carmodel)
+                    VALUES(%s, %s, %s, %s, %s)"""
 
-            sql = """INSERT INTO users (first_name, last_name, email, password, carmodel)
-                        VALUES(%s, %s, %s, %s, %s)"""
+        cur.execute(sql, data)
 
-            cur.execute(sql, data)
+        cur.close()
 
-            cur.close()
+        conn.commit()
 
-            conn.commit()
-
-            conn.close()
-
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
+        conn.close()
 
         return {'success': 'user account created'}, 201
 
@@ -166,20 +153,16 @@ class Users:
         login method
         """
         if get_user(email):
-            try:
 
-                stored_password = get_password(email)[0]
+            stored_password = get_password(email)[0]
 
-                if not check_password_hash(stored_password, password):
-                    return {'error': 'Incorrect password, try again !'}
+            if not check_password_hash(stored_password, password):
+                return {'error': 'Incorrect password, try again !'}
 
-                access_token = create_access_token(email)
+            access_token = create_access_token(email)
 
-                return {"success":"login successful",
-                        "access_token": access_token}
-
-            except psycopg2.DatabaseError as error:
-                return jsonify({'error': str(error)})
+            return {"success":"login successful",
+                    "access_token": access_token}
 
 
         return {'error':'The email is not recognised'}, 404
@@ -202,125 +185,114 @@ class Rides:
         email = get_jwt_identity()
         user = get_user_by_email(email)
 
-        try:
-            conn = dbconn()
-            cur = conn.cursor()
-            #check that user has not created the same ride twice
-            cur.execute('''select
-                            date_of_ride,
-                            time
-                            from rides where user_id=%(user_id)s''',
-                        {'user_id':user[0]})
+        conn = dbconn()
+        cur = conn.cursor()
+        #check that user has not created the same ride twice
+        cur.execute('''select
+                        date_of_ride,
+                        time
+                        from rides where user_id=%(user_id)s''',
+                    {'user_id':user[0]})
 
-            row = cur.fetchone()
-            if row:
-                ride_date = row[0]
-                ride_time = row[1]
+        row = cur.fetchone()
+        if row:
+            ride_date = row[0]
+            ride_time = row[1]
 
-                if (ride_date == self.date_of_ride) and (ride_time == self.time):
-                    return {'bad request': 'You have already created a ride at that time'}, 400
-            #insert ride to database
+            if (ride_date == self.date_of_ride) and (ride_time == self.time):
+                return {'bad request': 'You have already created a ride at that time'}, 400
+        #insert ride to database
 
-            cur.execute('''insert into rides
-                            (origin,
-                            destination,
-                            date_of_ride,
-                            time, 
-                            price, user_id) VALUES(%s, %s, %s, %s, %s, %s)''',
-                        [self.origin, self.destination, self.date_of_ride, self.time,
-                         self.price, user[0]])
+        cur.execute('''insert into rides
+                        (origin,
+                        destination,
+                        date_of_ride,
+                        time, 
+                        price, user_id) VALUES(%s, %s, %s, %s, %s, %s)''',
+                    [self.origin, self.destination, self.date_of_ride, self.time,
+                        self.price, user[0]])
 
-            cur.close()
-            conn.commit()
-            conn.close()
+        cur.close()
+        conn.commit()
+        conn.close()
 
-            return {'success': 'ride created'}, 201
+        return {'success': 'ride created'}, 201
 
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
 
     @staticmethod
     def get_all_rides():
         """
         get al rides methods
         """
-        try:
-            conn = dbconn()
-            cur = conn.cursor()
-            cur.execute('''select
-                            ride_id,
-                            origin,
-                            destination,
-                            date_of_ride,
-                            time,
-                            price,
-                            user_id from rides''')
+        conn = dbconn()
+        cur = conn.cursor()
+        cur.execute('''select
+                        ride_id,
+                        origin,
+                        destination,
+                        date_of_ride,
+                        time,
+                        price,
+                        user_id from rides''')
 
-            rows = cur.fetchall()
+        rows = cur.fetchall()
 
-            rides = {}
-            num = 1
-            for row in rows:
-                rides[num] = {
-                    'id':row[0],
-                    'origin':row[1],
-                    'destinaton': row[2],
-                    'date_of_ride': row[3],
-                    'time': row[4],
-                    'price': row[5],
-                    'driver': get_user_by_id(row[6])
-                }
-                num += 1
+        rides = {}
+        num = 1
+        for row in rows:
+            rides[num] = {
+                'id':row[0],
+                'origin':row[1],
+                'destinaton': row[2],
+                'date_of_ride': row[3],
+                'time': row[4],
+                'price': row[5],
+                'driver': get_user_by_id(row[6])
+            }
+            num += 1
 
-            cur.close()
-            conn.close()
+        cur.close()
+        conn.close()
 
-            if rides == {}:
-                return {'message': 'No rides available'}
+        if rides == {}:
+            return {'message': 'No rides available'}
 
-            return {'rides': rides}, 200
-
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
+        return {'rides': rides}, 200
 
     @staticmethod
     def get_single_ride(ride_id):
         """
         get single ride method
         """
-        try:
-            conn = dbconn()
-            cur = conn.cursor()
-            cur.execute('''select ride_id,
-                            user_id,
-                            origin,
-                            destination,
-                            date_of_ride,
-                            time,
-                            price
-                            from rides where ride_id=%(ride_id)s''', {'ride_id':ride_id})
+        conn = dbconn()
+        cur = conn.cursor()
+        cur.execute('''select ride_id,
+                        user_id,
+                        origin,
+                        destination,
+                        date_of_ride,
+                        time,
+                        price
+                        from rides where ride_id=%(ride_id)s''', {'ride_id':ride_id})
 
-            rows = cur.fetchone()
-            if not rows:
-                return {'error': 'ride not found'}, 404
+        rows = cur.fetchone()
+        if not rows:
+            return {'error': 'ride not found'}, 404
 
-            ride = {
-                'id': rows[0],
-                'driver': get_user_by_id(rows[1]),
-                'origin': rows[2],
-                'destination': rows[3],
-                'date_of_ride': rows[4],
-                'time': rows[5],
-                'price': rows[6]
-            }
+        ride = {
+            'id': rows[0],
+            'driver': get_user_by_id(rows[1]),
+            'origin': rows[2],
+            'destination': rows[3],
+            'date_of_ride': rows[4],
+            'time': rows[5],
+            'price': rows[6]
+        }
 
-            cur.close()
-            conn.close()
+        cur.close()
+        conn.close()
 
-            return {'message':'success', 'ride': ride}
-
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
+        return {'message':'success', 'ride': ride}
 
     @staticmethod
     def update_ride(ride_id, data):
@@ -337,46 +309,44 @@ class Rides:
 
         if user != ride_owner[0]:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
-        try:
-            conn = dbconn()
-            cur = conn.cursor()
-            cur.execute('''select
-                            origin,
-                            destination,
-                            date_of_ride,
-                            time,
-                            price from rides where ride_id=%(ride_id)s''',
-                        {'ride_id':ride_id})
 
-            row = cur.fetchone()
+        conn = dbconn()
+        cur = conn.cursor()
+        cur.execute('''select
+                        origin,
+                        destination,
+                        date_of_ride,
+                        time,
+                        price from rides where ride_id=%(ride_id)s''',
+                    {'ride_id':ride_id})
 
-            origin = row[0]
-            destination = row[1]
-            date_of_ride = row[2]
-            time = row[3]
-            price = row[4]
+        row = cur.fetchone()
 
-            cur.execute('''update rides set
-                            origin=%(origin)s, 
-                            destination=%(destination)s,
-                            date_of_ride=%(date_of_ride)s,
-                            time=%(time)s,
-                            price=%(price)s where ride_id=%(ride_id)s''',
-                        {'origin': data.get('origin', origin),
-                         'destination': data.get('destination', destination),
-                         'date_of_ride': data.get('date_of_ride', date_of_ride),
-                         'time': data.get('time', time),
-                         'price': data.get('price', price),
-                         'ride_id': ride_id})
+        origin = row[0]
+        destination = row[1]
+        date_of_ride = row[2]
+        time = row[3]
+        price = row[4]
 
-            cur.close()
-            conn.commit()
-            conn.close()
+        cur.execute('''update rides set
+                        origin=%(origin)s, 
+                        destination=%(destination)s,
+                        date_of_ride=%(date_of_ride)s,
+                        time=%(time)s,
+                        price=%(price)s where ride_id=%(ride_id)s''',
+                    {'origin': data.get('origin', origin),
+                        'destination': data.get('destination', destination),
+                        'date_of_ride': data.get('date_of_ride', date_of_ride),
+                        'time': data.get('time', time),
+                        'price': data.get('price', price),
+                        'ride_id': ride_id})
 
-            return {'success': 'ride details updated'}
+        cur.close()
+        conn.commit()
+        conn.close()
 
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
+        return {'success': 'ride details updated'}
+
 
     @staticmethod
     def delete_ride(ride_id):
@@ -391,18 +361,15 @@ class Rides:
         if user != ride_owner[0]:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
 
-        try:
-            conn = dbconn()
-            cur = conn.cursor()
-            cur.execute('''delete from rides where ride_id=%(ride_id)s''',
-                        {'ride_id': ride_id})
+        conn = dbconn()
+        cur = conn.cursor()
+        cur.execute('''delete from rides where ride_id=%(ride_id)s''',
+                    {'ride_id': ride_id})
 
-            cur.close()
-            conn.commit()
-            conn.close()
+        cur.close()
+        conn.commit()
+        conn.close()
 
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
 
         return {'success':'ride deleted'}, 200
 
@@ -430,36 +397,32 @@ class Requests:
         if user != ride_owner[0]:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
 
-        try:
-            conn = dbconn()
-            cur = conn.cursor()
-            cur.execute('''select
-                            request_id,
-                            user_id,
-                            accept_status
-                            from requests where ride_id=%(ride_id)s''',
-                        {'ride_id': ride_id})
+        conn = dbconn()
+        cur = conn.cursor()
+        cur.execute('''select
+                        request_id,
+                        user_id,
+                        accept_status
+                        from requests where ride_id=%(ride_id)s''',
+                    {'ride_id': ride_id})
 
-            rows = cur.fetchall()
-            requests = {}
-            num = 1
-            for row in rows:
-                requests[num] = {
-                    'id':row[0],
-                    'user_name': get_user_by_id(row[1]),
-                    'accept_status': row[2]
-                }
-                num += 1
-            cur.close()
-            conn.close()
+        rows = cur.fetchall()
+        requests = {}
+        num = 1
+        for row in rows:
+            requests[num] = {
+                'id':row[0],
+                'user_name': get_user_by_id(row[1]),
+                'accept_status': row[2]
+            }
+            num += 1
+        cur.close()
+        conn.close()
 
-            if requests == {}:
-                return {'message': 'no requests yet'}
+        if requests == {}:
+            return {'message': 'no requests yet'}
 
-            return requests
-
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
+        return requests
 
     @staticmethod
     def make_request(ride_id):
@@ -473,44 +436,40 @@ class Requests:
         if ride is None:
             return {"error": "ride not found"}, 404
 
-        try:
-            conn = dbconn()
-            cur = conn.cursor()
+        conn = dbconn()
+        cur = conn.cursor()
 
-            #check that the requestor is not the owner of the ride
-            cur.execute('''select
-                            user_id
-                            from rides where ride_id=%(ride_id)s''',
-                        {'ride_id': ride_id})
-            row = cur.fetchone()
-            if row[0] == user[0]:
-                return {'error': 'You cannot request your own ride'}, 400
+        #check that the requestor is not the owner of the ride
+        cur.execute('''select
+                        user_id
+                        from rides where ride_id=%(ride_id)s''',
+                    {'ride_id': ride_id})
+        row = cur.fetchone()
+        if row[0] == user[0]:
+            return {'error': 'You cannot request your own ride'}, 400
 
-            #check that user has not requested for the ride
-            cur.execute('''select
-                            ride_id, user_id
-                            from requests where user_id=%(user_id)s''',
-                        {'user_id': user[0]})
+        #check that user has not requested for the ride
+        cur.execute('''select
+                        ride_id, user_id
+                        from requests where user_id=%(user_id)s''',
+                    {'user_id': user[0]})
 
-            rows = cur.fetchall()
-            if rows:
-                for row in rows:
-                    if row[0] == ride_id:
-                        return {'bad request': 'you have already requested for this ride'}, 400
-
+        rows = cur.fetchall()
+        if rows:
+            for row in rows:
+                if row[0] == ride_id:
+                    return {'bad request': 'you have already requested for this ride'}, 400
 
 
-            cur.execute('''insert into requests (user_id, ride_id) values (%s, %s)''',
-                        [user[0], ride_id])
 
-            cur.close()
-            conn.commit()
-            conn.close()
+        cur.execute('''insert into requests (user_id, ride_id) values (%s, %s)''',
+                    [user[0], ride_id])
 
-            return {'success':'You have successfully requested for the ride'}, 200
+        cur.close()
+        conn.commit()
+        conn.close()
 
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
+        return {'success':'You have successfully requested for the ride'}, 200
 
     @staticmethod
     def respond_to_request(ride_id, request_id, data):
@@ -525,19 +484,15 @@ class Requests:
         if user != ride_owner[0]:
             return {'forbidden': 'You dont have permission to perform this operation'}, 403
 
-        try:
-            conn = dbconn()
-            cur = conn.cursor()
-            cur.execute('''update requests
-                            set accept_status =%(accept_status)s 
-                            where request_id =%(request_id)s''',
-                        {'accept_status':data['status'], 'request_id': request_id})
+        conn = dbconn()
+        cur = conn.cursor()
+        cur.execute('''update requests
+                        set accept_status =%(accept_status)s 
+                        where request_id =%(request_id)s''',
+                    {'accept_status':data['status'], 'request_id': request_id})
 
-            cur.close()
-            conn.commit()
-            conn.close()
+        cur.close()
+        conn.commit()
+        conn.close()
 
-            return {'success': 'request has been updated'}
-
-        except psycopg2.DatabaseError as error:
-            return {'error': str(error)}
+        return {'success': 'request has been updated'}
