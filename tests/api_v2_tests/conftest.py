@@ -1,7 +1,6 @@
 """
 Fixtures for apiV2
 """
-import urllib.parse
 import pytest
 import psycopg2
 
@@ -18,7 +17,7 @@ def test_client(request):
 
     ctx = app.app_context()
     ctx.push()
-    db = app.config['DATABASE']
+    dbase = app.config['DATABASE']
     yield app_client
 
     def fin():
@@ -27,7 +26,7 @@ def test_client(request):
         '''
         print('deleting data')
 
-        conn = psycopg2.connect(db)
+        conn = psycopg2.connect(dbase)
 
         cur = conn.cursor()
 
