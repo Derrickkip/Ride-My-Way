@@ -1,3 +1,0 @@
-"""
-Test for user endpoints
-"""
