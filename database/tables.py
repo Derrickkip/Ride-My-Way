@@ -42,7 +42,7 @@ def create_tables():
     )
 
     try:
-        conn = psycopg2.connect(os.getenv('TEST_DB'))
+        conn = psycopg2.connect(os.getenv('DATABASE'))
 
         cur = conn.cursor()
         #create tables
