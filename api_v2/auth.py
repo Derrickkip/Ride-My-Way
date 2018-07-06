@@ -1,10 +1,11 @@
 """
 Routes for user authentication
 """
+import re
 from flask import request
 from flask_restful import Resource
-from jsonschema import validate
-from database.dbsetup import Users
+from jsonschema import validate, ValidationError
+from database.models import Users
 
 SIGNUP_SCHEMA = {
     "type": "object",
@@ -13,7 +14,8 @@ SIGNUP_SCHEMA = {
         "last_name": {"type": "string"},
         "email": {"type": "string"},
         "password": {"type": "string"}
-    }
+    },
+    "required": ["first_name", "last_name", "email", "password"]
 }
 
 LOGIN_SCHEMA = {
@@ -21,8 +23,11 @@ LOGIN_SCHEMA = {
     "properties": {
         "email": {"type": "string"},
         "password": {"type": "string"}
-    }
+    },
+    "required":['email', 'password']
 }
+
+EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9\.]+@[a-zA-Z0-9\.]+\.[a-zA-Z]*$")
 
 class Signup(Resource):
     """
@@ -46,18 +51,24 @@ class Signup(Resource):
                 description: Bad request
         """
         data = request.json
-        validate(data, SIGNUP_SCHEMA)
+        try:
+            validate(data, SIGNUP_SCHEMA)
 
-        for key in data.keys():
-            if data[key].isspace():
-                return {'error': 'values cannot be empty strings'}, 400
+            for key in data.keys():
+                if data[key].isspace() or data[key] == '':
+                    return {'error': 'values cannot be empty strings'}, 400
 
-        new_user = Users(data['first_name'], data['last_name'],
-                         data['email'], data['password'])
+            if not re.match(EMAIL_REGEX, data['email']):
+                return {'Error': 'Invalid email'}, 400
 
-        response = new_user.signup()
+            new_user = Users(data['first_name'], data['last_name'],
+                             data['email'], data['password'])
 
-        return response
+            response = new_user.signup()
+
+            return response
+        except ValidationError as error:
+            return {'error': str(error)}, 400
 
 class Login(Resource):
     """
@@ -85,16 +96,18 @@ class Login(Resource):
 
         """
         data = request.json
-        validate(data, LOGIN_SCHEMA)
+        try:
+            validate(data, LOGIN_SCHEMA)
 
-        for key in data.keys():
-            if data[key].isspace():
-                return {'error': "values cannot be empty strings"}, 400
+            for key in data.keys():
+                if data[key].isspace() or data[key] == '':
+                    return {'error': "values cannot be empty strings"}, 400
 
-        email = data['email']
-        password = data['password']
+            email = data['email']
+            password = data['password']
 
-        response = Users.login(email, password)
+            response = Users.login(email, password)
 
-        return response
-      
+            return response
+        except ValidationError as error:
+            return {'error': str(error)}, 400

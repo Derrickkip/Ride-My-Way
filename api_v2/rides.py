@@ -3,9 +3,9 @@ Implements the rides endpoints
 """
 from flask import request
 from flask_restful import Resource
-from jsonschema import validate
+from jsonschema import validate, ValidationError
 from flask_jwt_extended import jwt_required
-from database.dbsetup import Rides, Requests
+from database.models import Rides, Requests
 
 RIDE_SCHEMA = {
     "type": "object",
@@ -15,39 +15,57 @@ RIDE_SCHEMA = {
         "date_of_ride": {"type": "string"},
         "time": {"type": "string"},
         "price": {"type": "number"}
-    }
+    },
+    "required": [
+        "origin",
+        "destination",
+        "date_of_ride",
+        "time",
+        "price"
+    ]
 }
 
 RESPONSE_SCHEMA = {
     "type": "object",
     "properties": {
         "status": {"enum": ["accepted", "rejected"]}
-    }
+    },
+    "required": ["status"]
 }
 
-
-class RidesEndpoint(Resource):
+class Ride(Resource):
     """
-    handler for /rides endpoint
+    Ride operations
     """
     @jwt_required
-    def get(self):
+    def get(self, ride_id=None):
         """
-        get all ride offers
+        view one or all ride offers
         ---
         tags:
             - Rides
+        description: Rides operations
         security:
             - Bearer: []
+        parameters:
+            - name: ride_id
+              in: path
+              type: int
+              description: Id of ride to fetch
+
         responses:
             200:
-                description: Success
+                description: ride fetched
                 schema:
                     $ref: '#/definitions/Rides'
+            404:
+                description: ride not found
 
         """
-
-        response = Rides.get_all_rides()
+        if ride_id is None:
+            response = Rides.get_all_rides()
+        else:
+            response = Rides.get_single_ride(ride_id)
 
         return response
 
@@ -73,52 +91,24 @@ class RidesEndpoint(Resource):
 
         """
         data = request.json
-        validate(data, RIDE_SCHEMA)
+        try:
+            validate(data, RIDE_SCHEMA)
 
-        for key in data.keys():
-            if str(data[key]).isspace():
-                return {'bad request': 'values cannot be spaces'}, 400
+            for key in data.keys():
+                if str(data[key]).isspace():
+                    return {'bad request': 'values cannot be spaces'}, 400
 
-        new_ride = Rides(data['origin'], data['destination'],
-                         data['date_of_ride'], data['time'], data['price'])
+            new_ride = Rides(data['origin'], data['destination'],
+                             data['date_of_ride'], data['time'], data['price'])
 
-        result = new_ride.create_ride()
+            result = new_ride.create_ride()
 
-        return result
+            return result
+
+        except ValidationError as error:
+            return {'error': str(error)}, 400
 
 
-class Ride(Resource):
-    """
-    Single ride operations
-    """
-    @jwt_required
-    def get(self, ride_id):
-        """
-        view details of a ride offer
-        ---
-        tags:
-            - Rides
-        description: view details of a ride
-        security:
-            - Bearer: []
-        parameters:
-            - name: ride_id
-              in: path
-              type: int
-              description: Id of ride to fetch
-
-        responses:
-            200:
-                description: ride fetched
-                schema:
-                    $ref: '#/definitions/Rides'
-            404:
-                description: ride not found
-
-        """
-        response = Rides.get_single_ride(ride_id)
-
-        return response
 
     @jwt_required
     def put(self, ride_id):
@@ -275,8 +265,12 @@ class Respond(Resource):
                 description: Unauthorised, Only owners of ride can respond to requests
         """
         data = request.json
-        validate(data, RESPONSE_SCHEMA)
+        try:
+            validate(data, RESPONSE_SCHEMA)
 
-        response = Requests.respond_to_request(ride_id, request_id, data)
+            response = Requests.respond_to_request(ride_id, request_id, data)
 
-        return response
+            return response
+
+        except ValidationError as error:
+            return {'error': str(error)}, 400
