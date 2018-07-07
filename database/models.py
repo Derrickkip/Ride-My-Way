@@ -1,7 +1,7 @@
 """
 Database config
 """
-
+import os
 import psycopg2
 from flask import current_app, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -12,7 +12,7 @@ def dbconn():
     return db connector
     """
     try:
-        conn = psycopg2.connect(current_app.config['DATABASE'])
+        conn = psycopg2.connect(os.getenv('TEST_DB'))
 
         return conn
     except psycopg2.DatabaseError as error:
