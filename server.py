@@ -4,7 +4,7 @@ App entry point
 import os
 from api_v2 import create_app
 
-APP = create_app('testing')
+APP = create_app(os.getenv('ENV'))
 
 if __name__ == '__main__':
     APP.run()
