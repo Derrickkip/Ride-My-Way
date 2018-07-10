@@ -12,7 +12,7 @@ def dbconn():
     return db connector
     """
     try:
-        conn = psycopg2.connect(os.getenv('TEST_DB'))
+        conn = psycopg2.connect(current_app.config['DATABASE'])
 
         return conn
     except psycopg2.DatabaseError as error:
