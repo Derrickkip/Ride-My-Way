@@ -10,6 +10,7 @@ from config import CONFIG
 from .auth import Signup, Login
 from .rides import Ride, RideRequests, Respond
 from .template import TEMPLATE
+from database.tables import create_tables
 
 def create_app(config_name):
     """
@@ -20,6 +21,8 @@ def create_app(config_name):
     app.config.from_object(CONFIG[config_name])
     Swagger(app, template=TEMPLATE)
     api = Api(app)
+
+    create_tables(app.config['DATABASE'])
 
     JWTManager(app)
 
