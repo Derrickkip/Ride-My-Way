@@ -3,15 +3,16 @@ Create db tables
 """
 import os
 import psycopg2
+from flask import current_app
 
-def create_tables():
+def create_tables(db=None):
     """
     Create tables for the database
     """
 
     commands = (
         """
-        CREATE TABLE users (
+        CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL primary key,
             first_name varchar(80) not null,
             last_name varchar(80) not null,
@@ -21,7 +22,7 @@ def create_tables():
             password varchar (255) not null
         )
         """,
-        """ CREATE TABLE rides (
+        """ CREATE TABLE IF NOT EXISTS rides (
                 ride_id SERIAL primary key,
                 user_id int not null references users(user_id) on delete cascade,
                 origin varchar(80) not null,
@@ -32,7 +33,7 @@ def create_tables():
 
         )
         """,
-        """ CREATE TABLE requests (
+        """ CREATE TABLE IF NOT EXISTS requests (
                 request_id SERIAL primary key,
                 user_id int references users(user_id) on delete cascade,
                 ride_id int references rides(ride_id) on delete cascade,
@@ -42,7 +43,7 @@ def create_tables():
     )
 
     try:
-        conn = psycopg2.connect(os.getenv('TEST_DB'))
+        conn = psycopg2.connect(db)
 
         cur = conn.cursor()
         #create tables
