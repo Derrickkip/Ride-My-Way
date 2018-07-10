@@ -1,6 +1,7 @@
 """
 Fixtures for apiV2
 """
+import os
 import pytest
 import psycopg2
 
@@ -17,7 +18,7 @@ def test_client(request):
 
     ctx = app.app_context()
     ctx.push()
-    dbase = app.config['DATABASE']
+    dbase = os.getenv('TEST_DB')
     yield app_client
 
     def fin():
