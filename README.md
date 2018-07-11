@@ -50,7 +50,7 @@ The api Implements a CRUD interface for rides using GET, POST, PUT and DELETE HT
 The endpoints above can be tested using postman which offers a friendly and easy to use interface.
 * NOTE * After logging in an access token is returned that needs to be passed in the header of all the other requests
 
-##Testing
+## Testing
 The api tests are written in pytest
 To run the tests type `coverage run -m pytest`
 
