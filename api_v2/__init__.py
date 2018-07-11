@@ -6,6 +6,7 @@ from flask import Flask
 from flask_restful import Resource, Api
 from flasgger import Swagger
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 from config import CONFIG
 from .auth import Signup, Login
 from .rides import Ride, RideRequests, Respond
@@ -25,6 +26,8 @@ def create_app(config_name):
     create_tables(app.config['DATABASE'])
 
     JWTManager(app)
+
+    CORS(app)
 
     api.add_resource(Signup, '/auth/signup')
     api.add_resource(Login, '/auth/login')
