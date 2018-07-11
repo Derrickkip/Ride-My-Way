@@ -55,8 +55,7 @@ Here is a screenshot from postman
 ![Postman screenshot](screenshots/postman2.png)
 
 ## Testing
-The api tests are written in pytest
-To run the tests type `coverage run -m pytest`
+To run the tests `coverage run -m pytest`
 
 
 
