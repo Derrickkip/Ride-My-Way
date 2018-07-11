@@ -14,7 +14,7 @@ class DevelopmentConfig(Config):
     """
     Development configurations
     """
-    pass
+    DATABASE = os.getenv('DEV_DB')
 
 class TestingConfig(Config):
     """
@@ -28,7 +28,7 @@ class ProductionConfig(Config):
     Production configurations
     """
     DEBUG = False
-    DATABASE = os.getenv('PROD_DATABASE')
+    DATABASE = os.getenv('DATABASE_URL')
 
 CONFIG = {
     'development': DevelopmentConfig,
