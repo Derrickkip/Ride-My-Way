@@ -9,7 +9,8 @@ DATA = [{'origin': 'Kisumu', 'destination': 'Kericho',
          'date_of_ride': '20th June 2018', 'time': "10:00 pm", "price":100},
         {'origin':'Siaya', 'date_of_ride': '13th July 2018'},
         {'origin': 'CBD', 'destination': 'Westlands',
-         'date_of_ride': '5th Sep 2018', 'time':'11:00am', "price": 300}]
+         'date_of_ride': '5th Sep 2018', 'time':'11:00am', "price": 300},
+        {'car_model': 'Audi Q7', 'registration': 'KCM 001X', 'seats': 5}]
 
 def dbconn():
     """
@@ -35,6 +36,20 @@ def get_rides_in_db():
 
     cur.close()
     conn.close()
+
+    return len(rows)
+
+def get_cars_in_db():
+    """
+    Returns number of cars in db
+    """
+    conn = dbconn()
+
+    cur = conn.cursor()
+
+    cur.execute('''select * from cars''')
+
+    rows = cur.fetchall()
 
     return len(rows)
 
@@ -129,6 +144,8 @@ def get_ride_id(test_client):
     ride_id = result['rides']["1"]["id"]
 
     return ride_id
+
+####################################################################################
 
 
 def test_get_rides(test_client):
@@ -386,4 +403,23 @@ def test_delete_ride(test_client):
                                content_type='application/json')
 
     assert response.status_code == 404
+
+def test_create_car(test_client):
+    """
+    Test that user can update car details
+    """
+    initial_count = get_cars_in_db()
+
+    auth_header = get_headers(test_client)[0]
+
+    response = test_client.post('/cars', headers={'Authorization':auth_header}, 
+                                data=json.dumps(DATA[3]), content_type='application/json')
+
+    assert response.status_code == 201
+
+    final_count = get_cars_in_db()
+
+    assert final_count - initial_count == 1
+
+
    
