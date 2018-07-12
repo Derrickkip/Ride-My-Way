@@ -496,3 +496,18 @@ class Requests:
         conn.close()
 
         return {'success': 'request has been updated'}
+
+class Cars:
+    """
+    Car object implementation
+    """
+    def __init__(self, car_model, registration, seats):
+        self.car_model = car_model
+        self.registration = registration
+        self.seats = seats
+
+    def create_car(self):
+        """
+        create ride for user
+        """
+        pass
