@@ -9,7 +9,7 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from config import CONFIG
 from .auth import Signup, Login
-from .rides import Ride, RideRequests, Respond
+from .rides import Ride, RideRequests, Respond, Car
 from .template import TEMPLATE
 from database.tables import create_tables
 
@@ -34,5 +34,6 @@ def create_app(config_name):
     api.add_resource(Ride, '/rides', '/rides/<int:ride_id>')
     api.add_resource(RideRequests, '/rides/<int:ride_id>/requests')
     api.add_resource(Respond, '/rides/<int:ride_id>/requests/<int:request_id>')
+    api.add_resource(Car, '/cars', '/cars/<int:car_id>')
 
     return app
