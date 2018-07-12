@@ -1,28 +1,34 @@
 """
 Create db tables
 """
-import os
 import psycopg2
-from flask import current_app
 
-def create_tables(db=None):
+def create_tables(db_url):
     """
     Create tables for the database
     """
 
     commands = (
         """
+        CREATE TABLE IF NOT EXISTS cars (
+            car_id SERIAL primary key,
+            car_model varchar(80) not null,
+            registration unique varchar(80) not null,
+            seats int not null
+        )
+        """,
+        """
         CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL primary key,
             first_name varchar(80) not null,
             last_name varchar(80) not null,
             email varchar(80) not null,
-            driving_licence varchar(80) null,
-            carmodel varchar(80) null,
+            car_id int null references cars(car_id),
             password varchar (255) not null
         )
         """,
-        """ CREATE TABLE IF NOT EXISTS rides (
+        """
+        CREATE TABLE IF NOT EXISTS rides (
                 ride_id SERIAL primary key,
                 user_id int not null references users(user_id) on delete cascade,
                 origin varchar(80) not null,
@@ -33,7 +39,8 @@ def create_tables(db=None):
 
         )
         """,
-        """ CREATE TABLE IF NOT EXISTS requests (
+        """
+        CREATE TABLE IF NOT EXISTS requests (
                 request_id SERIAL primary key,
                 user_id int references users(user_id) on delete cascade,
                 ride_id int references rides(ride_id) on delete cascade,
@@ -43,7 +50,7 @@ def create_tables(db=None):
     )
 
     try:
-        conn = psycopg2.connect(db)
+        conn = psycopg2.connect(db_url)
 
         cur = conn.cursor()
         #create tables
@@ -57,7 +64,3 @@ def create_tables(db=None):
         conn.close()
     except psycopg2.DatabaseError as error:
         print(error)
-
-
-if __name__ == '__main__':
-    create_tables()
