@@ -5,7 +5,7 @@ from flask import request
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from flask_jwt_extended import jwt_required
-from database.models import Rides, Requests
+from database.models import Rides, Requests, Cars
 
 RIDE_SCHEMA = {
     "type": "object",
@@ -274,3 +274,10 @@ class Respond(Resource):
 
         except ValidationError as error:
             return {'error': str(error)}, 400
+
+class Car(Resource):
+    '''
+    Car resource routes
+    '''
+    def post(self):
+        pass
