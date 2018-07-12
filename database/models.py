@@ -1,9 +1,8 @@
 """
 Database config
 """
-import os
 import psycopg2
-from flask import current_app, jsonify
+from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, get_jwt_identity
 
@@ -194,15 +193,16 @@ class Rides:
                         from rides where user_id=%(user_id)s''',
                     {'user_id':user[0]})
 
-        row = cur.fetchone()
-        if row:
-            ride_date = row[0]
-            ride_time = row[1]
+        rows = cur.fetchall()
+        if rows:
+            for row in rows:
+                ride_date = row[0]
+                ride_time = row[1]
 
-            if (ride_date == self.date_of_ride) and (ride_time == self.time):
-                return {'bad request': 'You have already created a ride at that time'}, 400
+                if (ride_date == self.date_of_ride) and (ride_time == self.time):
+                    return {'bad request': 'You have already created a ride at that time'}, 400
+
         #insert ride to database
-
         cur.execute('''insert into rides
                         (origin,
                         destination,
@@ -210,7 +210,7 @@ class Rides:
                         time, 
                         price, user_id) VALUES(%s, %s, %s, %s, %s, %s)''',
                     [self.origin, self.destination, self.date_of_ride, self.time,
-                        self.price, user[0]])
+                     self.price, user[0]])
 
         cur.close()
         conn.commit()
@@ -335,11 +335,11 @@ class Rides:
                         time=%(time)s,
                         price=%(price)s where ride_id=%(ride_id)s''',
                     {'origin': data.get('origin', origin),
-                        'destination': data.get('destination', destination),
-                        'date_of_ride': data.get('date_of_ride', date_of_ride),
-                        'time': data.get('time', time),
-                        'price': data.get('price', price),
-                        'ride_id': ride_id})
+                     'destination': data.get('destination', destination),
+                     'date_of_ride': data.get('date_of_ride', date_of_ride),
+                     'time': data.get('time', time),
+                     'price': data.get('price', price),
+                     'ride_id': ride_id})
 
         cur.close()
         conn.commit()

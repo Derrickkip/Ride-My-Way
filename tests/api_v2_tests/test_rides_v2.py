@@ -7,7 +7,9 @@ from flask import current_app
 
 DATA = [{'origin': 'Kisumu', 'destination': 'Kericho',
          'date_of_ride': '20th June 2018', 'time': "10:00 pm", "price":100},
-        {'origin':'Siaya', 'date_of_ride': '13th July 2018'}]
+        {'origin':'Siaya', 'date_of_ride': '13th July 2018'},
+        {'origin': 'CBD', 'destination': 'Westlands',
+         'date_of_ride': '5th Sep 2018', 'time':'11:00am', "price": 300}]
 
 def dbconn():
     """
@@ -174,6 +176,16 @@ def test_no_duplicate_ride(test_client):
                                 data=json.dumps(DATA[0]), content_type='application/json')
 
     assert response.status_code == 400
+
+    response2 = test_client.post('/rides', headers={'Authorization':auth_header},
+                                data=json.dumps(DATA[2]), content_type='application/json')
+
+    assert response2.status_code == 201
+
+    response3 = test_client.post('/rides', headers={'Authorization':auth_header},
+                                data=json.dumps(DATA[2]), content_type='application/json')
+
+    assert response3.status_code == 400
 
 def test_get_single_ride(test_client):
     """
