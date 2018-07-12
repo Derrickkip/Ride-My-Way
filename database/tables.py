@@ -13,7 +13,7 @@ def create_tables(db_url):
         CREATE TABLE IF NOT EXISTS cars (
             car_id SERIAL primary key,
             car_model varchar(80) not null,
-            registration unique varchar(80) not null,
+            registration varchar(80) not null unique,
             seats int not null
         )
         """,
