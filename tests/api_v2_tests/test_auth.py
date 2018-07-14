@@ -6,9 +6,9 @@ import psycopg2
 from flask import current_app
 
 DATA = [{'first_name':'Simon', 'last_name': 'Mbugua',
-         'email': 'simon@email.com', 'password':"testpassword"},
+         'email': 'simon@email.com', 'phone_number': '+254727138659', 'password':"testpassword"},
         {'first_name':'Simon', 'last_name': 'Mbugua',
-         'email': 'simonemail.com', 'password':"testpassword"},
+         'email': 'simonemail.com', 'phone_number': '+254727138659', 'password':"testpassword"},
         {'email':'simon@email.com', 'password':"testpassword"},
         {'email': 'swwee@mail.com', 'password':"testpassword"},
         {'email': 'simon@email.com', 'password': 'testp'}
