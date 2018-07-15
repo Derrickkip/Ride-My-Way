@@ -10,12 +10,16 @@ def create_tables(db_url):
 
     commands = (
         """
-        CREATE TABLE IF NOT EXISTS cars (
-            car_id SERIAL primary key,
-            car_model varchar(80) not null,
-            registration varchar(80) not null unique,
-            seats int not null
-        )
+        DROP TABLE IF EXISTS cars CASCADE
+        """,
+        """
+        DROP TABLE IF EXISTS users CASCADE
+        """,
+        """
+        DROP TABLE IF EXISTS rides CASCADE
+        """,
+        """
+        DROP TABLE IF EXISTS requests CASCADE
         """,
         """
         CREATE TABLE IF NOT EXISTS users (
@@ -23,8 +27,17 @@ def create_tables(db_url):
             first_name varchar(80) not null,
             last_name varchar(80) not null,
             email varchar(80) not null,
-            car_id int null references cars(car_id),
+            phone_number varchar(80) not null,
             password varchar (255) not null
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS cars (
+            car_id SERIAL primary key,
+            car_model varchar(80) not null,
+            registration varchar(80) not null unique,
+            user_id int null references users(user_id),
+            seats int not null
         )
         """,
         """
