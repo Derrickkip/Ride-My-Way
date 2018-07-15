@@ -13,9 +13,10 @@ SIGNUP_SCHEMA = {
         "first_name": {"type": "string"},
         "last_name": {"type": "string"},
         "email": {"type": "string"},
+        "phone_number": {"type": "string"},
         "password": {"type": "string"}
     },
-    "required": ["first_name", "last_name", "email", "password"]
+    "required": ["first_name", "last_name", "email", "phone_number", "password"]
 }
 
 LOGIN_SCHEMA = {
@@ -62,7 +63,7 @@ class Signup(Resource):
                 return {'Error': 'Invalid email'}, 400
 
             new_user = Users(data['first_name'], data['last_name'],
-                             data['email'], data['password'])
+                             data['email'], data['phone_number'], data['password'])
 
             response = new_user.signup()
 

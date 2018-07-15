@@ -93,6 +93,24 @@ def get_user(email):
 
     return rows is not None
 
+def get_phone_number(user_id):
+    """
+    returns users phone number
+    """
+    conn = dbconn()
+
+    cur = conn.cursor()
+
+    cur.execute("select phone_number from users where user_id=%(user_id)s", {'user_id':user_id})
+
+    rows = cur.fetchone()
+
+    cur.close()
+
+    conn.close()
+
+    return rows[0]
+
 def get_password(email):
     """
     get users password
@@ -107,25 +125,53 @@ def get_password(email):
 
     return rows
 
+def get_user_car(user_id):
+    """
+    returns users  car
+    """
+    conn = dbconn()
+    cur = conn.cursor()
+
+    cur.execute('''SELECT * from cars where user_id=%(user_id)s''',
+                {'user_id': user_id})
+
+    row = cur.fetchone()
+
+    return row
+
+def registration_exists(registration):
+    """
+    Check that the car registration is unique
+    """
+    conn = dbconn()
+    cur = conn.cursor()
+
+    cur.execute('''SELECT * from cars where registration=%(registration)s''',
+                {'registration': registration})
+
+    row = cur.fetchone()
+
+    return row is not None
+
 ########################################
 
 class Users:
     """
     user class definition
     """
-    def __init__(self, first_name, last_name, email, password, carmodel=None):
+    def __init__(self, first_name, last_name, email, phone_number, password):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
+        self.phone_number = phone_number
         self.password_hash = generate_password_hash(password)
-        self.carmodel = carmodel
 
     def signup(self):
         """
         user signup method
         """
 
-        data = [self.first_name, self.last_name, self.email, self.password_hash, self.carmodel]
+        data = [self.first_name, self.last_name, self.email, self.phone_number, self.password_hash]
 
         if get_user(self.email):
             return {'error': 'user already exists'}, 400
@@ -133,7 +179,7 @@ class Users:
         conn = dbconn()
         cur = conn.cursor()
 
-        sql = """INSERT INTO users (first_name, last_name, email, password, carmodel)
+        sql = """INSERT INTO users (first_name, last_name, email, phone_number, password)
                     VALUES(%s, %s, %s, %s, %s)"""
 
         cur.execute(sql, data)
@@ -183,6 +229,11 @@ class Rides:
         """
         email = get_jwt_identity()
         user = get_user_by_email(email)
+
+        #check that user has car
+        car = get_user_car(user[0])
+        if car is None:
+            return {'message': 'Update your car details to create ride'}, 400
 
         conn = dbconn()
         cur = conn.cursor()
@@ -279,14 +330,20 @@ class Rides:
         if not rows:
             return {'error': 'ride not found'}, 404
 
+        car = get_user_car(rows[1])
+
         ride = {
             'id': rows[0],
             'driver': get_user_by_id(rows[1]),
+            'phone_number': get_phone_number(rows[1]),
             'origin': rows[2],
             'destination': rows[3],
             'date_of_ride': rows[4],
             'time': rows[5],
-            'price': rows[6]
+            'price': rows[6],
+            'car_model': car[1],
+            'registration': car[2],
+            'seats': car[4]
         }
 
         cur.close()
@@ -377,11 +434,6 @@ class Requests:
     """
     Request object implementation
     """
-    def __init__(self, request_id, user_id, accept_status='pending'):
-        self.request_id = request_id
-        self.user_id = user_id
-        self.accept_status = accept_status
-
     @staticmethod
     def get_all_requests(ride_id):
         """
@@ -486,6 +538,14 @@ class Requests:
 
         conn = dbconn()
         cur = conn.cursor()
+        cur.execute('''select * from requests where request_id=%(request_id)s''',
+                    {'request_id': request_id})
+
+        row = cur.fetchone()
+
+        if not row:
+            return {'error': 'That request does not exist'}, 404
+
         cur.execute('''update requests
                         set accept_status =%(accept_status)s 
                         where request_id =%(request_id)s''',
@@ -496,3 +556,127 @@ class Requests:
         conn.close()
 
         return {'success': 'request has been updated'}
+
+class Cars:
+    """
+    Car object implementation
+    """
+    def __init__(self, car_model, registration, seats):
+        self.car_model = car_model
+        self.registration = registration
+        self.seats = seats
+
+    def create_car(self):
+        """
+        create ride for user
+        """
+        email = get_jwt_identity()
+        user_id = get_user_by_email(email)[0]
+
+        #check user has no car
+        car = get_user_car(user_id)
+        if car:
+            return {'message':'You can only use one car'}, 400
+
+        if registration_exists(self.registration):
+            return {'error': 'That registration already exists'}, 400
+
+        conn = dbconn()
+
+        cur = conn.cursor()
+
+        cur.execute('''insert into cars
+                    (car_model, registration, user_id, seats)
+                    values (%s,%s,%s, %s)''',
+                    [self.car_model, self.registration, user_id, self.seats])
+
+        cur.close()
+
+        conn.commit()
+
+        conn.close()
+
+        return {'success': 'Car successfully added'}, 201
+
+    @staticmethod
+    def get_car():
+        """
+        fetch users car
+        """
+        email = get_jwt_identity()
+        user_id = get_user_by_email(email)[0]
+        conn = dbconn()
+
+        cur = conn.cursor()
+
+        cur.execute('''select * from cars where user_id=%(user_id)s''', {'user_id': user_id})
+
+        row = cur.fetchone()
+
+        if row is None:
+            return {'message': 'No car found'}, 404
+
+        car = {}
+        car['car_model'] = row[1]
+        car['registration'] = row[2]
+        car['seats'] = row[4]
+
+        return {'car': car}
+
+    @staticmethod
+    def update_details(data):
+        """
+        Update user car details
+        """
+        email = get_jwt_identity()
+        user_id = get_user_by_email(email)[0]
+
+        car = get_user_car(user_id)
+        if car is None:
+            return {'error': 'Car not found'}, 404
+        conn = dbconn()
+
+        cur = conn.cursor()
+
+        cur.execute('''update cars set
+                    car_model=%(car_model)s,
+                    registration=%(registration)s,
+                    seats=%(seats)s
+                    where user_id=%(user_id)s''',
+                    {'car_model': data['car_model'],
+                     'registration': data['registration'],
+                     'seats': data['seats'], 'user_id': user_id})
+
+        cur.close()
+
+        conn.commit()
+
+        conn.close()
+
+        return {'success': 'car details updated'}
+
+    @staticmethod
+    def delete():
+        """
+        delete car details
+        """
+        email = get_jwt_identity()
+        user_id = get_user_by_email(email)[0]
+
+        car = get_user_car(user_id)
+        if car is None:
+            return {'error': 'Car not found'}, 404
+        conn = dbconn()
+
+        cur = conn.cursor()
+
+        cur.execute('''delete from cars where user_id=%(user_id)s''',
+                    {'user_id': user_id})
+
+        cur.close()
+
+        conn.commit()
+
+        conn.close()
+
+        return {'message': 'car details deleted'}

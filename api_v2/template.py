@@ -29,6 +29,9 @@ TEMPLATE = {
                 "email": {
                     "type": "string"
                 },
+                "phone_number": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 }
@@ -65,6 +68,41 @@ TEMPLATE = {
                 }
             }
         },
+        "Ride_details": {
+            "type": "object",
+            "properties": {
+                "driver": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "origin": {
+                    "type": "string"
+                },
+                "destination": {
+                    "type": "string"
+                },
+                "date_of_ride": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "car_model": {
+                    "type": "string"
+                },
+                "registration": {
+                    "type": "string"
+                },
+                "seats": {
+                    "type": "number"
+                }
+            }
+        },
         "Requests": {
             "type": "object",
             "properties": {
@@ -85,6 +123,20 @@ TEMPLATE = {
                 "status": {
                     "type": "string",
                     "enum": ["rejected", "accepted"]
+                }
+            }
+        },
+        "Cars": {
+            "type": "object",
+            "properties": {
+                "car_model": {
+                    "type": "string"
+                },
+                "registration": {
+                    "type": "string"
+                },
+                "seats": {
+                    "type": "number"
                 }
             }
         }

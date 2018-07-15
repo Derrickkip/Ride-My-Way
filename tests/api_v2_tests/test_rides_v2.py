@@ -9,7 +9,16 @@ DATA = [{'origin': 'Kisumu', 'destination': 'Kericho',
          'date_of_ride': '20th June 2018', 'time': "10:00 pm", "price":100},
         {'origin':'Siaya', 'date_of_ride': '13th July 2018'},
         {'origin': 'CBD', 'destination': 'Westlands',
-         'date_of_ride': '5th Sep 2018', 'time':'11:00am', "price": 300}]
+         'date_of_ride': '5th Sep 2018', 'time':'11:00am', "price": 300},
+        {'car_model': 'Audi Q7', 'registration': 'KCM 001X', 'seats': 5},
+        {'car_model': 'Audi Q7', 'registration': 'KCM 030X', 'seats': 5},
+        {'car_model': 'Subaru Imprezza', 'registration': 'KCP 001Z', 'seats': 4}]
+
+BAD_DATA = [{'origin': 'Kisumu', 'destination': 'Kericho',
+             'date_of_ride': '', 'time': "10:00 pm", "price":100},
+            {'origin': 'Kisumu', 'destination': 'Kericho', 'time': "10:00 pm",
+             "price":100},
+            {'registration': 'KCM 001X', 'seats': 5}]
 
 def dbconn():
     """
@@ -35,6 +44,20 @@ def get_rides_in_db():
 
     cur.close()
     conn.close()
+
+    return len(rows)
+
+def get_cars_in_db():
+    """
+    Returns number of cars in db
+    """
+    conn = dbconn()
+
+    cur = conn.cursor()
+
+    cur.execute('''select * from cars''')
+
+    rows = cur.fetchall()
 
     return len(rows)
 
@@ -81,7 +104,7 @@ def get_headers(test_client):
     ############### USER 1 ########################
 
     user1 = {'first_name':'Susan', 'last_name': 'Mbugua',
-             'email': 'sue@email.com', 'password':"testpassword"}
+             'email': 'sue@email.com', 'phone_number': '231321444', 'password':"testpassword"}
 
     test_client.post('/auth/signup', data=json.dumps(user1),
                      content_type='application/json')
@@ -98,7 +121,7 @@ def get_headers(test_client):
     ############## USER 2 ###############################
 
     user2 = {'first_name':'Luke', 'last_name': 'Skywalker',
-             'email': 'skywalker@email.com', 'password':"testpassword"}
+             'email': 'skywalker@email.com', 'phone_number': '3133243', 'password':"testpassword"}
 
     test_client.post('/auth/signup', data=json.dumps(user2),
                      content_type='application/json')
@@ -130,6 +153,8 @@ def get_ride_id(test_client):
 
     return ride_id
 
+####################################################################################
+
 
 def test_get_rides(test_client):
     """
@@ -153,9 +178,143 @@ def test_unauthenticated_user(test_client):
 
     assert response.status_code == 401
 
-def test_create_ride(test_client):
+def test_user_without_car_cant_create_ride(test_client):
     """
-    test that a user can create rides
+    user without car cant create ride
+    """
+    auth_header = get_headers(test_client)[0]
+    response = test_client.post('/rides', headers={'Authorization':auth_header},
+                                data=json.dumps(DATA[0]), content_type='application/json')
+
+    assert response.status_code == 400
+
+def test_create_car(test_client):
+    """
+    Test that user can update car details
+    """
+    initial_count = get_cars_in_db()
+
+    auth_header = get_headers(test_client)[0]
+
+    response = test_client.post('/cars', headers={'Authorization':auth_header},
+                                data=json.dumps(DATA[3]), content_type='application/json')
+
+    assert response.status_code == 201
+
+    final_count = get_cars_in_db()
+
+    assert final_count - initial_count == 1
+
+def test_create_car_missing_field(test_client):
+    """
+    test returns 400 if a field is missing
+    """
+    auth_header = get_headers(test_client)[1]
+
+    response = test_client.post('/cars', headers={'Authorization':auth_header},
+                                data=json.dumps(BAD_DATA[2]), content_type='application/json')
+
+    assert response.status_code == 400
+
+def test_user_can_add_car_only_once(test_client):
+    """
+    Each user should have only one car
+    """
+    initial_count = get_cars_in_db()
+
+    auth_header = get_headers(test_client)[0]
+
+    response = test_client.post('/cars', headers={'Authorization':auth_header},
+                                data=json.dumps(DATA[4]), content_type='application/json')
+
+    assert response.status_code == 400
+
+    final_count = get_cars_in_db()
+
+    assert final_count - initial_count == 0
+
+def test_unique_registration_numbers(test_client):
+    """
+    Car registrations should be unique
+    """
+    auth_header = get_headers(test_client)[1]
+
+    response = test_client.post('/cars', headers={'Authorization':auth_header},
+                                data=json.dumps(DATA[3]), content_type='application/json')
+
+    assert response.status_code == 400
+
+def test_get_car(test_client):
+    """
+    Get all cars
+    """
+    auth_header = get_headers(test_client)[0]
+
+    response = test_client.get('/cars', headers={'Authorization':auth_header},
+                               content_type='application/json')
+
+    assert response.status_code == 200
+    result = json.loads(response.data)
+
+    assert 'car' in result
+
+def test_get_car_for_user_without_car(test_client):
+    """
+    Should return 404 if user has no car
+    """
+    auth_header = get_headers(test_client)[1]
+
+    response = test_client.get('/cars', headers={'Authorization':auth_header},
+                               content_type='application/json')
+
+    assert response.status_code == 404
+
+def test_update_car(test_client):
+    """
+    Update car details
+    """
+    auth_header = get_headers(test_client)[0]
+
+    response = test_client.put('/cars', headers={'Authorization':auth_header},
+                               data=json.dumps(DATA[5]), content_type='application/json')
+
+    assert response.status_code == 200
+
+    conn = dbconn()
+
+    cur = conn.cursor()
+
+    cur.execute('''select * from cars''')
+
+    row = cur.fetchone()
+
+    assert row[1] == 'Subaru Imprezza'
+
+def test_update_car_missing_field(test_client):
+    """
+    test returns 400 error if field is missing
+    """
+    auth_header = get_headers(test_client)[0]
+
+    response = test_client.put('/cars', headers={'Authorization':auth_header},
+                               data=json.dumps(BAD_DATA[2]), content_type='application/json')
+
+    assert response.status_code == 400
+
+def test_update_for_user_without_car(test_client):
+    """
+    Should return 404
+    """
+    auth_header = get_headers(test_client)[1]
+
+    response = test_client.put('/cars', headers={'Authorization':auth_header},
+                               data=json.dumps(DATA[5]), content_type='application/json')
+
+    assert response.status_code == 404
+
+def test_user_with_car_create_ride(test_client):
+    """
+    test that a user with car can create rides
     """
     initial_count = get_rides_in_db()
     auth_header = get_headers(test_client)[0]
@@ -166,6 +325,26 @@ def test_create_ride(test_client):
     final_count = get_rides_in_db()
     assert final_count - initial_count == 1
 
+def test_create_ride_empty_string(test_client):
+    """
+    test that it returns 400 error
+    """
+    auth_header = get_headers(test_client)[0]
+    response = test_client.post('/rides', headers={'Authorization':auth_header},
+                                data=json.dumps(BAD_DATA[0]), content_type='application/json')
+
+    assert response.status_code == 400
+
+
+def test_create_ride_missing_field(test_client):
+    """
+    test returns 400 error if a field is missing
+    """
+    auth_header = get_headers(test_client)[0]
+    response = test_client.post('/rides', headers={'Authorization':auth_header},
+                                data=json.dumps(BAD_DATA[1]), content_type='application/json')
+
+    assert response.status_code == 400
 
 def test_no_duplicate_ride(test_client):
     """
@@ -178,12 +357,12 @@ def test_no_duplicate_ride(test_client):
     assert response.status_code == 400
 
     response2 = test_client.post('/rides', headers={'Authorization':auth_header},
-                                data=json.dumps(DATA[2]), content_type='application/json')
+                                 data=json.dumps(DATA[2]), content_type='application/json')
 
     assert response2.status_code == 201
 
     response3 = test_client.post('/rides', headers={'Authorization':auth_header},
-                                data=json.dumps(DATA[2]), content_type='application/json')
+                                 data=json.dumps(DATA[2]), content_type='application/json')
 
     assert response3.status_code == 400
 
@@ -226,6 +405,17 @@ def test_user_can_update_ride(test_client):
     assert ride[0] == 'Siaya'
     #Check value in date_of_ride is updated
     assert ride[1] == '13th July 2018'
+
+def test_non_owner_update_ride(test_client):
+    """
+    test only the owner of ride can update it
+    """
+    auth_header = get_headers(test_client)[1]
+    ride_id = get_ride_id(test_client)
+    response = test_client.put('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+                               data=json.dumps(DATA[1]), content_type='application/json')
+
+    assert response.status_code == 403
 
 def test_update_non_existent_ride(test_client):
     """
@@ -365,6 +555,94 @@ def test_respond_to_rides(test_client):
 
     assert result['1']['accept_status'] == "accepted"
 
+def test_respond_non_existent_request(test_client):
+    """
+    test raises 404
+    """
+    ride_id = get_ride_id(test_client)
+    auth_header = get_headers(test_client)[0]
+
+    status = {'status': "accepted"}
+
+    response = test_client.put('/rides/'+str(ride_id)+'/requests/3',
+                               headers={'Authorization':auth_header},
+                               data=json.dumps(status), content_type='application/json')
+
+    assert response.status_code == 404
+
+def test_respond_non_existent_ride(test_client):
+    """
+    Test raises 404 if ride is not available
+    """
+    auth_header = get_headers(test_client)[0]
+
+    status = {'status': "accepted"}
+
+    response = test_client.put('/rides/4/requests/3',
+                               headers={'Authorization':auth_header},
+                               data=json.dumps(status), content_type='application/json')
+
+    assert response.status_code == 404
+
+def test_respond_missing_field(test_client):
+    """
+    test returns 400 error if status field is missing
+    """
+    ride_id = get_ride_id(test_client)
+    auth_header = get_headers(test_client)[0]
+
+    req_response = test_client.get('/rides/'+str(ride_id)+'/requests',
+                                   headers={'Authorization':auth_header},
+                                   content_type='application/json')
+
+    result1 = json.loads(req_response.data)
+
+    request_id = result1["1"]["id"]
+
+    status = {'respond': "accepted"}
+
+    response = test_client.put('/rides/'+str(ride_id)+'/requests/'+str(request_id),
+                               headers={'Authorization':auth_header},
+                               data=json.dumps(status), content_type='application/json')
+
+    assert response.status_code == 400
+
+def test_non_owner_respond_to_ride_requests(test_client):
+    """
+    only owner can respond to requests
+    """
+    ride_id = get_ride_id(test_client)
+    auth_header = get_headers(test_client)[0]
+
+    req_response = test_client.get('/rides/'+str(ride_id)+'/requests',
+                                   headers={'Authorization':auth_header},
+                                   content_type='application/json')
+
+    result1 = json.loads(req_response.data)
+
+    request_id = result1["1"]["id"]
+
+    status = {'status': "accepted"}
+
+    auth_header2 = get_headers(test_client)[1]
+
+    response = test_client.put('/rides/'+str(ride_id)+'/requests/'+str(request_id),
+                               headers={'Authorization':auth_header2},
+                               data=json.dumps(status), content_type='application/json')
+
+    assert response.status_code == 403
+
+def test_non_owner_delete_ride(test_client):
+    """
+    Test that only ride owner can delete ride
+    """
+    auth_header = get_headers(test_client)[1]
+    ride_id = get_ride_id(test_client)
+    response = test_client.delete('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+                                  content_type='application/json')
+
+    assert response.status_code == 403
+
 def test_delete_ride(test_client):
     """
     Test that user can delete ride
@@ -386,4 +664,42 @@ def test_delete_ride(test_client):
                                content_type='application/json')
 
     assert response.status_code == 404
-   
+
+def test_delete_non_existent_ride(test_client):
+    """
+    Test return 404 error if ride is not available
+    """
+    auth_header = get_headers(test_client)[0]
+    response = test_client.delete('/rides/500', headers={'Authorization':auth_header},
+                                  content_type='application/json')
+
+    assert response.status_code == 404
+
+def test_delete_car(test_client):
+    """
+    Test user can delete car
+    """
+    initial_count = get_cars_in_db()
+
+    auth_header = get_headers(test_client)[0]
+
+    response = test_client.delete('/cars', headers={'Authorization':auth_header},
+                                  content_type='application/json')
+
+    assert response.status_code == 200
+
+    final_count = get_cars_in_db()
+
+    assert initial_count - final_count == 1
+
+def test_delete_for_user_without_car(test_client):
+    """
+    Should return 404
+    """
+    auth_header = get_headers(test_client)[1]
+
+    response = test_client.delete('/cars', headers={'Authorization':auth_header},
+                                  content_type='application/json')
+
+    assert response.status_code == 404
+  
