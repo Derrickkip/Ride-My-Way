@@ -34,6 +34,6 @@ def create_app(config_name):
     api.add_resource(Ride, '/rides', '/rides/<int:ride_id>')
     api.add_resource(RideRequests, '/rides/<int:ride_id>/requests')
     api.add_resource(Respond, '/rides/<int:ride_id>/requests/<int:request_id>')
-    api.add_resource(Car, '/cars', '/cars/<int:car_id>')
+    api.add_resource(Car, '/cars')
 
     return app
