@@ -33,6 +33,20 @@ RESPONSE_SCHEMA = {
     "required": ["status"]
 }
 
+CAR_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "car_model": {"type": "string"},
+        "registration": {"type": "string"},
+        "seats": {"type": "number"}
+    },
+    "required": [
+        "car_model",
+        "registration",
+        "seats"
+    ]
+}
+
 class Ride(Resource):
     """
     Ride operations
@@ -57,7 +71,7 @@ class Ride(Resource):
             200:
                 description: ride fetched
                 schema:
-                    $ref: '#/definitions/Rides'
+                    $ref: '#/definitions/Ride_details'
             404:
                 description: ride not found
 
@@ -95,7 +109,7 @@ class Ride(Resource):
             validate(data, RIDE_SCHEMA)
 
             for key in data.keys():
-                if str(data[key]).isspace():
+                if str(data[key]).isspace() or data[key] == '':
                     return {'bad request': 'values cannot be spaces'}, 400
 
             new_ride = Rides(data['origin'], data['destination'],
@@ -177,7 +191,7 @@ class RideRequests(Resource):
         get all requests to a ride offer
         ---
         tags:
-            - Rides
+            - Requests
         security:
             - Bearer: []
 
@@ -206,7 +220,7 @@ class RideRequests(Resource):
         request to join a ride offer
         ---
         tags:
-            - Rides
+            - Requests
         security:
             - Bearer: []
 
@@ -238,7 +252,7 @@ class Respond(Resource):
         accept or reject a request to a ride offer
         ---
         tags:
-            - Rides
+            - Requests
         security:
             - Bearer: []
 
@@ -279,5 +293,104 @@ class Car(Resource):
     '''
     Car resource routes
     '''
+    @jwt_required
     def post(self):
-        pass
+        """
+        Add user's car
+        ---
+        tags:
+            - Cars
+        security:
+            - Bearer: []
+        
+        parameters:
+            - name: cars
+              in: body
+              schema:
+                $ref: '#/definitions/Cars'
+
+        responses:
+            201:
+                description: Car details updated
+            400:
+                description: Bad request
+        """
+        data = request.json
+        try:
+            validate(data, CAR_SCHEMA)
+            new_car = Cars(data['car_model'], data['registration'], data['seats'])
+            response = new_car.create_car()
+
+            return response
+
+        except ValidationError as error:
+            return {'error': str(error)}, 400
+
+    @jwt_required
+    def get(self):
+        """
+        Get user's car
+        ---
+        tags:
+            - Cars
+        security:
+            - Bearer: []
+        responses:
+            200:
+                description: Success
+                schema: 
+                    $ref: '#/definitions/Cars'
+            404:
+                description: Not found
+        """
+        response = Cars.get_car()
+        
+        return response
+
+    @jwt_required
+    def put(self):
+        """
+        Update car details
+        ---
+        tags:
+            - Cars
+        security:
+            - Bearer: []
+        parameters:
+            - name: car
+              in: body
+              schema:
+                $ref: '#/definitions/Cars'
+        responses:
+            200:
+                description: successfully updated
+        """
+        data = request.json
+        try:
+            validate(data, CAR_SCHEMA)
+
+            response = Cars.update_details(data)
+
+            return response
+
+        except ValidationError as error:
+            return {'error': str(error)}, 400
+
+    @jwt_required
+    def delete(self):
+        '''
+        delete car details
+        ---
+        tags:
+            - Cars
+        security:
+            - Bearer: []
+        responses:
+            200:
+                description: successfully deleted
+            404:
+                description: no car details
+        '''
+        response = Cars.delete()
+
+        return response
