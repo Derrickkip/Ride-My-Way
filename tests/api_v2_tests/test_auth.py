@@ -11,7 +11,7 @@ DATA = [{'first_name':'Simon', 'last_name': 'Mbugua',
          'email': 'simonemail.com', 'phone_number': '+254727138659', 'password':"testpassword"},
         {'first_name':'Simon', 'last_name': 'Mbugua',
          'email': ' ', 'phone_number': '+254727138659', 'password':"testpassword"},
-        {'first_name':'Simon','email': 'simo@mgugua.com', 
+        {'first_name':'Simon', 'email': 'simo@mgugua.com',
          'phone_number': '+254727138659', 'password':"testpassword"},
         {'email':'simon@email.com', 'password':"testpassword"},
         {'email': 'swwee@mail.com', 'password':"testpassword"},
@@ -124,7 +124,7 @@ def test_login_empty_string(test_client):
     response = test_client.post('/auth/login', data=json.dumps(DATA[7]),
                                 content_type='application/json')
 
-    assert response.status_code == 400    
+    assert response.status_code == 400
 
 def test_login_missing_field(test_client):
     """
@@ -133,4 +133,4 @@ def test_login_missing_field(test_client):
     response = test_client.post('/auth/login', data=json.dumps(DATA[8]),
                                 content_type='application/json')
 
-    assert response.status_code == 400 
+    assert response.status_code == 400

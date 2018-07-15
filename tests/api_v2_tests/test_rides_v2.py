@@ -1,7 +1,6 @@
 """
 Tests for rides endpoint
 """
-import pdb
 import json
 import psycopg2
 from flask import current_app
@@ -16,10 +15,10 @@ DATA = [{'origin': 'Kisumu', 'destination': 'Kericho',
         {'car_model': 'Subaru Imprezza', 'registration': 'KCP 001Z', 'seats': 4}]
 
 BAD_DATA = [{'origin': 'Kisumu', 'destination': 'Kericho',
-         'date_of_ride': '', 'time': "10:00 pm", "price":100},
-         {'origin': 'Kisumu', 'destination': 'Kericho', 'time': "10:00 pm", 
-          "price":100},
-        {'registration': 'KCM 001X', 'seats': 5}]
+             'date_of_ride': '', 'time': "10:00 pm", "price":100},
+            {'origin': 'Kisumu', 'destination': 'Kericho', 'time': "10:00 pm",
+             "price":100},
+            {'registration': 'KCM 001X', 'seats': 5}]
 
 def dbconn():
     """
@@ -105,7 +104,7 @@ def get_headers(test_client):
     ############### USER 1 ########################
 
     user1 = {'first_name':'Susan', 'last_name': 'Mbugua',
-             'email': 'sue@email.com', 'phone_number': '231321444','password':"testpassword"}
+             'email': 'sue@email.com', 'phone_number': '231321444', 'password':"testpassword"}
 
     test_client.post('/auth/signup', data=json.dumps(user1),
                      content_type='application/json')
@@ -122,7 +121,7 @@ def get_headers(test_client):
     ############## USER 2 ###############################
 
     user2 = {'first_name':'Luke', 'last_name': 'Skywalker',
-             'email': 'skywalker@email.com', 'phone_number': '3133243','password':"testpassword"}
+             'email': 'skywalker@email.com', 'phone_number': '3133243', 'password':"testpassword"}
 
     test_client.post('/auth/signup', data=json.dumps(user2),
                      content_type='application/json')
@@ -197,7 +196,7 @@ def test_create_car(test_client):
 
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.post('/cars', headers={'Authorization':auth_header}, 
+    response = test_client.post('/cars', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[3]), content_type='application/json')
 
     assert response.status_code == 201
@@ -212,7 +211,7 @@ def test_create_car_missing_field(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.post('/cars', headers={'Authorization':auth_header}, 
+    response = test_client.post('/cars', headers={'Authorization':auth_header},
                                 data=json.dumps(BAD_DATA[2]), content_type='application/json')
 
     assert response.status_code == 400
@@ -225,7 +224,7 @@ def test_user_can_add_car_only_once(test_client):
 
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.post('/cars', headers={'Authorization':auth_header}, 
+    response = test_client.post('/cars', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[4]), content_type='application/json')
 
     assert response.status_code == 400
@@ -240,7 +239,7 @@ def test_unique_registration_numbers(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.post('/cars', headers={'Authorization':auth_header}, 
+    response = test_client.post('/cars', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[3]), content_type='application/json')
 
     assert response.status_code == 400
@@ -251,8 +250,8 @@ def test_get_car(test_client):
     """
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.get('/cars', headers={'Authorization':auth_header}, 
-                                content_type='application/json')
+    response = test_client.get('/cars', headers={'Authorization':auth_header},
+                               content_type='application/json')
 
     assert response.status_code == 200
     result = json.loads(response.data)
@@ -265,8 +264,8 @@ def test_get_car_for_user_without_car(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.get('/cars', headers={'Authorization':auth_header}, 
-                                content_type='application/json')
+    response = test_client.get('/cars', headers={'Authorization':auth_header},
+                               content_type='application/json')
 
     assert response.status_code == 404
 
@@ -276,8 +275,8 @@ def test_update_car(test_client):
     """
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.put('/cars', headers={'Authorization':auth_header}, 
-                                data=json.dumps(DATA[5]), content_type='application/json')
+    response = test_client.put('/cars', headers={'Authorization':auth_header},
+                               data=json.dumps(DATA[5]), content_type='application/json')
 
     assert response.status_code == 200
 
@@ -297,8 +296,8 @@ def test_update_car_missing_field(test_client):
     """
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.put('/cars', headers={'Authorization':auth_header}, 
-                                data=json.dumps(BAD_DATA[2]), content_type='application/json')
+    response = test_client.put('/cars', headers={'Authorization':auth_header},
+                               data=json.dumps(BAD_DATA[2]), content_type='application/json')
 
     assert response.status_code == 400
 
@@ -308,8 +307,8 @@ def test_update_for_user_without_car(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.put('/cars', headers={'Authorization':auth_header}, 
-                                data=json.dumps(DATA[5]), content_type='application/json')
+    response = test_client.put('/cars', headers={'Authorization':auth_header},
+                               data=json.dumps(DATA[5]), content_type='application/json')
 
     assert response.status_code == 404
 
@@ -358,12 +357,12 @@ def test_no_duplicate_ride(test_client):
     assert response.status_code == 400
 
     response2 = test_client.post('/rides', headers={'Authorization':auth_header},
-                                data=json.dumps(DATA[2]), content_type='application/json')
+                                 data=json.dumps(DATA[2]), content_type='application/json')
 
     assert response2.status_code == 201
 
     response3 = test_client.post('/rides', headers={'Authorization':auth_header},
-                                data=json.dumps(DATA[2]), content_type='application/json')
+                                 data=json.dumps(DATA[2]), content_type='application/json')
 
     assert response3.status_code == 400
 
@@ -684,8 +683,8 @@ def test_delete_car(test_client):
 
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.delete('/cars', headers={'Authorization':auth_header}, 
-                                content_type='application/json')
+    response = test_client.delete('/cars', headers={'Authorization':auth_header},
+                                  content_type='application/json')
 
     assert response.status_code == 200
 
@@ -699,8 +698,8 @@ def test_delete_for_user_without_car(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.delete('/cars', headers={'Authorization':auth_header}, 
-                                content_type='application/json')
+    response = test_client.delete('/cars', headers={'Authorization':auth_header},
+                                  content_type='application/json')
 
     assert response.status_code == 404
   

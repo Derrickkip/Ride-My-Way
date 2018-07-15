@@ -302,7 +302,7 @@ class Car(Resource):
             - Cars
         security:
             - Bearer: []
-        
+
         parameters:
             - name: cars
               in: body
@@ -338,13 +338,13 @@ class Car(Resource):
         responses:
             200:
                 description: Success
-                schema: 
+                schema:
                     $ref: '#/definitions/Cars'
             404:
                 description: Not found
         """
         response = Cars.get_car()
-        
+
         return response
 
     @jwt_required

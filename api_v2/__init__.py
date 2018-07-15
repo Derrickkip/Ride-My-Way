@@ -8,10 +8,10 @@ from flasgger import Swagger
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from config import CONFIG
+from database.tables import create_tables
 from .auth import Signup, Login
 from .rides import Ride, RideRequests, Respond, Car
 from .template import TEMPLATE
-from database.tables import create_tables
 
 def create_app(config_name):
     """

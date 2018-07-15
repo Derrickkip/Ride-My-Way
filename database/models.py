@@ -232,7 +232,7 @@ class Rides:
 
         #check that user has car
         car = get_user_car(user[0])
-        if car == None:
+        if car is None:
             return {'message': 'Update your car details to create ride'}, 400
 
         conn = dbconn()
@@ -576,7 +576,7 @@ class Cars:
         #check user has no car
         car = get_user_car(user_id)
         if car:
-            return {'message':'You can only use one car, update the details if they have changed'}, 400
+            return {'message':'You can only use one car'}, 400
 
         if registration_exists(self.registration):
             return {'error': 'That registration already exists'}, 400
@@ -587,7 +587,8 @@ class Cars:
 
         cur.execute('''insert into cars
                     (car_model, registration, user_id, seats)
-                    values (%s,%s,%s, %s)''', [self.car_model, self.registration, user_id, self.seats])
+                    values (%s,%s,%s, %s)''',
+                    [self.car_model, self.registration, user_id, self.seats])
 
         cur.close()
 
@@ -615,7 +616,7 @@ class Cars:
         if row is None:
             return {'message': 'No car found'}, 404
 
-        car={}
+        car = {}
         car['car_model'] = row[1]
         car['registration'] = row[2]
         car['seats'] = row[4]
@@ -637,14 +638,14 @@ class Cars:
 
         cur = conn.cursor()
 
-        cur.execute('''update cars set 
+        cur.execute('''update cars set
                     car_model=%(car_model)s,
                     registration=%(registration)s,
                     seats=%(seats)s
                     where user_id=%(user_id)s''',
                     {'car_model': data['car_model'],
-                    'registration': data['registration'],
-                    'seats': data['seats'], 'user_id': user_id})
+                     'registration': data['registration'],
+                     'seats': data['seats'], 'user_id': user_id})
 
         cur.close()
 
