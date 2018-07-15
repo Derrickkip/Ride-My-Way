@@ -16,7 +16,7 @@ SIGNUP_SCHEMA = {
         "phone_number": {"type": "string"},
         "password": {"type": "string"}
     },
-    "required": ["first_name", "last_name", "email", "password"]
+    "required": ["first_name", "last_name", "email", "phone_number", "password"]
 }
 
 LOGIN_SCHEMA = {
