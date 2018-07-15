@@ -9,9 +9,15 @@ DATA = [{'first_name':'Simon', 'last_name': 'Mbugua',
          'email': 'simon@email.com', 'phone_number': '+254727138659', 'password':"testpassword"},
         {'first_name':'Simon', 'last_name': 'Mbugua',
          'email': 'simonemail.com', 'phone_number': '+254727138659', 'password':"testpassword"},
+        {'first_name':'Simon', 'last_name': 'Mbugua',
+         'email': ' ', 'phone_number': '+254727138659', 'password':"testpassword"},
+        {'first_name':'Simon','email': 'simo@mgugua.com', 
+         'phone_number': '+254727138659', 'password':"testpassword"},
         {'email':'simon@email.com', 'password':"testpassword"},
         {'email': 'swwee@mail.com', 'password':"testpassword"},
-        {'email': 'simon@email.com', 'password': 'testp'}
+        {'email': 'simon@email.com', 'password': 'testp'},
+        {'email': 'simon@email.com', 'password': ' '},
+        {'email': 'simon@email.com'}
        ]
 
 def get_users_in_db():
@@ -64,11 +70,27 @@ def test_signup_wrong_email(test_client):
                                 content_type='application/json')
     assert response.status_code == 400
 
+def test_signup_empty_string(test_client):
+    """
+    Should return 400
+    """
+    response = test_client.post('/auth/signup', data=json.dumps(DATA[2]),
+                                content_type='application/json')
+    assert response.status_code == 400
+
+def test_signup_missing_field(test_client):
+    """
+    test returns 400 error
+    """
+    response = test_client.post('/auth/signup', data=json.dumps(DATA[3]),
+                                content_type='application/json')
+    assert response.status_code == 400
+
 def test_login(test_client):
     """
     test that user can login into account
     """
-    response = test_client.post('/auth/login', data=json.dumps(DATA[2]),
+    response = test_client.post('/auth/login', data=json.dumps(DATA[4]),
                                 content_type='application/json')
 
     assert response.status_code == 200
@@ -81,16 +103,34 @@ def test_wrong_email(test_client):
     """
     test that it returns 404 error for wrong email
     """
-    response = test_client.post('/auth/login', data=json.dumps(DATA[3]),
+    response = test_client.post('/auth/login', data=json.dumps(DATA[5]),
                                 content_type='application/json')
 
     assert response.status_code == 404
 
 def test_wrong_password(test_client):
     """
-    test returns 404 error for wrong password
+    test returns 400 error for wrong password
     """
-    response = test_client.post('/auth/login', data=json.dumps(DATA[4]),
+    response = test_client.post('/auth/login', data=json.dumps(DATA[6]),
                                 content_type='application/json')
 
     assert response.status_code == 400
+
+def test_login_empty_string(test_client):
+    """
+    test returns 400 for empty strings
+    """
+    response = test_client.post('/auth/login', data=json.dumps(DATA[7]),
+                                content_type='application/json')
+
+    assert response.status_code == 400    
+
+def test_login_missing_field(test_client):
+    """
+    test returns 400 error for missing fields
+    """
+    response = test_client.post('/auth/login', data=json.dumps(DATA[8]),
+                                content_type='application/json')
+
+    assert response.status_code == 400 
