@@ -24,9 +24,10 @@ To get started you need the following
 4. Create a virtual environment `python3 -m venv venv`
 5. Activate the virtual environment `source venv/bin/activate`
 6. Install requirements `pip install -r requirements.txt` This should install all dependancies including flask
-7. Create a `.env` file
+7. Create a `.env` file in the root folder
 8. Copy the contents of `.env.sample` into `.env`
-9. Replace the urls in the env with relevant database urls
+9. Create a postgres database
+9. Replace the urls in the `.env` with the database url you just created
 10. In the terminal run `source .env` to export the settings
 11. Now Run the app `python server.py`
 
@@ -46,9 +47,14 @@ The api Implements a CRUD interface for rides using GET, POST, PUT and DELETE HT
  POST                | /rides/<ride_id>/requests               | Make a request for ride with ride_id
  GET                 | /rides/<ride_id>/requests               | Get all requests to ride with specified ride_id
  PUT                 | /rides/<ride_id>/requests/<requests_id> |respond to a ride request with either accept or reject
+ POST                | /cars                                   | add car details
+ GET                 | /cars                                   | get users car
+ PUT                 | /cars                                   | Update users car
+ DELETE              | /cars                                   | Delete users car
 
 The endpoints above can be tested using postman which offers a friendly and easy to use interface.
-* NOTE * After logging in an access token is returned that needs to be passed in the header of all the other requests
+* **NOTE**  After logging in an access token is returned that needs to be passed in the header of all the other requests.
+You have to update car details before creating a ride
 
 Here is a screenshot from postman
 
@@ -57,6 +63,12 @@ Here is a screenshot from postman
 ## Testing
 To run the tests `coverage run -m pytest`
 
+## Documentation
+[Heroku](https://derrick-ride-my-way.herokuapp.com/apidocs)
+
+## Frontend
+[Github pages](https://derrickkip.github.io/Ride-My-Way/)
+
 
 
 ## Author
@@ -64,7 +76,7 @@ To run the tests `coverage run -m pytest`
 
 ## Acknowledgements
 * [Micah Oriaso](https://github.com/micahoriaso)
-* My LFA's Millicent and Gidraf 
+* My LFA's Millicent and Gidraf
 
 
 ## License
