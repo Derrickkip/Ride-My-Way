@@ -6,7 +6,7 @@ from flask import request
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from database.models import Users
-from .schema import SIGNUP_SCHEMA, LOGIN_SCHEMA
+from .schemas import SIGNUP_SCHEMA, LOGIN_SCHEMA
 
 
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9\.]+@[a-zA-Z0-9\.]+\.[a-zA-Z]*$")

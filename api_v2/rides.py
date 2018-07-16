@@ -6,7 +6,7 @@ from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from flask_jwt_extended import jwt_required
 from database.models import Rides, Requests, Cars
-from .schema import RIDE_SCHEMA, RESPONSE_SCHEMA, CAR_SCHEMA
+from .schemas import RIDE_SCHEMA, RESPONSE_SCHEMA, CAR_SCHEMA
 
 
 class Ride(Resource):
