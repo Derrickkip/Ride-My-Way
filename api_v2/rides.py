@@ -6,46 +6,8 @@ from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from flask_jwt_extended import jwt_required
 from database.models import Rides, Requests, Cars
+from .schema import RIDE_SCHEMA, RESPONSE_SCHEMA, CAR_SCHEMA
 
-RIDE_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "origin": {"type": "string"},
-        "destination": {"type": "string"},
-        "date_of_ride": {"type": "string"},
-        "time": {"type": "string"},
-        "price": {"type": "number"}
-    },
-    "required": [
-        "origin",
-        "destination",
-        "date_of_ride",
-        "time",
-        "price"
-    ]
-}
-
-RESPONSE_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "status": {"enum": ["accepted", "rejected"]}
-    },
-    "required": ["status"]
-}
-
-CAR_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "car_model": {"type": "string"},
-        "registration": {"type": "string"},
-        "seats": {"type": "number"}
-    },
-    "required": [
-        "car_model",
-        "registration",
-        "seats"
-    ]
-}
 
 class Ride(Resource):
     """

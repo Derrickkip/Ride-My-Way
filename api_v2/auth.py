@@ -6,27 +6,8 @@ from flask import request
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from database.models import Users
+from .schema import SIGNUP_SCHEMA, LOGIN_SCHEMA
 
-SIGNUP_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "first_name": {"type": "string"},
-        "last_name": {"type": "string"},
-        "email": {"type": "string"},
-        "phone_number": {"type": "string"},
-        "password": {"type": "string"}
-    },
-    "required": ["first_name", "last_name", "email", "phone_number", "password"]
-}
-
-LOGIN_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "email": {"type": "string"},
-        "password": {"type": "string"}
-    },
-    "required":['email', 'password']
-}
 
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9\.]+@[a-zA-Z0-9\.]+\.[a-zA-Z]*$")
 
