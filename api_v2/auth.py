@@ -6,27 +6,8 @@ from flask import request
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from database.models import Users
+from .schemas import SIGNUP_SCHEMA, LOGIN_SCHEMA
 
-SIGNUP_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "first_name": {"type": "string"},
-        "last_name": {"type": "string"},
-        "email": {"type": "string"},
-        "phone_number": {"type": "string"},
-        "password": {"type": "string"}
-    },
-    "required": ["first_name", "last_name", "email", "phone_number", "password"]
-}
-
-LOGIN_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "email": {"type": "string"},
-        "password": {"type": "string"}
-    },
-    "required":['email', 'password']
-}
 
 EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9\.]+@[a-zA-Z0-9\.]+\.[a-zA-Z]*$")
 
@@ -40,11 +21,15 @@ class Signup(Resource):
         ---
         tags:
             - Auth
+
+        description: Signup for an account
+
         parameters:
             - name: User
               in: body
               schema:
                 $ref: '#/definitions/UserSignup'
+
         responses:
             201:
                 description: Account created successfully
@@ -81,12 +66,15 @@ class Login(Resource):
         ---
         tags:
             - Auth
+
         description: login into account
+
         parameters:
             - name: login details
               in: body
               schema:
                 $ref: '#/definitions/UserLogin'
+
         responses:
             200:
                 description: login successfull
