@@ -158,7 +158,7 @@ def get_ride_id(test_client):
 
 def test_get_rides(test_client):
     """
-    test user can create rides
+    test user can view rides
     """
     auth_header = get_headers(test_client)[0]
     response = test_client.get('/rides', headers={'Authorization':auth_header},
@@ -172,11 +172,15 @@ def test_get_rides(test_client):
 
 def test_unauthenticated_user(test_client):
     """
-    test that user needs auth header to view rides
+    test that unauthenticated user can view rides
     """
     response = test_client.get('/rides')
 
-    assert response.status_code == 401
+    assert response.status_code == 200
+
+    result = json.loads(response.data)
+
+    assert 'message' in result
 
 def test_user_without_car_cant_create_ride(test_client):
     """
