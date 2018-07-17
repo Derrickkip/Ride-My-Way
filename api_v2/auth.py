@@ -21,11 +21,15 @@ class Signup(Resource):
         ---
         tags:
             - Auth
+
+        description: Signup for an account
+
         parameters:
             - name: User
               in: body
               schema:
                 $ref: '#/definitions/UserSignup'
+
         responses:
             201:
                 description: Account created successfully
@@ -62,12 +66,15 @@ class Login(Resource):
         ---
         tags:
             - Auth
+
         description: login into account
+
         parameters:
             - name: login details
               in: body
               schema:
                 $ref: '#/definitions/UserLogin'
+
         responses:
             200:
                 description: login successfull

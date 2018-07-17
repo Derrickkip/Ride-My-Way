@@ -19,7 +19,9 @@ class RidesList(Resource):
         ---
         tags:
             - Rides
-        description: Rides operati
+
+        description: Fetch all ride offers
+
         responses:
             200:
                 description: ride fetched
@@ -28,7 +30,7 @@ class RidesList(Resource):
 
         """
         response = Rides.get_all_rides()
-        
+
         return response
 
     @jwt_required
@@ -38,13 +40,18 @@ class RidesList(Resource):
         ---
         tags:
             - Rides
+
         security:
             - Bearer: []
+
+        description: Create a new ride offer
+
         parameters:
             - name: Rides
               in: body
               schema:
                 $ref: '#/definitions/Rides'
+
         responses:
             201:
                 description: Ride successfully created
@@ -81,9 +88,12 @@ class Ride(Resource):
         ---
         tags:
             - Rides
-        description: Rides operations
+
+        description: Fetch single ride offer
+
         security:
             - Bearer: []
+
         parameters:
             - name: ride_id
               in: path
@@ -110,9 +120,12 @@ class Ride(Resource):
         ---
         tags:
             - Rides
-        description: Update details of a ride send only fields to update
+
+        description: Update details of a ride offer
+
         security:
             - Bearer: []
+
         parameters:
             - name: ride_id
               in: path
@@ -142,13 +155,18 @@ class Ride(Resource):
         ---
         tags:
             - Rides
+
         security:
             - Bearer: []
+
+        description: Delete ride offer
+
         parameters:
             - name: ride_id
               in: path
               type: int
               description: Id of ride to delete
+
         responses:
             200:
                 description: ride deleted
@@ -171,8 +189,11 @@ class RideRequests(Resource):
         ---
         tags:
             - Requests
+
         security:
             - Bearer: []
+
+        description: Get requests to ride offer
 
         parameters:
             - name: ride_id
@@ -200,8 +221,11 @@ class RideRequests(Resource):
         ---
         tags:
             - Requests
+
         security:
             - Bearer: []
+
+        description: Request to join ride
 
         parameters:
             - name: ride_id
@@ -234,6 +258,8 @@ class Respond(Resource):
             - Requests
         security:
             - Bearer: []
+
+        description: respond to request
 
         parameters:
             - name: ride_id
@@ -279,8 +305,11 @@ class Car(Resource):
         ---
         tags:
             - Cars
+
         security:
             - Bearer: []
+
+        description: Add car details
 
         parameters:
             - name: cars
@@ -312,8 +341,12 @@ class Car(Resource):
         ---
         tags:
             - Cars
+
         security:
             - Bearer: []
+
+        description: View car details, User can only view their car details
+
         responses:
             200:
                 description: Success
@@ -333,13 +366,18 @@ class Car(Resource):
         ---
         tags:
             - Cars
+
         security:
             - Bearer: []
+
+        description: Update car details
+
         parameters:
             - name: car
               in: body
               schema:
                 $ref: '#/definitions/Cars'
+
         responses:
             200:
                 description: successfully updated
@@ -362,8 +400,12 @@ class Car(Resource):
         ---
         tags:
             - Cars
+
         security:
             - Bearer: []
+
+        description: Delete car details
+
         responses:
             200:
                 description: successfully deleted
