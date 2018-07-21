@@ -153,3 +153,49 @@ def check_requestor(email, ride_id):
         code = 403
 
     return message, code
+
+def get_ride_details(ride_id):
+    """
+    Get details of ride with id
+    """
+    conn = dbconn()
+    cur = conn.cursor()
+    cur.execute('''select
+                    origin,
+                    destination,
+                    date_of_ride,
+                    time,
+                    price from rides where ride_id=%(ride_id)s''',
+                {'ride_id':ride_id})
+
+    row = cur.fetchone()
+
+    return row
+
+def check_ride_existence(user_id, date_of_ride, time):
+    """
+    Check user has not created ride at same time
+    """
+
+    message = None
+    code = None
+    conn = dbconn()
+    cur = conn.cursor()
+    #check that user has not created the same ride twice
+    cur.execute('''select
+                    date_of_ride,
+                    time
+                    from rides where user_id=%(user_id)s''',
+                {'user_id':user_id})
+
+    rows = cur.fetchall()
+    if rows:
+        for row in rows:
+            ride_date = row[0]
+            ride_time = row[1]
+
+            if (ride_date == date_of_ride) and (ride_time == time):
+                message = {'bad request': 'You have already created a ride at that time'}
+                code = 400
+
+    return message, code

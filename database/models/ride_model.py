@@ -5,7 +5,7 @@ Implements CRUD operations for rides
 from flask_jwt_extended import get_jwt_identity
 from ..dbconn import dbconn
 from .helpers import (get_user_by_email, get_user_car, get_user_by_id, get_phone_number,
-                      get_ride_owner, check_requestor)
+                      get_ride_owner, check_requestor, get_ride_details, check_ride_existence)
 
 class Rides:
     """
@@ -30,23 +30,13 @@ class Rides:
         if car is None:
             return {'message': 'Update your car details to create ride'}, 400
 
+        message, code = check_ride_existence(user[0], self.date_of_ride, self.time)
+
+        if message:
+            return message, code
+
         conn = dbconn()
         cur = conn.cursor()
-        #check that user has not created the same ride twice
-        cur.execute('''select
-                        date_of_ride,
-                        time
-                        from rides where user_id=%(user_id)s''',
-                    {'user_id':user[0]})
-
-        rows = cur.fetchall()
-        if rows:
-            for row in rows:
-                ride_date = row[0]
-                ride_time = row[1]
-
-                if (ride_date == self.date_of_ride) and (ride_time == self.time):
-                    return {'bad request': 'You have already created a ride at that time'}, 400
 
         #insert ride to database
         cur.execute('''insert into rides
@@ -161,17 +151,7 @@ class Rides:
         if message:
             return message, code
 
-        conn = dbconn()
-        cur = conn.cursor()
-        cur.execute('''select
-                        origin,
-                        destination,
-                        date_of_ride,
-                        time,
-                        price from rides where ride_id=%(ride_id)s''',
-                    {'ride_id':ride_id})
-
-        row = cur.fetchone()
+        row = get_ride_details(ride_id)
 
         origin = row[0]
         destination = row[1]
@@ -179,18 +159,18 @@ class Rides:
         time = row[3]
         price = row[4]
 
+        conn = dbconn()
+        cur = conn.cursor()
+
         cur.execute('''update rides set
-                        origin=%(origin)s, 
-                        destination=%(destination)s,
-                        date_of_ride=%(date_of_ride)s,
-                        time=%(time)s,
+                        origin=%(origin)s, destination=%(destination)s,
+                        date_of_ride=%(date_of_ride)s, time=%(time)s,
                         price=%(price)s where ride_id=%(ride_id)s''',
                     {'origin': data.get('origin', origin),
                      'destination': data.get('destination', destination),
                      'date_of_ride': data.get('date_of_ride', date_of_ride),
                      'time': data.get('time', time),
-                     'price': data.get('price', price),
-                     'ride_id': ride_id})
+                     'price': data.get('price', price), 'ride_id': ride_id})
 
         cur.close()
         conn.commit()
