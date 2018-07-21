@@ -45,7 +45,7 @@ def test_signup(test_client):
     test that accounts can be created
     """
     initial_count = get_users_in_db()
-    response = test_client.post('/auth/signup', data=json.dumps(DATA[0]),
+    response = test_client.post('/api/v2/auth/signup', data=json.dumps(DATA[0]),
                                 content_type='application/json')
 
     assert response.status_code == 201
@@ -57,7 +57,7 @@ def test_signup_twice(test_client):
     test that an already signed in user cannot sign in again
     """
 
-    response = test_client.post('/auth/signup', data=json.dumps(DATA[0]),
+    response = test_client.post('/api/v2/auth/signup', data=json.dumps(DATA[0]),
                                 content_type='application/json')
 
     assert response.status_code == 400
@@ -66,7 +66,7 @@ def test_signup_wrong_email(test_client):
     """
     test that a validation error is raised
     """
-    response = test_client.post('/auth/signup', data=json.dumps(DATA[1]),
+    response = test_client.post('/api/v2/auth/signup', data=json.dumps(DATA[1]),
                                 content_type='application/json')
     assert response.status_code == 400
 
@@ -74,7 +74,7 @@ def test_signup_empty_string(test_client):
     """
     Should return 400
     """
-    response = test_client.post('/auth/signup', data=json.dumps(DATA[2]),
+    response = test_client.post('/api/v2/auth/signup', data=json.dumps(DATA[2]),
                                 content_type='application/json')
     assert response.status_code == 400
 
@@ -82,7 +82,7 @@ def test_signup_missing_field(test_client):
     """
     test returns 400 error
     """
-    response = test_client.post('/auth/signup', data=json.dumps(DATA[3]),
+    response = test_client.post('/api/v2/auth/signup', data=json.dumps(DATA[3]),
                                 content_type='application/json')
     assert response.status_code == 400
 
@@ -90,7 +90,7 @@ def test_login(test_client):
     """
     test that user can login into account
     """
-    response = test_client.post('/auth/login', data=json.dumps(DATA[4]),
+    response = test_client.post('/api/v2/auth/login', data=json.dumps(DATA[4]),
                                 content_type='application/json')
 
     assert response.status_code == 200
@@ -103,7 +103,7 @@ def test_wrong_email(test_client):
     """
     test that it returns 404 error for wrong email
     """
-    response = test_client.post('/auth/login', data=json.dumps(DATA[5]),
+    response = test_client.post('/api/v2/auth/login', data=json.dumps(DATA[5]),
                                 content_type='application/json')
 
     assert response.status_code == 404
@@ -112,7 +112,7 @@ def test_wrong_password(test_client):
     """
     test returns 400 error for wrong password
     """
-    response = test_client.post('/auth/login', data=json.dumps(DATA[6]),
+    response = test_client.post('/api/v2/auth/login', data=json.dumps(DATA[6]),
                                 content_type='application/json')
 
     assert response.status_code == 400
@@ -121,7 +121,7 @@ def test_login_empty_string(test_client):
     """
     test returns 400 for empty strings
     """
-    response = test_client.post('/auth/login', data=json.dumps(DATA[7]),
+    response = test_client.post('/api/v2/auth/login', data=json.dumps(DATA[7]),
                                 content_type='application/json')
 
     assert response.status_code == 400
@@ -130,7 +130,7 @@ def test_login_missing_field(test_client):
     """
     test returns 400 error for missing fields
     """
-    response = test_client.post('/auth/login', data=json.dumps(DATA[8]),
+    response = test_client.post('/api/v2/auth/login', data=json.dumps(DATA[8]),
                                 content_type='application/json')
 
     assert response.status_code == 400
