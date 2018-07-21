@@ -10,7 +10,9 @@ from flask_cors import CORS
 from config import CONFIG
 from database.tables import create_tables
 from .auth import Signup, Login
-from .rides import RidesList, Ride, RideRequests, Respond, Car
+from .rides import RidesList, Ride
+from .requests import RideRequests, Respond
+from .cars import Car
 from .template import TEMPLATE
 
 def create_app(config_name):
