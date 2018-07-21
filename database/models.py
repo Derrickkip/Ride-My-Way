@@ -323,7 +323,8 @@ class Rides:
                         destination,
                         date_of_ride,
                         time,
-                        price
+                        price,
+                        requests
                         from rides where ride_id=%(ride_id)s''', {'ride_id':ride_id})
 
         rows = cur.fetchone()
@@ -343,7 +344,8 @@ class Rides:
             'price': rows[6],
             'car_model': car[1],
             'registration': car[2],
-            'seats': car[4]
+            'seats': car[4],
+            'requests': rows[7]
         }
 
         cur.close()
@@ -493,12 +495,20 @@ class Requests:
 
         #check that the requestor is not the owner of the ride
         cur.execute('''select
-                        user_id
+                        user_id,
+                        requests
                         from rides where ride_id=%(ride_id)s''',
                     {'ride_id': ride_id})
         row = cur.fetchone()
         if row[0] == user[0]:
             return {'error': 'You cannot request your own ride'}, 400
+
+        #check that the requests are not more than the seats
+        requests = row[1]
+        seats = get_user_car(row[0])[4]
+
+        if requests >= seats:
+            return {"message": "The ride is fully booked"}, 400
 
         #check that user has not requested for the ride
         cur.execute('''select
@@ -516,6 +526,9 @@ class Requests:
 
         cur.execute('''insert into requests (user_id, ride_id) values (%s, %s)''',
                     [user[0], ride_id])
+
+        cur.execute('''update rides set requests=%(requests)s where ride_id=%(ride_id)s''',
+                    {'requests': requests+1, 'ride_id': ride_id})
 
         cur.close()
         conn.commit()

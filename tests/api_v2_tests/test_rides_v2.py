@@ -1,6 +1,7 @@
 """
 Tests for rides endpoint
 """
+import pdb
 import json
 import psycopg2
 from flask import current_app
@@ -12,7 +13,9 @@ DATA = [{'origin': 'Kisumu', 'destination': 'Kericho',
          'date_of_ride': '5th Sep 2018', 'time':'11:00am', "price": 300},
         {'car_model': 'Audi Q7', 'registration': 'KCM 001X', 'seats': 5},
         {'car_model': 'Audi Q7', 'registration': 'KCM 030X', 'seats': 5},
-        {'car_model': 'Subaru Imprezza', 'registration': 'KCP 001Z', 'seats': 4}]
+        {'car_model': 'Subaru Imprezza', 'registration': 'KCP 001Z', 'seats': 4},
+        {'origin': 'Kisumu', 'destination': 'Kericho',
+         'date_of_ride': '13th July 2018', 'time': "10:00 pm", "price":100}]
 
 BAD_DATA = [{'origin': 'Kisumu', 'destination': 'Kericho',
              'date_of_ride': '', 'time': "10:00 pm", "price":100},
@@ -350,26 +353,6 @@ def test_create_ride_missing_field(test_client):
 
     assert response.status_code == 400
 
-def test_no_duplicate_ride(test_client):
-    """
-    Ride duplicates should be rejected
-    """
-    auth_header = get_headers(test_client)[0]
-    response = test_client.post('/rides', headers={'Authorization':auth_header},
-                                data=json.dumps(DATA[0]), content_type='application/json')
-
-    assert response.status_code == 400
-
-    response2 = test_client.post('/rides', headers={'Authorization':auth_header},
-                                 data=json.dumps(DATA[2]), content_type='application/json')
-
-    assert response2.status_code == 201
-
-    response3 = test_client.post('/rides', headers={'Authorization':auth_header},
-                                 data=json.dumps(DATA[2]), content_type='application/json')
-
-    assert response3.status_code == 400
-
 def test_get_single_ride(test_client):
     """
     test user can view details of single ride
@@ -635,6 +618,27 @@ def test_non_owner_respond_to_ride_requests(test_client):
                                data=json.dumps(status), content_type='application/json')
 
     assert response.status_code == 403
+
+def test_no_duplicate_ride(test_client):
+    """
+    Ride duplicates should be rejected
+    """
+    auth_header = get_headers(test_client)[0]
+    response = test_client.post('/rides', headers={'Authorization':auth_header},
+                                data=json.dumps(DATA[6]), content_type='application/json')
+
+    assert response.status_code == 400
+
+    response2 = test_client.post('/rides', headers={'Authorization':auth_header},
+                                 data=json.dumps(DATA[2]), content_type='application/json')
+
+    assert response2.status_code == 201
+
+    response3 = test_client.post('/rides', headers={'Authorization':auth_header},
+                                 data=json.dumps(DATA[2]), content_type='application/json')
+
+    assert response3.status_code == 400
+
 
 def test_non_owner_delete_ride(test_client):
     """

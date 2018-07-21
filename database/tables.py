@@ -36,7 +36,8 @@ def create_tables(db_url):
                 destination varchar(80) not null,
                 date_of_ride varchar(80) not null,
                 time varchar(80) not null,
-                price int not null
+                price int not null,
+                requests int default 0
 
         )
         """,
