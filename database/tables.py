@@ -3,12 +3,7 @@ Create db tables
 """
 import psycopg2
 
-def create_tables(db_url):
-    """
-    Create tables for the database
-    """
-
-    commands = (
+commands = (
         """
         CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL primary key,
@@ -51,6 +46,10 @@ def create_tables(db_url):
         """
     )
 
+def create_tables(db_url):
+    """
+    Create tables for the database
+    """
     try:
         conn = psycopg2.connect(db_url)
 
