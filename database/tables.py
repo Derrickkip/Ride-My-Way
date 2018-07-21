@@ -10,18 +10,6 @@ def create_tables(db_url):
 
     commands = (
         """
-        DROP TABLE IF EXISTS requests
-        """,
-        """
-        DROP TABLE IF EXISTS rides
-        """,
-        """
-        DROP TABLE IF EXISTS cars
-        """,
-        """
-        DROP TABLE IF EXISTS users
-        """,
-        """
         CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL primary key,
             first_name varchar(80) not null,
