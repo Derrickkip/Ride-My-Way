@@ -10,10 +10,16 @@
 * Passengers can request to join a ride
 * Drivers can accept or reject requests to rides they created
 
+## Technologies Used
+* **Flask_restful** for api implementation
+* **Flask_jwt_extended** for securing endpoints
+* **Pytest** For tests
+* **Flasgger** For documentation
+* **Postgresql** For data persistence
+
 ## Getting started
- Ride-My-Way is written in python using the Flask framework
 ### Requirements
-To get started you need the following
+To get started you need the following installed
  * Git
  * Python3
 
@@ -35,22 +41,22 @@ To get started you need the following
 The api Implements a CRUD interface for rides using GET, POST, PUT and DELETE HTTP methods. The Api also has an auth route with signup and login
 
 #### Available endpoints
-| Method             | Endpoint                                | Functionality
-|:------------------:|:---------------------------------------:|:--------------------------------------:|
- POST                | /auth/signup                            | register a new account
- POST                | /auth/login                             | login into application
- GET                 | /rides                                  | get a list of all available ride offers
- GET                 | /rides/<ride_id>                        | get ride with specified ride_id
- POST                | /rides                                  | Create a new ride
- PUT                 | /rides/ride_id>                         | Update ride with specified ride_id
- DELETE              | /rides/<ride_id>                        | Delete ride with specified ride_id
- POST                | /rides/<ride_id>/requests               | Make a request for ride with ride_id
- GET                 | /rides/<ride_id>/requests               | Get all requests to ride with specified ride_id
- PUT                 | /rides/<ride_id>/requests/<requests_id> |respond to a ride request with either accept or reject
- POST                | /cars                                   | add car details
- GET                 | /cars                                   | get users car
- PUT                 | /cars                                   | Update users car
- DELETE              | /cars                                   | Delete users car
+| Method             | Endpoint                                       | Functionality
+|:------------------:|:----------------------------------------------:|:--------------------------------------:|
+ POST                | /api/v2/auth/signup                            | register a new account
+ POST                | /api/v2/auth/login                             | login into application
+ GET                 | /api/v2/rides                                  | get a list of all available ride offers
+ GET                 | /api/v2/rides/<ride_id>                        | get ride with specified ride_id
+ POST                | /api/v2/rides                                  | Create a new ride
+ PUT                 | /api/v2/rides/ride_id>                         | Update ride with specified ride_id
+ DELETE              | /api/v2/rides/<ride_id>                        | Delete ride with specified ride_id
+ POST                | /api/v2/rides/<ride_id>/requests               | Make a request for ride with ride_id
+ GET                 | /api/v2/rides/<ride_id>/requests               | Get all requests to ride with specified ride_id
+ PUT                 | /api/v2/rides/<ride_id>/requests/<requests_id> |respond to a ride request with either accept or reject
+ POST                | /api/v2/cars                                   | add car details
+ GET                 | /api/v2/cars                                   | get users car
+ PUT                 | /api/v2/cars                                   | Update users car
+ DELETE              | /api/v2/cars                                   | Delete users car
 
 The endpoints above can be tested using postman which offers a friendly and easy to use interface.
 * **NOTE**  After logging in an access token is returned that needs to be passed in the header of all the other requests.
@@ -60,13 +66,13 @@ Here is a screenshot from postman
 
 ![Postman screenshot](screenshots/postman2.png)
 
-## Testing
+### Testing
 To run the tests `coverage run -m pytest`
 
-## Documentation
+### Documentation
 [Heroku](https://derrick-ride-my-way.herokuapp.com/apidocs)
 
-## Frontend
+### Frontend
 [Github pages](https://derrickkip.github.io/Ride-My-Way/)
 
 
