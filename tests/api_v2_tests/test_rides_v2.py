@@ -109,12 +109,12 @@ def get_headers(test_client):
     user1 = {'first_name':'Susan', 'last_name': 'Mbugua',
              'email': 'sue@email.com', 'phone_number': '231321444', 'password':"testpassword"}
 
-    test_client.post('/auth/signup', data=json.dumps(user1),
+    test_client.post('/api/v2/auth/signup', data=json.dumps(user1),
                      content_type='application/json')
 
     data_login = {'email': 'sue@email.com', 'password':"testpassword"}
 
-    response1 = test_client.post('/auth/login', data=json.dumps(data_login),
+    response1 = test_client.post('/api/v2/auth/login', data=json.dumps(data_login),
                                  content_type='application/json')
 
     result = json.loads(response1.data)
@@ -126,12 +126,12 @@ def get_headers(test_client):
     user2 = {'first_name':'Luke', 'last_name': 'Skywalker',
              'email': 'skywalker@email.com', 'phone_number': '3133243', 'password':"testpassword"}
 
-    test_client.post('/auth/signup', data=json.dumps(user2),
+    test_client.post('/api/v2/auth/signup', data=json.dumps(user2),
                      content_type='application/json')
 
     data_login2 = {'email': 'skywalker@email.com', 'password':"testpassword"}
 
-    response2 = test_client.post('/auth/login', data=json.dumps(data_login2),
+    response2 = test_client.post('/api/v2/auth/login', data=json.dumps(data_login2),
                                  content_type='application/json')
 
     result2 = json.loads(response2.data)
@@ -147,7 +147,7 @@ def get_ride_id(test_client):
     Returns id of a ride for testing
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.get('/rides', headers={'Authorization':auth_header},
+    response = test_client.get('/api/v2/rides', headers={'Authorization':auth_header},
                                content_type='application/json')
 
     result = json.loads(response.data)
@@ -164,7 +164,7 @@ def test_get_rides(test_client):
     test user can view rides
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.get('/rides', headers={'Authorization':auth_header},
+    response = test_client.get('/api/v2/rides', headers={'Authorization':auth_header},
                                content_type='application/json')
 
     assert response.status_code == 200
@@ -177,7 +177,7 @@ def test_unauthenticated_user(test_client):
     """
     test that unauthenticated user can view rides
     """
-    response = test_client.get('/rides')
+    response = test_client.get('/api/v2/rides')
 
     assert response.status_code == 200
 
@@ -190,7 +190,7 @@ def test_user_without_car_cant_create_ride(test_client):
     user without car cant create ride
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.post('/rides', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/rides', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[0]), content_type='application/json')
 
     assert response.status_code == 400
@@ -203,7 +203,7 @@ def test_create_car(test_client):
 
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.post('/cars', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/cars', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[3]), content_type='application/json')
 
     assert response.status_code == 201
@@ -218,7 +218,7 @@ def test_create_car_missing_field(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.post('/cars', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/cars', headers={'Authorization':auth_header},
                                 data=json.dumps(BAD_DATA[2]), content_type='application/json')
 
     assert response.status_code == 400
@@ -231,7 +231,7 @@ def test_user_can_add_car_only_once(test_client):
 
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.post('/cars', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/cars', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[4]), content_type='application/json')
 
     assert response.status_code == 400
@@ -246,7 +246,7 @@ def test_unique_registration_numbers(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.post('/cars', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/cars', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[3]), content_type='application/json')
 
     assert response.status_code == 400
@@ -257,7 +257,7 @@ def test_get_car(test_client):
     """
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.get('/cars', headers={'Authorization':auth_header},
+    response = test_client.get('/api/v2/cars', headers={'Authorization':auth_header},
                                content_type='application/json')
 
     assert response.status_code == 200
@@ -271,7 +271,7 @@ def test_get_car_for_user_without_car(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.get('/cars', headers={'Authorization':auth_header},
+    response = test_client.get('/api/v2/cars', headers={'Authorization':auth_header},
                                content_type='application/json')
 
     assert response.status_code == 404
@@ -282,7 +282,7 @@ def test_update_car(test_client):
     """
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.put('/cars', headers={'Authorization':auth_header},
+    response = test_client.put('/api/v2/cars', headers={'Authorization':auth_header},
                                data=json.dumps(DATA[5]), content_type='application/json')
 
     assert response.status_code == 200
@@ -303,7 +303,7 @@ def test_update_car_missing_field(test_client):
     """
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.put('/cars', headers={'Authorization':auth_header},
+    response = test_client.put('/api/v2/cars', headers={'Authorization':auth_header},
                                data=json.dumps(BAD_DATA[2]), content_type='application/json')
 
     assert response.status_code == 400
@@ -314,7 +314,7 @@ def test_update_for_user_without_car(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.put('/cars', headers={'Authorization':auth_header},
+    response = test_client.put('/api/v2/cars', headers={'Authorization':auth_header},
                                data=json.dumps(DATA[5]), content_type='application/json')
 
     assert response.status_code == 404
@@ -325,7 +325,7 @@ def test_user_with_car_create_ride(test_client):
     """
     initial_count = get_rides_in_db()
     auth_header = get_headers(test_client)[0]
-    response = test_client.post('/rides', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/rides', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[0]), content_type='application/json')
 
     assert response.status_code == 201
@@ -337,7 +337,7 @@ def test_create_ride_empty_string(test_client):
     test that it returns 400 error
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.post('/rides', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/rides', headers={'Authorization':auth_header},
                                 data=json.dumps(BAD_DATA[0]), content_type='application/json')
 
     assert response.status_code == 400
@@ -348,7 +348,7 @@ def test_create_ride_missing_field(test_client):
     test returns 400 error if a field is missing
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.post('/rides', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/rides', headers={'Authorization':auth_header},
                                 data=json.dumps(BAD_DATA[1]), content_type='application/json')
 
     assert response.status_code == 400
@@ -359,7 +359,7 @@ def test_get_single_ride(test_client):
     """
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[0]
-    response = test_client.get('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+    response = test_client.get('/api/v2/rides/'+str(ride_id), headers={'Authorization':auth_header},
                                content_type='application/json')
 
     assert response.status_code == 200
@@ -370,7 +370,7 @@ def test_non_existent_ride(test_client):
     test that requesting for none existent ride raises 404 error
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.get('/rides/50000', headers={'Authorization':auth_header},
+    response = test_client.get('/api/v2/rides/50000', headers={'Authorization':auth_header},
                                content_type='application/json')
 
     assert response.status_code == 404
@@ -381,7 +381,7 @@ def test_user_can_update_ride(test_client):
     """
     auth_header = get_headers(test_client)[0]
     ride_id = get_ride_id(test_client)
-    response = test_client.put('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+    response = test_client.put('/api/v2/rides/'+str(ride_id), headers={'Authorization':auth_header},
                                data=json.dumps(DATA[1]), content_type='application/json')
 
     assert response.status_code == 200
@@ -399,7 +399,7 @@ def test_non_owner_update_ride(test_client):
     """
     auth_header = get_headers(test_client)[1]
     ride_id = get_ride_id(test_client)
-    response = test_client.put('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+    response = test_client.put('/api/v2/rides/'+str(ride_id), headers={'Authorization':auth_header},
                                data=json.dumps(DATA[1]), content_type='application/json')
 
     assert response.status_code == 403
@@ -409,7 +409,7 @@ def test_update_non_existent_ride(test_client):
     test raises 404 error
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.put('/rides/50000', headers={'Authorization':auth_header},
+    response = test_client.put('/api/v2/rides/50000', headers={'Authorization':auth_header},
                                data=json.dumps(DATA[1]), content_type='application/json')
 
     assert response.status_code == 404
@@ -424,7 +424,7 @@ def test_users_can_request_rides(test_client):
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.post('/rides/'+str(ride_id)+'/requests',
+    response = test_client.post('/api/v2/rides/'+str(ride_id)+'/requests',
                                 headers={'Authorization':auth_header},
                                 content_type='application/json')
 
@@ -441,7 +441,7 @@ def test_no_duplicate_requests(test_client):
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.post('/rides/'+str(ride_id)+'/requests',
+    response = test_client.post('/api/v2/rides/'+str(ride_id)+'/requests',
                                 headers={'Authorization':auth_header},
                                 content_type='application/json')
 
@@ -453,7 +453,7 @@ def test_owner_cannot_request_ride(test_client):
     """
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[0]
-    response = test_client.post('/rides/'+str(ride_id)+'/requests',
+    response = test_client.post('/api/v2/rides/'+str(ride_id)+'/requests',
                                 headers={'Authorization':auth_header},
                                 content_type='application/json')
 
@@ -466,7 +466,7 @@ def test_request_non_existent_ride(test_client):
     """
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.post('/rides/5000/requests',
+    response = test_client.post('/api/v2/rides/5000/requests',
                                 headers={'Authorization':auth_header},
                                 content_type='application/json')
 
@@ -479,7 +479,7 @@ def test_view_ride_requests(test_client):
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.get('/rides/'+str(ride_id)+'/requests',
+    response = test_client.get('/api/v2/rides/'+str(ride_id)+'/requests',
                                headers={'Authorization':auth_header},
                                content_type='application/json')
 
@@ -492,7 +492,7 @@ def test_only_owner_view_requests(test_client):
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.get('/rides/'+str(ride_id)+'/requests',
+    response = test_client.get('/api/v2/rides/'+str(ride_id)+'/requests',
                                headers={'Authorization':auth_header},
                                content_type='application/json')
 
@@ -504,7 +504,7 @@ def test_requests_of_missing_ride(test_client):
     """
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.get('/rides/5000/requests',
+    response = test_client.get('/api/v2/rides/5000/requests',
                                headers={'Authorization':auth_header},
                                content_type='application/json')
 
@@ -517,7 +517,7 @@ def test_respond_to_rides(test_client):
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[0]
 
-    req_response = test_client.get('/rides/'+str(ride_id)+'/requests',
+    req_response = test_client.get('/api/v2/rides/'+str(ride_id)+'/requests',
                                    headers={'Authorization':auth_header},
                                    content_type='application/json')
 
@@ -527,14 +527,14 @@ def test_respond_to_rides(test_client):
 
     status = {'status': "accepted"}
 
-    response = test_client.put('/rides/'+str(ride_id)+'/requests/'+str(request_id),
+    response = test_client.put('/api/v2/rides/'+str(ride_id)+'/requests/'+str(request_id),
                                headers={'Authorization':auth_header},
                                data=json.dumps(status), content_type='application/json')
 
     assert response.status_code == 200
 
     #Check that request is updated
-    response2 = test_client.get('/rides/'+str(ride_id)+'/requests',
+    response2 = test_client.get('/api/v2/rides/'+str(ride_id)+'/requests',
                                 headers={'Authorization':auth_header},
                                 content_type='application/json')
 
@@ -551,7 +551,7 @@ def test_respond_non_existent_request(test_client):
 
     status = {'status': "accepted"}
 
-    response = test_client.put('/rides/'+str(ride_id)+'/requests/3',
+    response = test_client.put('/api/v2/rides/'+str(ride_id)+'/requests/3',
                                headers={'Authorization':auth_header},
                                data=json.dumps(status), content_type='application/json')
 
@@ -565,7 +565,7 @@ def test_respond_non_existent_ride(test_client):
 
     status = {'status': "accepted"}
 
-    response = test_client.put('/rides/4/requests/3',
+    response = test_client.put('/api/v2/rides/4/requests/3',
                                headers={'Authorization':auth_header},
                                data=json.dumps(status), content_type='application/json')
 
@@ -578,7 +578,7 @@ def test_respond_missing_field(test_client):
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[0]
 
-    req_response = test_client.get('/rides/'+str(ride_id)+'/requests',
+    req_response = test_client.get('/api/v2/rides/'+str(ride_id)+'/requests',
                                    headers={'Authorization':auth_header},
                                    content_type='application/json')
 
@@ -588,7 +588,7 @@ def test_respond_missing_field(test_client):
 
     status = {'respond': "accepted"}
 
-    response = test_client.put('/rides/'+str(ride_id)+'/requests/'+str(request_id),
+    response = test_client.put('/api/v2/rides/'+str(ride_id)+'/requests/'+str(request_id),
                                headers={'Authorization':auth_header},
                                data=json.dumps(status), content_type='application/json')
 
@@ -601,7 +601,7 @@ def test_non_owner_respond_to_ride_requests(test_client):
     ride_id = get_ride_id(test_client)
     auth_header = get_headers(test_client)[0]
 
-    req_response = test_client.get('/rides/'+str(ride_id)+'/requests',
+    req_response = test_client.get('/api/v2/rides/'+str(ride_id)+'/requests',
                                    headers={'Authorization':auth_header},
                                    content_type='application/json')
 
@@ -613,7 +613,7 @@ def test_non_owner_respond_to_ride_requests(test_client):
 
     auth_header2 = get_headers(test_client)[1]
 
-    response = test_client.put('/rides/'+str(ride_id)+'/requests/'+str(request_id),
+    response = test_client.put('/api/v2/rides/'+str(ride_id)+'/requests/'+str(request_id),
                                headers={'Authorization':auth_header2},
                                data=json.dumps(status), content_type='application/json')
 
@@ -624,17 +624,17 @@ def test_no_duplicate_ride(test_client):
     Ride duplicates should be rejected
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.post('/rides', headers={'Authorization':auth_header},
+    response = test_client.post('/api/v2/rides', headers={'Authorization':auth_header},
                                 data=json.dumps(DATA[6]), content_type='application/json')
 
     assert response.status_code == 400
 
-    response2 = test_client.post('/rides', headers={'Authorization':auth_header},
+    response2 = test_client.post('/api/v2/rides', headers={'Authorization':auth_header},
                                  data=json.dumps(DATA[2]), content_type='application/json')
 
     assert response2.status_code == 201
 
-    response3 = test_client.post('/rides', headers={'Authorization':auth_header},
+    response3 = test_client.post('/api/v2/rides', headers={'Authorization':auth_header},
                                  data=json.dumps(DATA[2]), content_type='application/json')
 
     assert response3.status_code == 400
@@ -646,7 +646,7 @@ def test_non_owner_delete_ride(test_client):
     """
     auth_header = get_headers(test_client)[1]
     ride_id = get_ride_id(test_client)
-    response = test_client.delete('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+    response = test_client.delete('/api/v2/rides/'+str(ride_id), headers={'Authorization':auth_header},
                                   content_type='application/json')
 
     assert response.status_code == 403
@@ -658,7 +658,7 @@ def test_delete_ride(test_client):
     initial_count = get_rides_in_db()
     auth_header = get_headers(test_client)[0]
     ride_id = get_ride_id(test_client)
-    response = test_client.delete('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+    response = test_client.delete('/api/v2/rides/'+str(ride_id), headers={'Authorization':auth_header},
                                   content_type='application/json')
 
     assert response.status_code == 200
@@ -668,7 +668,7 @@ def test_delete_ride(test_client):
     assert initial_count - final_count == 1
 
     #check that ride does not exist
-    response = test_client.get('/rides/'+str(ride_id), headers={'Authorization':auth_header},
+    response = test_client.get('/api/v2/rides/'+str(ride_id), headers={'Authorization':auth_header},
                                content_type='application/json')
 
     assert response.status_code == 404
@@ -678,7 +678,7 @@ def test_delete_non_existent_ride(test_client):
     Test return 404 error if ride is not available
     """
     auth_header = get_headers(test_client)[0]
-    response = test_client.delete('/rides/500', headers={'Authorization':auth_header},
+    response = test_client.delete('/api/v2/rides/500', headers={'Authorization':auth_header},
                                   content_type='application/json')
 
     assert response.status_code == 404
@@ -691,7 +691,7 @@ def test_delete_car(test_client):
 
     auth_header = get_headers(test_client)[0]
 
-    response = test_client.delete('/cars', headers={'Authorization':auth_header},
+    response = test_client.delete('/api/v2/cars', headers={'Authorization':auth_header},
                                   content_type='application/json')
 
     assert response.status_code == 200
@@ -706,7 +706,7 @@ def test_delete_for_user_without_car(test_client):
     """
     auth_header = get_headers(test_client)[1]
 
-    response = test_client.delete('/cars', headers={'Authorization':auth_header},
+    response = test_client.delete('/api/v2/cars', headers={'Authorization':auth_header},
                                   content_type='application/json')
 
     assert response.status_code == 404

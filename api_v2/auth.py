@@ -5,7 +5,7 @@ import re
 from flask import request
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
-from database.models import Users
+from database.models.user_model import Users
 from .schemas import SIGNUP_SCHEMA, LOGIN_SCHEMA
 
 

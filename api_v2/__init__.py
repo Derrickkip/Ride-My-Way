@@ -10,7 +10,9 @@ from flask_cors import CORS
 from config import CONFIG
 from database.tables import create_tables
 from .auth import Signup, Login
-from .rides import RidesList, Ride, RideRequests, Respond, Car
+from .rides import RidesList, Ride
+from .requests import RideRequests, Respond
+from .cars import Car
 from .template import TEMPLATE
 
 def create_app(config_name):
@@ -29,12 +31,12 @@ def create_app(config_name):
 
     CORS(app)
 
-    api.add_resource(Signup, '/auth/signup')
-    api.add_resource(Login, '/auth/login')
-    api.add_resource(RidesList, '/rides')
-    api.add_resource(Ride, '/rides/<int:ride_id>')
-    api.add_resource(RideRequests, '/rides/<int:ride_id>/requests')
-    api.add_resource(Respond, '/rides/<int:ride_id>/requests/<int:request_id>')
-    api.add_resource(Car, '/cars')
+    api.add_resource(Signup, '/api/v2/auth/signup')
+    api.add_resource(Login, '/api/v2/auth/login')
+    api.add_resource(RidesList, '/api/v2/rides')
+    api.add_resource(Ride, '/api/v2/rides/<int:ride_id>')
+    api.add_resource(RideRequests, '/api/v2/rides/<int:ride_id>/requests')
+    api.add_resource(Respond, '/api/v2/rides/<int:ride_id>/requests/<int:request_id>')
+    api.add_resource(Car, '/api/v2/cars')
 
     return app
