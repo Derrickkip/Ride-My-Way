@@ -9,9 +9,10 @@ SIGNUP_SCHEMA = {
         "last_name": {"type": "string"},
         "email": {"type": "string"},
         "phone_number": {"type": "string"},
-        "password": {"type": "string"}
+        "password": {"type": "string"},
+        "confirm_password": {"type": "string"}
     },
-    "required": ["first_name", "last_name", "email", "phone_number", "password"]
+    "required": ["first_name", "last_name", "email", "phone_number", "password", "confirm_password"]
 }
 
 LOGIN_SCHEMA = {
