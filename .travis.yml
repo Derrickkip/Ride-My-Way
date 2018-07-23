@@ -16,7 +16,7 @@ before_script:
   - psql -c 'alter database testdb owner to testuser' -U postgres
 
 script:
-  - coverage run -m pytest
+  - coverage run -m pytest -v
 
 addons:
   coveralls:
