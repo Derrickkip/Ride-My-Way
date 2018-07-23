@@ -199,3 +199,16 @@ def check_ride_existence(user_id, date_of_ride, time):
                 code = 400
 
     return message, code
+
+def update_ride_requests(requests, ride_id):
+    """
+    Updates number of requests after each request
+    """
+    conn = dbconn()
+    cur = conn.cursor()
+    cur.execute('''update rides set requests=%(requests)s where ride_id=%(ride_id)s''',
+                {'requests': requests+1, 'ride_id': ride_id})
+
+    cur.close()
+    conn.commit()
+    conn.close()
