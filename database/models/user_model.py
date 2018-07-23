@@ -2,6 +2,7 @@
 User model
 Signup and login functionality
 """
+from flask import abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from .helpers import get_user, get_password
@@ -26,7 +27,7 @@ class Users:
         data = [self.first_name, self.last_name, self.email, self.phone_number, self.password_hash]
 
         if get_user(self.email):
-            return {'error': 'user already exists'}, 400
+            abort(400, 'user already exists')
 
         conn = dbconn()
         cur = conn.cursor()
@@ -49,17 +50,15 @@ class Users:
         """
         login method
         """
-        if get_user(email):
+        if not get_user(email):
+            abort(404, 'The email is not recognised')
 
-            stored_password = get_password(email)[0]
+        stored_password = get_password(email)[0]
 
-            if not check_password_hash(stored_password, password):
-                return {'error': 'Incorrect password, try again !'}, 400
+        if not check_password_hash(stored_password, password):
+            abort(400, 'Incorrect password, try again !')
 
-            access_token = create_access_token(email)
+        access_token = create_access_token(email)
 
-            return {"success":"login successful",
-                    "access_token": access_token}
-
-
-        return {'error':'The email is not recognised'}, 404
+        return {"success":"login successful",
+                "access_token": access_token}
