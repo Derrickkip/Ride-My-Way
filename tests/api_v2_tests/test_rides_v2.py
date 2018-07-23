@@ -107,7 +107,7 @@ def get_headers(test_client):
     ############### USER 1 ########################
 
     user1 = {'first_name':'Susan', 'last_name': 'Mbugua',
-             'email': 'sue@email.com', 'phone_number': '231321444', 'password':"testpassword"}
+             'email': 'sue@email.com', 'phone_number': '231321444', 'password':"testpassword", "confirm_password":"testpassword"}
 
     test_client.post('/api/v2/auth/signup', data=json.dumps(user1),
                      content_type='application/json')
@@ -124,7 +124,7 @@ def get_headers(test_client):
     ############## USER 2 ###############################
 
     user2 = {'first_name':'Luke', 'last_name': 'Skywalker',
-             'email': 'skywalker@email.com', 'phone_number': '3133243', 'password':"testpassword"}
+             'email': 'skywalker@email.com', 'phone_number': '3133243', 'password':"testpassword", "confirm_password":"testpassword"}
 
     test_client.post('/api/v2/auth/signup', data=json.dumps(user2),
                      content_type='application/json')
