@@ -6,7 +6,7 @@ from flask import abort
 from flask_jwt_extended import get_jwt_identity
 from ..dbconn import dbconn
 from .helpers import (get_user_by_email, get_ride_owner, get_user_by_id,
-                      get_user_car, check_requestor, update_ride_requests)
+                      get_user_car, check_requestor)
 
 class Requests:
     """
@@ -91,7 +91,8 @@ class Requests:
         cur.execute('''insert into requests (user_id, ride_id) values (%s, %s)''',
                     [user[0], ride_id])
 
-        update_ride_requests(requests, ride_id)
+        cur.execute('''update rides set requests=%(requests)s where ride_id=%(ride_id)s''',
+                    {'requests': requests+1, 'ride_id': ride_id})
 
         cur.close()
         conn.commit()
