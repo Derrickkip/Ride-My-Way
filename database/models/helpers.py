@@ -212,3 +212,5 @@ def update_ride_requests(requests, ride_id):
     cur.close()
     conn.commit()
     conn.close()
+
+    return
