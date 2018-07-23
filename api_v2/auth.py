@@ -2,7 +2,7 @@
 Routes for user authentication
 """
 import re
-from flask import request
+from flask import request, abort
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from database.models.user_model import Users
@@ -46,6 +46,9 @@ class Signup(Resource):
 
             if not re.match(EMAIL_REGEX, data['email']):
                 return {'Error': 'Invalid email'}, 400
+
+            if data['password'] != data['confirm_password']:
+                abort(400, 'Passwords do not match')
 
             new_user = Users(data['first_name'], data['last_name'],
                              data['email'], data['phone_number'], data['password'])
