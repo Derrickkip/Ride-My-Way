@@ -2,6 +2,7 @@
 Car model
 Implement CRUD functionality for Cars resource
 """
+from flask import abort
 from flask_jwt_extended import get_jwt_identity
 from ..dbconn import dbconn
 from .helpers import get_user_by_email, get_user_car, registration_exists
@@ -25,10 +26,10 @@ class Cars:
         #check user has no car
         car = get_user_car(user_id)
         if car:
-            return {'message':'You can only use one car'}, 400
+            abort(400, 'You can only use one car')
 
         if registration_exists(self.registration):
-            return {'error': 'That registration already exists'}, 400
+            abort(400, 'That registration already exists')
 
         conn = dbconn()
 
@@ -63,7 +64,7 @@ class Cars:
         row = cur.fetchone()
 
         if row is None:
-            return {'message': 'No car found'}, 404
+            abort(404, 'No car found')
 
         car = {}
         car['car_model'] = row[1]
@@ -82,7 +83,7 @@ class Cars:
 
         car = get_user_car(user_id)
         if car is None:
-            return {'error': 'Car not found'}, 404
+            abort(404, 'Car not found')
         conn = dbconn()
 
         cur = conn.cursor()
@@ -114,7 +115,7 @@ class Cars:
 
         car = get_user_car(user_id)
         if car is None:
-            return {'error': 'Car not found'}, 404
+            abort(404, 'Car not found')
         conn = dbconn()
 
         cur = conn.cursor()

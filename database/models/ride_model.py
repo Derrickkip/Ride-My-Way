@@ -2,6 +2,7 @@
 Ride model
 Implements CRUD operations for rides
 """
+from flask import abort
 from flask_jwt_extended import get_jwt_identity
 from ..dbconn import dbconn
 from .helpers import (get_user_by_email, get_user_car, get_user_by_id, get_phone_number,
@@ -28,7 +29,7 @@ class Rides:
         #check that user has car
         car = get_user_car(user[0])
         if car is None:
-            return {'message': 'Update your car details to create ride'}, 400
+            abort(400, 'Update your car details to create ride')
 
         message, code = check_ride_existence(user[0], self.date_of_ride, self.time)
 
@@ -62,14 +63,8 @@ class Rides:
         """
         conn = dbconn()
         cur = conn.cursor()
-        cur.execute('''select
-                        ride_id,
-                        origin,
-                        destination,
-                        date_of_ride,
-                        time,
-                        price,
-                        user_id from rides''')
+        cur.execute('''select ride_id, origin, destination, date_of_ride,
+                        time, price, user_id from rides''')
 
         rows = cur.fetchall()
 
@@ -102,19 +97,13 @@ class Rides:
         """
         conn = dbconn()
         cur = conn.cursor()
-        cur.execute('''select ride_id,
-                        user_id,
-                        origin,
-                        destination,
-                        date_of_ride,
-                        time,
-                        price,
-                        requests
+        cur.execute('''select ride_id, user_id, origin, destination,
+                        date_of_ride, time, price, requests
                         from rides where ride_id=%(ride_id)s''', {'ride_id':ride_id})
 
         rows = cur.fetchone()
         if not rows:
-            return {'error': 'ride not found'}, 404
+            abort(404, 'ride not found')
 
         car = get_user_car(rows[1])
 
@@ -129,8 +118,7 @@ class Rides:
             'price': rows[6],
             'car_model': car[1],
             'registration': car[2],
-            'seats': car[4],
-            'requests': rows[7]
+            'seats': car[4], 'requests': rows[7]
         }
 
         cur.close()
@@ -162,8 +150,7 @@ class Rides:
         conn = dbconn()
         cur = conn.cursor()
 
-        cur.execute('''update rides set
-                        origin=%(origin)s, destination=%(destination)s,
+        cur.execute('''update rides set origin=%(origin)s, destination=%(destination)s,
                         date_of_ride=%(date_of_ride)s, time=%(time)s,
                         price=%(price)s where ride_id=%(ride_id)s''',
                     {'origin': data.get('origin', origin),
@@ -188,9 +175,9 @@ class Rides:
         user = get_user_by_email(email)[0]
         ride_owner = get_ride_owner(ride_id)
         if ride_owner is None:
-            return {'error':'Ride not found'}, 404
+            abort(404, 'Ride not found')
         if user != ride_owner[0]:
-            return {'forbidden': 'You dont have permission to perform this operation'}, 403
+            abort(403, 'You dont have permission to perform this operation')
 
         conn = dbconn()
         cur = conn.cursor()

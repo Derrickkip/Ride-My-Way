@@ -2,6 +2,7 @@
 Request model
 Implements Get requests, Make requests and Respond to requests
 """
+from flask import abort
 from flask_jwt_extended import get_jwt_identity
 from ..dbconn import dbconn
 from .helpers import (get_user_by_email, get_ride_owner, get_user_by_id,
@@ -25,9 +26,7 @@ class Requests:
         conn = dbconn()
         cur = conn.cursor()
         cur.execute('''select
-                        request_id,
-                        user_id,
-                        accept_status
+                        request_id, user_id, accept_status
                         from requests where ride_id=%(ride_id)s''',
                     {'ride_id': ride_id})
 
@@ -36,8 +35,7 @@ class Requests:
         num = 1
         for row in rows:
             requests[num] = {
-                'id':row[0],
-                'user_name': get_user_by_id(row[1]),
+                'id':row[0], 'user_name': get_user_by_id(row[1]),
                 'accept_status': row[2]
             }
             num += 1
@@ -59,39 +57,34 @@ class Requests:
         ride = get_ride_owner(ride_id)
 
         if ride is None:
-            return {"error": "ride not found"}, 404
+            abort(404, "ride not found")
 
         conn = dbconn()
         cur = conn.cursor()
 
         #check that the requestor is not the owner of the ride
-        cur.execute('''select
-                        user_id,
-                        requests
-                        from rides where ride_id=%(ride_id)s''',
-                    {'ride_id': ride_id})
+        cur.execute('''select user_id, requests
+                        from rides where ride_id=%(ride_id)s''', {'ride_id': ride_id})
         row = cur.fetchone()
         if row[0] == user[0]:
-            return {'error': 'You cannot request your own ride'}, 400
+            abort(400, "You cannot request your own ride")
 
         #check that the requests are not more than the seats
         requests = row[1]
         seats = get_user_car(row[0])[4]
 
         if requests >= seats:
-            return {"message": "The ride is fully booked"}, 400
+            abort(400, "The ride is fully booked")
 
         #check that user has not requested for the ride
-        cur.execute('''select
-                        ride_id, user_id
-                        from requests where user_id=%(user_id)s''',
-                    {'user_id': user[0]})
+        cur.execute('''select ride_id, user_id
+                        from requests where user_id=%(user_id)s''', {'user_id': user[0]})
 
         rows = cur.fetchall()
         if rows:
             for row in rows:
                 if row[0] == ride_id:
-                    return {'bad request': 'you have already requested for this ride'}, 400
+                    abort(400, 'you have already requested for this ride')
 
 
 
@@ -116,9 +109,9 @@ class Requests:
         user = get_user_by_email(email)[0]
         ride_owner = get_ride_owner(ride_id)
         if not ride_owner:
-            return {'error': 'ride not found'}, 404
+            abort(404, 'ride not found')
         if user != ride_owner[0]:
-            return {'forbidden': 'You dont have permission to perform this operation'}, 403
+            abort(403, 'You dont have permission to perform this operation')
 
         conn = dbconn()
         cur = conn.cursor()
@@ -128,7 +121,7 @@ class Requests:
         row = cur.fetchone()
 
         if not row:
-            return {'error': 'That request does not exist'}, 404
+            abort(404, 'That request does not exist')
 
         cur.execute('''update requests
                         set accept_status =%(accept_status)s 
