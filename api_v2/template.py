@@ -34,6 +34,9 @@ TEMPLATE = {
                 },
                 "password": {
                     "type": "string"
+                },
+                "confirm_password": {
+                    "type": "string"
                 }
             }
         },

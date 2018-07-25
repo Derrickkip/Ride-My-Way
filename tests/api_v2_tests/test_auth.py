@@ -6,9 +6,9 @@ import psycopg2
 from flask import current_app
 
 DATA = [{'first_name':'Simon', 'last_name': 'Mbugua',
-         'email': 'simon@email.com', 'phone_number': '+254727138659', 'password':"testpassword"},
+         'email': 'simon@email.com', 'phone_number': '+254727138659', 'password':"testpassword", "confirm_password":"testpassword"},
         {'first_name':'Simon', 'last_name': 'Mbugua',
-         'email': 'simonemail.com', 'phone_number': '+254727138659', 'password':"testpassword"},
+         'email': 'simonemail.com', 'phone_number': '+254727138659', 'password':"testpassword", "confirm_password":"testpassword"},
         {'first_name':'Simon', 'last_name': 'Mbugua',
          'email': ' ', 'phone_number': '+254727138659', 'password':"testpassword"},
         {'first_name':'Simon', 'email': 'simo@mgugua.com',
@@ -17,7 +17,9 @@ DATA = [{'first_name':'Simon', 'last_name': 'Mbugua',
         {'email': 'swwee@mail.com', 'password':"testpassword"},
         {'email': 'simon@email.com', 'password': 'testp'},
         {'email': 'simon@email.com', 'password': ' '},
-        {'email': 'simon@email.com'}
+        {'email': 'simon@email.com'},
+        {'first_name':'Simon', 'last_name': 'Mbugua',
+         'email': 'mike@email.com', 'phone_number': '+254727138659', 'password':"testpassword", "confirm_password":"password"}
        ]
 
 def get_users_in_db():
@@ -51,6 +53,14 @@ def test_signup(test_client):
     assert response.status_code == 201
     final_count = get_users_in_db()
     assert final_count - initial_count == 1
+
+def test_signup_non_matching_passwords(test_client):
+    """
+    test raises 400 error if passwords dont match
+    """
+    response = test_client.post('/api/v2/auth/signup', data=json.dumps(DATA[9]),
+                                content_type='application/json')
+    assert response.status_code == 400
 
 def test_signup_twice(test_client):
     """
