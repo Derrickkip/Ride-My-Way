@@ -68,27 +68,26 @@ class Rides:
 
         rows = cur.fetchall()
 
-        rides = {}
-        num = 1
+        rides = []
         for row in rows:
-            rides[num] = {
+            ride = {
                 'id':row[0],
                 'origin':row[1],
-                'destinaton': row[2],
+                'destination': row[2],
                 'date_of_ride': row[3],
                 'time': row[4],
                 'price': row[5],
                 'driver': get_user_by_id(row[6])
             }
-            num += 1
+            rides.append(ride)
 
         cur.close()
         conn.close()
 
-        if rides == {}:
+        if rides == []:
             return {'message': 'No rides available'}
 
-        return {'rides': rides}, 200
+        return rides, 200
 
     @staticmethod
     def get_single_ride(ride_id):
@@ -124,7 +123,7 @@ class Rides:
         cur.close()
         conn.close()
 
-        return {'message':'success', 'ride': ride}
+        return {'ride': ride}
 
     @staticmethod
     def update_ride(ride_id, data):
