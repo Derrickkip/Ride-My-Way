@@ -152,7 +152,7 @@ def get_ride_id(test_client):
 
     result = json.loads(response.data)
 
-    ride_id = result['rides']["1"]["id"]
+    ride_id = result[0]["id"]
 
     return ride_id
 
