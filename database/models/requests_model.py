@@ -98,7 +98,7 @@ class Requests:
         conn.commit()
         conn.close()
 
-        return {'success':'You have successfully requested for the ride'}, 200
+        return {'message':'You have successfully requested for the ride'}, 200
 
     @staticmethod
     def respond_to_request(ride_id, request_id, data):
