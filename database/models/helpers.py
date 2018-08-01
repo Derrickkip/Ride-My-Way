@@ -195,7 +195,7 @@ def check_ride_existence(user_id, date_of_ride, time):
             ride_time = row[1]
 
             if (ride_date == date_of_ride) and (ride_time == time):
-                message = {'bad request': 'You have already created a ride at that time'}
+                message = {'message': 'You have already created a ride at that time'}
                 code = 400
 
     return message, code
