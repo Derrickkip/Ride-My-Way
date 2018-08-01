@@ -65,7 +65,7 @@ class RidesList(Resource):
 
             for key in data.keys():
                 if str(data[key]).isspace() or data[key] == '':
-                    return {'bad request': 'values cannot be spaces'}, 400
+                    return {'message': 'values cannot be spaces'}, 400
 
             new_ride = Rides(data['origin'], data['destination'],
                              data['date_of_ride'], data['time'], data['price'])
