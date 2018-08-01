@@ -53,7 +53,7 @@ class Rides:
         conn.commit()
         conn.close()
 
-        return {'success': 'ride created'}, 201
+        return {'message': 'ride created'}, 201
 
 
     @staticmethod
