@@ -26,10 +26,10 @@ class Cars:
         #check user has no car
         car = get_user_car(user_id)
         if car:
-            abort(400, 'You can only use one car')
+            return {'message': 'You can only use one car'}, 400
 
         if registration_exists(self.registration):
-            abort(400, 'That registration already exists')
+            return {'message':'That registration already exists'}, 400
 
         conn = dbconn()
 
@@ -46,7 +46,7 @@ class Cars:
 
         conn.close()
 
-        return {'success': 'Car successfully added'}, 201
+        return {'message': 'Car successfully added'}, 201
 
     @staticmethod
     def get_car():
@@ -64,7 +64,7 @@ class Cars:
         row = cur.fetchone()
 
         if row is None:
-            abort(404, 'No car found')
+            return {'message':'No car found'}, 404
 
         car = {}
         car['car_model'] = row[1]
@@ -103,7 +103,7 @@ class Cars:
 
         conn.close()
 
-        return {'success': 'car details updated'}
+        return {'message': 'car details updated'}
 
     @staticmethod
     def delete():
@@ -115,7 +115,7 @@ class Cars:
 
         car = get_user_car(user_id)
         if car is None:
-            abort(404, 'Car not found')
+            return {'message': 'Car not found'}, 404
         conn = dbconn()
 
         cur = conn.cursor()

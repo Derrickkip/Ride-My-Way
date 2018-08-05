@@ -31,18 +31,17 @@ class Requests:
                     {'ride_id': ride_id})
 
         rows = cur.fetchall()
-        requests = {}
-        num = 1
+        requests = []
         for row in rows:
-            requests[num] = {
+            request = {
                 'id':row[0], 'user_name': get_user_by_id(row[1]),
                 'accept_status': row[2]
             }
-            num += 1
+            requests.append(request)
         cur.close()
         conn.close()
 
-        if requests == {}:
+        if requests == []:
             return {'message': 'no requests yet'}
 
         return requests
@@ -132,4 +131,4 @@ class Requests:
         conn.commit()
         conn.close()
 
-        return {'success': 'request has been updated'}
+        return {'message': 'request has been updated'}

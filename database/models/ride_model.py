@@ -126,6 +126,42 @@ class Rides:
         return {'ride': ride}
 
     @staticmethod
+    def get_user_rides():
+        """
+        get users ride
+        """
+        email = get_jwt_identity()
+
+        user_id = get_user_by_email(email)[0]
+
+        conn = dbconn()
+        cur = conn.cursor()
+
+        cur.execute('''select * from rides where user_id=%(user_id)s''', {'user_id': user_id})
+
+        rows = cur.fetchall()
+
+        rides = []
+        for row in rows:
+            ride = {
+                'id':row[0],
+                'origin':row[2],
+                'destination': row[3],
+                'date_of_ride': row[4],
+                'time': row[5],
+                'price': row[6],
+                'requests': row[7],
+            }
+            rides.append(ride)
+
+
+        cur.close()
+        conn.close()
+
+        return rides
+
+
+    @staticmethod
     def update_ride(ride_id, data):
         """
         update ride method
@@ -162,7 +198,7 @@ class Rides:
         conn.commit()
         conn.close()
 
-        return {'success': 'ride details updated'}
+        return {'message': 'ride details updated'}
 
 
     @staticmethod
@@ -188,4 +224,4 @@ class Rides:
         conn.close()
 
 
-        return {'success':'ride deleted'}, 200
+        return {'message':'ride deleted'}, 200

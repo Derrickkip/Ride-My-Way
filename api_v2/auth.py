@@ -5,6 +5,7 @@ import re
 from flask import request, abort
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
+from flask_jwt_extended import jwt_required
 from database.models.user_model import Users
 from .schemas import SIGNUP_SCHEMA, LOGIN_SCHEMA
 
@@ -42,13 +43,13 @@ class Signup(Resource):
 
             for key in data.keys():
                 if data[key].isspace() or data[key] == '':
-                    return {'error': 'values cannot be empty strings'}, 400
+                    return {'message': 'values cannot be empty strings'}, 400
 
             if not re.match(EMAIL_REGEX, data['email']):
-                return {'Error': 'Invalid email'}, 400
+                return {'message': 'Invalid email'}, 400
 
             if data['password'] != data['confirm_password']:
-                abort(400, 'Passwords do not match')
+                return {'message': 'Passwords do not match'}, 400
 
             new_user = Users(data['first_name'], data['last_name'],
                              data['email'], data['phone_number'], data['password'])
@@ -57,7 +58,7 @@ class Signup(Resource):
 
             return response
         except ValidationError as error:
-            return {'error': str(error)}, 400
+            return {'message': str(error)}, 400
 
 class Login(Resource):
     """
@@ -93,7 +94,7 @@ class Login(Resource):
 
             for key in data.keys():
                 if data[key].isspace() or data[key] == '':
-                    return {'error': "values cannot be empty strings"}, 400
+                    return {'message': "values cannot be empty strings"}, 400
 
             email = data['email']
             password = data['password']
@@ -103,3 +104,33 @@ class Login(Resource):
             return response
         except ValidationError as error:
             return {'error': str(error)}, 400
+
+class User(Resource):
+    """
+    User resource routes
+    """
+    @jwt_required
+    def get(self):
+        """
+        Get user
+        ---
+        tags:
+            - Users
+        
+        description: get user details
+
+        responses:
+            200:
+                description: successful
+
+        """
+        return Users.get_user()
+
+    @jwt_required
+    def put(self):
+        """
+        Update user details
+        """
+        data = request.json
+        
+        return Users.update_user(data)

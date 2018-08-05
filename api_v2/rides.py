@@ -177,3 +177,21 @@ class Ride(Resource):
         response = Rides.delete_ride(ride_id)
 
         return response
+
+class UserRides(Resource):
+    """
+    Specific User rides
+    """
+    @jwt_required
+    def get(self):
+        """
+        Get specific user rides
+        ---
+        tags:
+            - Rides
+        """
+
+        response = Rides.get_user_rides()
+
+        return response
+

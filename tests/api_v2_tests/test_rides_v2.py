@@ -523,7 +523,7 @@ def test_respond_to_rides(test_client):
 
     result1 = json.loads(req_response.data)
 
-    request_id = result1["1"]["id"]
+    request_id = result1[0]["id"]
 
     status = {'status': "accepted"}
 
@@ -540,7 +540,7 @@ def test_respond_to_rides(test_client):
 
     result = json.loads(response2.data)
 
-    assert result['1']['accept_status'] == "accepted"
+    assert result[0]['accept_status'] == "accepted"
 
 def test_respond_non_existent_request(test_client):
     """
@@ -584,7 +584,7 @@ def test_respond_missing_field(test_client):
 
     result1 = json.loads(req_response.data)
 
-    request_id = result1["1"]["id"]
+    request_id = result1[0]["id"]
 
     status = {'respond': "accepted"}
 
@@ -607,7 +607,7 @@ def test_non_owner_respond_to_ride_requests(test_client):
 
     result1 = json.loads(req_response.data)
 
-    request_id = result1["1"]["id"]
+    request_id = result1[0]["id"]
 
     status = {'status': "accepted"}
 
